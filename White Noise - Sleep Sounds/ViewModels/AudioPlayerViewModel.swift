@@ -7,6 +7,12 @@ class AudioPlayerViewModel {
     var isPlaying: Bool = false
     var volume: Float = 0.7
     var currentIndex: Int = 0
+    var isShuffleOn: Bool = false
+    var loopMode: LoopMode = .off
+
+    enum LoopMode {
+        case off, one, all
+    }
 
     // Mix playback
     var currentMix: SoundMix?
@@ -92,14 +98,42 @@ class AudioPlayerViewModel {
 
     func next() {
         guard !soundList.isEmpty else { return }
-        currentIndex = (currentIndex + 1) % soundList.count
+        if loopMode == .one, let sound = currentSound {
+            play(sound: sound)
+            return
+        }
+        if isShuffleOn {
+            currentIndex = Int.random(in: 0..<soundList.count)
+        } else {
+            currentIndex = (currentIndex + 1) % soundList.count
+        }
         play(sound: soundList[currentIndex])
     }
 
     func previous() {
         guard !soundList.isEmpty else { return }
-        currentIndex = (currentIndex - 1 + soundList.count) % soundList.count
+        if loopMode == .one, let sound = currentSound {
+            play(sound: sound)
+            return
+        }
+        if isShuffleOn {
+            currentIndex = Int.random(in: 0..<soundList.count)
+        } else {
+            currentIndex = (currentIndex - 1 + soundList.count) % soundList.count
+        }
         play(sound: soundList[currentIndex])
+    }
+
+    func toggleShuffle() {
+        isShuffleOn.toggle()
+    }
+
+    func cycleLoopMode() {
+        switch loopMode {
+        case .off: loopMode = .all
+        case .all: loopMode = .one
+        case .one: loopMode = .off
+        }
     }
 
     func setVolume(_ newVolume: Float) {

@@ -140,7 +140,18 @@ struct NowPlayingView: View {
             Spacer()
 
             // Transport controls
-            HStack(spacing: 40) {
+            HStack(spacing: 28) {
+                // Shuffle
+                Button {
+                    player.toggleShuffle()
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                } label: {
+                    Image(systemName: "shuffle")
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundStyle(player.isShuffleOn ? Color.appAccent : .white.opacity(0.5))
+                }
+                .frame(width: 36, height: 36)
+
                 Button {
                     if let mix = player.currentMix, let manager = mixesManager {
                         player.previousMix(in: manager.mixes)
@@ -149,7 +160,7 @@ struct NowPlayingView: View {
                     }
                 } label: {
                     Image(systemName: "backward.fill")
-                        .font(.system(size: 28))
+                        .font(.system(size: 26))
                         .foregroundStyle(.white)
                 }
 
@@ -170,9 +181,20 @@ struct NowPlayingView: View {
                     }
                 } label: {
                     Image(systemName: "forward.fill")
-                        .font(.system(size: 28))
+                        .font(.system(size: 26))
                         .foregroundStyle(.white)
                 }
+
+                // Loop
+                Button {
+                    player.cycleLoopMode()
+                    UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                } label: {
+                    Image(systemName: loopIconName)
+                        .font(.system(size: 18, weight: .medium))
+                        .foregroundStyle(player.loopMode != .off ? Color.appAccent : .white.opacity(0.5))
+                }
+                .frame(width: 36, height: 36)
             }
 
             // Volume slider
@@ -210,6 +232,14 @@ struct NowPlayingView: View {
             Text("Go to the Sounds tab to choose a sound")
                 .font(.subheadline)
                 .foregroundStyle(.white.opacity(0.4))
+        }
+    }
+
+    private var loopIconName: String {
+        switch player.loopMode {
+        case .off: return "repeat"
+        case .all: return "repeat"
+        case .one: return "repeat.1"
         }
     }
 

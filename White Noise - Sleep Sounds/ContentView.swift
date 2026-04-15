@@ -9,6 +9,7 @@ struct ContentView: View {
     @State private var sleepLog = SleepLogManager()
     @State private var customSoundsManager = CustomSoundsManager()
     @State private var selectedTab = 0
+    @State private var discoverCategory: SoundCategory? = nil
     @State private var showSleepClock = false
     var storeManager: StoreManager
     var settings: SettingsManager
@@ -16,76 +17,15 @@ struct ContentView: View {
     @Binding var deepLinkAction: RootView.DeepLinkAction?
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            SoundsListView(
-                player: player,
-                favorites: favorites,
-                storeManager: storeManager,
-                selectedTab: $selectedTab
-            )
-            .tabItem {
-                Label("Sounds", systemImage: "waveform")
-            }
-            .tag(0)
-
-            ScenesView(
-                player: player,
-                favorites: favorites,
-                storeManager: storeManager,
-                selectedTab: $selectedTab
-            )
-            .tabItem {
-                Label("Scenes", systemImage: "sparkles.rectangle.stack")
-            }
-            .tag(1)
-
-            NowPlayingView(
-                player: player,
-                favorites: favorites,
-                timerManager: timerManager,
-                mixesManager: mixesManager
-            )
-            .tabItem {
-                Label("Now Playing", systemImage: "play.circle.fill")
-            }
-            .tag(2)
-
-            MixesView(
-                player: player,
-                mixesManager: mixesManager
-            )
-            .tabItem {
-                Label("Mixes", systemImage: "square.stack.3d.up.fill")
-            }
-            .tag(3)
-
-            MoreView(
-                player: player,
-                favorites: favorites,
-                storeManager: storeManager,
-                settings: settings,
-                playlistManager: playlistManager,
-                sleepLog: sleepLog,
-                customSoundsManager: customSoundsManager,
-                selectedTab: $selectedTab
-            )
-            .tabItem {
-                Label("More", systemImage: "ellipsis.circle.fill")
-            }
-            .tag(4)
+        ZStack(alignment: .bottom) {
+            tabContent
+            miniPlayerOverlay
         }
-        .tint(Color.appAccent)
-        .preferredColorScheme(.dark)
         .onAppear {
-            // Style the tab bar
-            let appearance = UITabBarAppearance()
-            appearance.configureWithOpaqueBackground()
-            appearance.backgroundColor = UIColor(Color.appSurface)
-            UITabBar.appearance().standardAppearance = appearance
-            UITabBar.appearance().scrollEdgeAppearance = appearance
+            // Glass morphism tab bar
+            configureGlassTabBar()
 
             timerManager.onTimerComplete = {
-                // Log the sleep session before stopping
                 sleepLog.endSession()
                 player.stop()
                 playlistManager.stopPlaylist()
@@ -94,7 +34,6 @@ struct ContentView: View {
                 player.setVolume(volume * player.volume)
             }
 
-            // Wire playlist playback
             playlistManager.onPlaySound = { sound in
                 player.play(sound: sound)
             }
@@ -129,6 +68,120 @@ struct ContentView: View {
             SleepClockView(player: player, timerManager: timerManager)
         }
     }
+
+    // MARK: - Tab Content
+
+    private var tabContent: some View {
+        TabView(selection: $selectedTab) {
+            homeTab
+            discoverTab
+            nowPlayingTab
+            mixesTab
+            moreTab
+        }
+        .tint(Color.appAccent)
+        .preferredColorScheme(.dark)
+    }
+
+    private var homeTab: some View {
+        HomeView(
+            player: player,
+            favorites: favorites,
+            storeManager: storeManager,
+            selectedTab: $selectedTab,
+            discoverCategory: $discoverCategory
+        )
+        .tabItem { Label("Home", systemImage: "house.fill") }
+        .tag(0)
+    }
+
+    private var discoverTab: some View {
+        DiscoverView(
+            player: player,
+            favorites: favorites,
+            storeManager: storeManager,
+            selectedTab: $selectedTab,
+            discoverCategory: $discoverCategory
+        )
+        .tabItem { Label("Discover", systemImage: "magnifyingglass") }
+        .tag(1)
+    }
+
+    private var nowPlayingTab: some View {
+        NowPlayingView(
+            player: player,
+            favorites: favorites,
+            timerManager: timerManager,
+            mixesManager: mixesManager
+        )
+        .tabItem { Label("Now Playing", systemImage: "play.circle.fill") }
+        .tag(2)
+    }
+
+    private var mixesTab: some View {
+        MixesView(
+            player: player,
+            mixesManager: mixesManager,
+            storeManager: storeManager
+        )
+        .tabItem { Label("Mixes", systemImage: "square.stack.3d.up.fill") }
+        .tag(3)
+    }
+
+    private var moreTab: some View {
+        MoreView(
+            player: player,
+            favorites: favorites,
+            storeManager: storeManager,
+            settings: settings,
+            playlistManager: playlistManager,
+            sleepLog: sleepLog,
+            customSoundsManager: customSoundsManager,
+            selectedTab: $selectedTab
+        )
+        .tabItem { Label("More", systemImage: "ellipsis.circle.fill") }
+        .tag(4)
+    }
+
+    // MARK: - Mini Player
+
+    @ViewBuilder
+    private var miniPlayerOverlay: some View {
+        if selectedTab != 2 {
+            MiniPlayerView(player: player) {
+                withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+                    selectedTab = 2
+                }
+            }
+            .padding(.bottom, 58)
+        }
+    }
+
+    // MARK: - Glass Tab Bar
+
+    private func configureGlassTabBar() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithTransparentBackground()
+        appearance.backgroundEffect = UIBlurEffect(style: .systemChromeMaterialDark)
+        appearance.backgroundColor = UIColor(Color.appSurface.opacity(0.3))
+
+        // Active tab color
+        let activeColor = UIColor(Color.appAccent)
+        let inactiveColor = UIColor(Color.white.opacity(0.4))
+
+        let normalAttributes: [NSAttributedString.Key: Any] = [.foregroundColor: inactiveColor]
+        let selectedAttributes: [NSAttributedString.Key: Any] = [.foregroundColor: activeColor]
+
+        appearance.stackedLayoutAppearance.normal.iconColor = inactiveColor
+        appearance.stackedLayoutAppearance.normal.titleTextAttributes = normalAttributes
+        appearance.stackedLayoutAppearance.selected.iconColor = activeColor
+        appearance.stackedLayoutAppearance.selected.titleTextAttributes = selectedAttributes
+
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+    }
+
+    // MARK: - Navigation
 
     private func handleShortcutAction(_ action: AppShortcutAction.Action) {
         switch action {

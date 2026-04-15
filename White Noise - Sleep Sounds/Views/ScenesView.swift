@@ -28,19 +28,24 @@ struct ScenesView: View {
     @Binding var selectedTab: Int
 
     @State private var selectedScene: SoundScene?
+    @State private var appearedCards: Set<String> = []
 
     var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
-                    ForEach(SoundScene.allScenes) { scene in
+                    ForEach(Array(SoundScene.allScenes.enumerated()), id: \.element.id) { index, scene in
                         sceneCard(scene)
+                            .staggeredAppear(index: index, appearedCards: $appearedCards, id: "scene_\(scene.id)")
                     }
                 }
                 .padding(16)
+                .padding(.bottom, 80)
             }
             .background(Color.appBackground)
             .navigationTitle("Scenes")
+            .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .navigationDestination(item: $selectedScene) { scene in
                 SceneDetailView(
                     scene: scene,
@@ -128,7 +133,7 @@ struct ScenesView: View {
                 .padding(20)
             }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(CardPressStyle())
         .sheet(isPresented: $showPremiumSheet) {
             PremiumUpgradeView(storeManager: storeManager)
         }

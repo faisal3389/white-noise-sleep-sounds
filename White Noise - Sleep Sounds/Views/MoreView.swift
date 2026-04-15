@@ -48,82 +48,139 @@ struct MoreView: View {
                     }
                     .listRowBackground(Color.appSurface)
 
-                    NavigationLink {
-                        PlaylistView(
-                            playlistManager: playlistManager,
-                            player: player,
-                            favorites: favorites,
-                            storeManager: storeManager,
-                            selectedTab: $selectedTab
-                        )
-                    } label: {
-                        Label {
-                            HStack {
-                                Text("Playlist")
-                                    .foregroundStyle(.white)
-                                Spacer()
-                                if playlistManager.isActive {
-                                    Text("Playing")
-                                        .font(.caption)
-                                        .foregroundStyle(Color.appAccent)
-                                } else if playlistManager.hasItems {
-                                    Text("\(playlistManager.items.count)")
+                    if storeManager.isPremium {
+                        NavigationLink {
+                            PlaylistView(
+                                playlistManager: playlistManager,
+                                player: player,
+                                favorites: favorites,
+                                storeManager: storeManager,
+                                selectedTab: $selectedTab
+                            )
+                        } label: {
+                            Label {
+                                HStack {
+                                    Text("Playlist")
+                                        .foregroundStyle(.white)
+                                    Spacer()
+                                    if playlistManager.isActive {
+                                        Text("Playing")
+                                            .font(.caption)
+                                            .foregroundStyle(Color.appAccent)
+                                    } else if playlistManager.hasItems {
+                                        Text("\(playlistManager.items.count)")
+                                            .font(.caption)
+                                            .foregroundStyle(.white.opacity(0.4))
+                                    }
+                                }
+                            } icon: {
+                                Image(systemName: "list.bullet.rectangle.portrait")
+                                    .foregroundStyle(Color.appAccent)
+                            }
+                        }
+                        .listRowBackground(Color.appSurface)
+                    } else {
+                        Button { showPremiumSheet = true } label: {
+                            Label {
+                                HStack {
+                                    Text("Playlist")
+                                        .foregroundStyle(.white)
+                                    Spacer()
+                                    Image(systemName: "lock.fill")
                                         .font(.caption)
                                         .foregroundStyle(.white.opacity(0.4))
                                 }
+                            } icon: {
+                                Image(systemName: "list.bullet.rectangle.portrait")
+                                    .foregroundStyle(Color.appAccent)
                             }
-                        } icon: {
-                            Image(systemName: "list.bullet.rectangle.portrait")
-                                .foregroundStyle(Color.appAccent)
                         }
+                        .listRowBackground(Color.appSurface)
                     }
-                    .listRowBackground(Color.appSurface)
 
-                    NavigationLink {
-                        SleepLogView(sleepLog: sleepLog)
-                    } label: {
-                        Label {
-                            HStack {
-                                Text("Sleep Log")
-                                    .foregroundStyle(.white)
-                                Spacer()
-                                if !sleepLog.entries.isEmpty {
-                                    Text("\(sleepLog.entries.count) sessions")
+                    if storeManager.isPremium {
+                        NavigationLink {
+                            SleepLogView(sleepLog: sleepLog)
+                        } label: {
+                            Label {
+                                HStack {
+                                    Text("Sleep Log")
+                                        .foregroundStyle(.white)
+                                    Spacer()
+                                    if !sleepLog.entries.isEmpty {
+                                        Text("\(sleepLog.entries.count) sessions")
+                                            .font(.caption)
+                                            .foregroundStyle(.white.opacity(0.4))
+                                    }
+                                }
+                            } icon: {
+                                Image(systemName: "bed.double.fill")
+                                    .foregroundStyle(Color.appAccent)
+                            }
+                        }
+                        .listRowBackground(Color.appSurface)
+                    } else {
+                        Button { showPremiumSheet = true } label: {
+                            Label {
+                                HStack {
+                                    Text("Sleep Log")
+                                        .foregroundStyle(.white)
+                                    Spacer()
+                                    Image(systemName: "lock.fill")
                                         .font(.caption)
                                         .foregroundStyle(.white.opacity(0.4))
                                 }
+                            } icon: {
+                                Image(systemName: "bed.double.fill")
+                                    .foregroundStyle(Color.appAccent)
                             }
-                        } icon: {
-                            Image(systemName: "bed.double.fill")
-                                .foregroundStyle(Color.appAccent)
                         }
+                        .listRowBackground(Color.appSurface)
                     }
-                    .listRowBackground(Color.appSurface)
 
-                    NavigationLink {
-                        ImportSoundView(
-                            customSoundsManager: customSoundsManager,
-                            player: player,
-                            selectedTab: $selectedTab
-                        )
-                    } label: {
-                        Label {
-                            HStack {
-                                Text("My Sounds")
-                                    .foregroundStyle(.white)
-                                Spacer()
-                                if !customSoundsManager.sounds.isEmpty {
-                                    Text("\(customSoundsManager.sounds.count)")
+                    if storeManager.isPremium {
+                        NavigationLink {
+                            ImportSoundView(
+                                customSoundsManager: customSoundsManager,
+                                player: player,
+                                selectedTab: $selectedTab
+                            )
+                        } label: {
+                            Label {
+                                HStack {
+                                    Text("My Sounds")
+                                        .foregroundStyle(.white)
+                                    Spacer()
+                                    if !customSoundsManager.sounds.isEmpty {
+                                        Text("\(customSoundsManager.sounds.count)")
+                                            .font(.caption)
+                                            .foregroundStyle(.white.opacity(0.4))
+                                    }
+                                }
+                            } icon: {
+                                Image(systemName: "square.and.arrow.down")
+                                    .foregroundStyle(Color.appAccent)
+                            }
+                        }
+                        .listRowBackground(Color.appSurface)
+                    } else {
+                        Button { showPremiumSheet = true } label: {
+                            Label {
+                                HStack {
+                                    Text("My Sounds")
+                                        .foregroundStyle(.white)
+                                    Spacer()
+                                    Image(systemName: "lock.fill")
                                         .font(.caption)
                                         .foregroundStyle(.white.opacity(0.4))
                                 }
+                            } icon: {
+                                Image(systemName: "square.and.arrow.down")
+                                    .foregroundStyle(Color.appAccent)
                             }
-                        } icon: {
-                            Image(systemName: "square.and.arrow.down")
-                                .foregroundStyle(Color.appAccent)
                         }
+                        .listRowBackground(Color.appSurface)
                     }
-                    .listRowBackground(Color.appSurface)
                 }
 
                 // MARK: - Premium Section
@@ -212,6 +269,8 @@ struct MoreView: View {
             .scrollContentBackground(.hidden)
             .background(Color.appBackground)
             .navigationTitle("More")
+            .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .sheet(isPresented: $showPremiumSheet) {
                 PremiumUpgradeView(storeManager: storeManager)
             }

@@ -3,8 +3,10 @@ import SwiftUI
 struct MixesView: View {
     @Bindable var player: AudioPlayerViewModel
     var mixesManager: MixesManager
+    var storeManager: StoreManager
 
     @State private var showCreateMix = false
+    @State private var showPremiumSheet = false
     @State private var editingMix: SoundMix?
     @State private var createHeroPressed = false
 
@@ -31,6 +33,9 @@ struct MixesView: View {
         .sheet(item: $editingMix) { mix in
             CreateMixView(player: player, mixesManager: mixesManager, editingMix: mix)
         }
+        .sheet(isPresented: $showPremiumSheet) {
+            PremiumUpgradeView(storeManager: storeManager)
+        }
     }
 
     // MARK: - Header
@@ -53,7 +58,11 @@ struct MixesView: View {
 
     private var createHeroCard: some View {
         Button {
-            showCreateMix = true
+            if storeManager.isPremium {
+                showCreateMix = true
+            } else {
+                showPremiumSheet = true
+            }
         } label: {
             ZStack {
                 // Gradient background
@@ -77,11 +86,11 @@ struct MixesView: View {
                 VStack(spacing: 12) {
                     ZStack {
                         Circle()
-                            .fill(Color.appAccent)
+                            .fill(storeManager.isPremium ? Color.appAccent : Color.gray)
                             .frame(width: 64, height: 64)
-                            .shadow(color: Color.appAccent.opacity(0.4), radius: 16)
+                            .shadow(color: (storeManager.isPremium ? Color.appAccent : Color.gray).opacity(0.4), radius: 16)
 
-                        Image(systemName: "plus")
+                        Image(systemName: storeManager.isPremium ? "plus" : "lock.fill")
                             .font(.system(size: 28, weight: .medium))
                             .foregroundStyle(Color.onPrimary)
                     }
@@ -89,10 +98,16 @@ struct MixesView: View {
                     Text("Create New Mix")
                         .font(.system(size: 20, weight: .bold, design: .rounded))
                         .foregroundStyle(Color.onSurface)
+
+                    if !storeManager.isPremium {
+                        Text("Premium Feature")
+                            .font(.system(size: 13, weight: .medium))
+                            .foregroundStyle(Color.appAccent)
+                    }
                 }
             }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(CardPressStyle())
     }
 
     // MARK: - Saved Mixes
@@ -114,7 +129,11 @@ struct MixesView: View {
                                 player.playMix(mix: mix)
                             },
                             onEdit: {
-                                editingMix = mix
+                                if storeManager.isPremium {
+                                    editingMix = mix
+                                } else {
+                                    showPremiumSheet = true
+                                }
                             }
                         )
                         .contextMenu {
@@ -235,6 +254,6 @@ struct MixesView: View {
             .frame(height: 140)
             .clipShape(RoundedRectangle(cornerRadius: 16))
         }
-        .buttonStyle(.plain)
+        .buttonStyle(CardPressStyle())
     }
 }
