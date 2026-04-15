@@ -1,4 +1,5 @@
 import Foundation
+import WidgetKit
 
 @Observable
 class AudioPlayerViewModel {
@@ -36,6 +37,7 @@ class AudioPlayerViewModel {
 
         audioEngine.setVolume(volume)
         isPlaying = true
+        SharedPlaybackState.update(soundId: sound.id, soundName: sound.name, isPlaying: true)
     }
 
     func pause() {
@@ -44,6 +46,7 @@ class AudioPlayerViewModel {
         if isMixPlaying {
             isMixPlaying = false
         }
+        SharedPlaybackState.update(soundId: currentSound?.id ?? currentMix?.id.uuidString, soundName: displayTitle, isPlaying: false)
     }
 
     func resume() {
@@ -52,6 +55,7 @@ class AudioPlayerViewModel {
         if currentMix != nil {
             isMixPlaying = true
         }
+        SharedPlaybackState.update(soundId: currentSound?.id ?? currentMix?.id.uuidString, soundName: displayTitle, isPlaying: true)
     }
 
     func stop() {
@@ -61,6 +65,7 @@ class AudioPlayerViewModel {
         currentMix = nil
         isMixPlaying = false
         activeComponents = []
+        SharedPlaybackState.clear()
     }
 
     func togglePlayPause() {
@@ -101,6 +106,7 @@ class AudioPlayerViewModel {
 
         audioEngine.playMix(components: mix.components)
         audioEngine.setVolume(volume)
+        SharedPlaybackState.update(soundId: mix.id.uuidString, soundName: mix.name, isPlaying: true)
     }
 
     func adjustComponentVolume(soundId: String, volume: Float) {

@@ -26,21 +26,22 @@ struct SoundsListView: View {
                     ForEach(filteredGroups, id: \.category) { group in
                         Section {
                             ForEach(group.sounds) { sound in
-                                SoundRowView(
-                                    sound: sound,
-                                    isFavorite: favorites.isFavorite(sound),
-                                    onFavoriteToggle: { favorites.toggle(sound) }
-                                )
-                                .contentShape(Rectangle())
-                                .onTapGesture {
+                                Button {
                                     if sound.isPremium && !storeManager.isPremium {
                                         showPremiumSheet = true
                                     } else {
                                         player.play(sound: sound)
                                         selectedTab = 1
                                     }
+                                } label: {
+                                    SoundRowView(
+                                        sound: sound,
+                                        isFavorite: favorites.isFavorite(sound),
+                                        onFavoriteToggle: { favorites.toggle(sound) }
+                                    )
                                 }
-                                .listRowBackground(Color.appBackground)
+                                .buttonStyle(.plain)
+                                .listRowBackground(Color.appSurface.opacity(0.5))
                             }
                         } header: {
                             Text(group.category.rawValue)

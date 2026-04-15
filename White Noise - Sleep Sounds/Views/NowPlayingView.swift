@@ -3,9 +3,12 @@ import SwiftUI
 struct NowPlayingView: View {
     @Bindable var player: AudioPlayerViewModel
     @Bindable var favorites: FavoritesManager
+    @Bindable var timerManager: TimerManager
     var mixesManager: MixesManager?
 
     @State private var showMixerSheet = false
+    @State private var showTimerSheet = false
+    @State private var showSleepClock = false
 
     var body: some View {
         ZStack {
@@ -19,6 +22,21 @@ struct NowPlayingView: View {
         }
         .sheet(isPresented: $showMixerSheet) {
             mixerSheet
+        }
+        .sheet(isPresented: $showTimerSheet) {
+            SleepTimerView(
+                timerManager: timerManager,
+                onStart: {
+                    timerManager.startTimer(minutes: timerManager.selectedMinutes)
+                },
+                onCancel: {
+                    timerManager.stopTimer()
+                }
+            )
+            .presentationDetents([.large])
+        }
+        .fullScreenCover(isPresented: $showSleepClock) {
+            SleepClockView(player: player, timerManager: timerManager)
         }
     }
 
@@ -54,6 +72,24 @@ struct NowPlayingView: View {
                 #endif
 
                 Spacer()
+
+                // Sleep clock button
+                Button {
+                    showSleepClock = true
+                } label: {
+                    Image(systemName: "clock.fill")
+                        .font(.title2)
+                        .foregroundStyle(.white.opacity(0.8))
+                }
+
+                // Timer button
+                Button {
+                    showTimerSheet = true
+                } label: {
+                    Image(systemName: "moon.fill")
+                        .font(.title2)
+                        .foregroundStyle(timerManager.isTimerActive ? Color.appAccent : .white.opacity(0.8))
+                }
 
                 // Mixer button (active when mix is playing)
                 if player.currentMix != nil {
@@ -91,6 +127,13 @@ struct NowPlayingView: View {
                 Text(player.displaySubtitle)
                     .font(.caption)
                     .foregroundStyle(.white.opacity(0.6))
+
+                if timerManager.isTimerActive {
+                    Text("Sleep timer: \(timerManager.remainingFormatted)")
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(Color.appAccent)
+                        .padding(.top, 4)
+                }
             }
 
             Spacer()
@@ -151,14 +194,18 @@ struct NowPlayingView: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "waveform")
-                .font(.system(size: 60))
-                .foregroundStyle(.white.opacity(0.3))
+        VStack(spacing: 20) {
+            Image(systemName: "waveform.circle.fill")
+                .font(.system(size: 80))
+                .foregroundStyle(Color.appAccent.opacity(0.6))
 
             Text("Pick a sound to begin")
-                .font(.title3)
-                .foregroundStyle(.white.opacity(0.5))
+                .font(.title2.weight(.medium))
+                .foregroundStyle(.white.opacity(0.7))
+
+            Text("Go to the Sounds tab to choose a sound")
+                .font(.subheadline)
+                .foregroundStyle(.white.opacity(0.4))
         }
     }
 

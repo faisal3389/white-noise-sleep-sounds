@@ -23,6 +23,8 @@ White Noise - Sleep Sounds/
     FavoritesManager.swift         # @Observable, UserDefaults persistence
     StoreManager.swift             # RevenueCat IAP wrapper (conditional import)
     SettingsManager.swift          # App settings persistence
+    TimerManager.swift             # @Observable sleep timer + alarm scheduling
+    SharedPlaybackState.swift      # Widget ↔ app shared state via UserDefaults
   ViewModels/
     AudioPlayerViewModel.swift     # Playback state for single sounds + mixes
   Views/
@@ -37,6 +39,8 @@ White Noise - Sleep Sounds/
     AirPlayButton.swift            # AVRoutePickerView wrapper
     BannerAdView.swift             # AdMob banner (conditional import)
     PremiumUpgradeView.swift       # IAP purchase sheet
+    SleepTimerView.swift           # Sleep timer sheet (presets, custom, fade, alarm)
+    SleepClockView.swift           # Bedside clock mode (OLED black, auto-dim)
   Utilities/
     Color+Hex.swift                # Color tokens + hex initializer
   ContentView.swift                # 5-tab root layout
@@ -97,21 +101,22 @@ White Noise - Sleep Sounds/
 - [x] 3 curated mixes (Rainy Forest, Ocean Breeze, Cozy Cabin)
 - [x] Context menu on mix cards (favorite, delete)
 
-### Phase 4 -- Widgets, Timers & Sleep Clock -- NOT STARTED
+### Phase 4 -- Widgets, Timers & Sleep Clock -- IN PROGRESS
 
 - [ ] Home Screen widget (medium 2x2): current sound + background image + quick-play buttons
 - [ ] Home Screen widget (small 1x1): play/pause icon + thumbnail
 - [ ] Lock Screen widget (circular): waveform icon tap-to-open
 - [ ] Lock Screen widget (rectangular): sound name + play/stop
 - [ ] AppIntents for widget actions (PlaySoundIntent)
-- [ ] Sleep timer (15m/30m/45m/1h/2h/4h presets + custom picker)
-- [ ] Fade-out option (volume -> 0 over last 30 seconds)
-- [ ] Timer countdown display on Now Playing
-- [ ] Alarm (UNUserNotificationCenter scheduled notification -> resume playback)
-- [ ] Sleep clock / bedside mode (full-screen black, large digital time, OLED-friendly)
-- [ ] Auto-dim after 5 seconds of no touch
-- [ ] Prevent auto-lock in sleep clock mode
-- [ ] No ads in sleep clock mode
+- [x] Sleep timer (15m/30m/45m/1h/2h/4h presets + custom picker)
+- [x] Fade-out option (volume -> 0 over last 30 seconds)
+- [x] Timer countdown display on Now Playing
+- [x] Alarm (UNUserNotificationCenter scheduled notification -> resume playback)
+- [x] Sleep clock / bedside mode (full-screen black, large digital time, OLED-friendly)
+- [x] Auto-dim after 5 seconds of no touch
+- [x] Prevent auto-lock in sleep clock mode
+- [x] No ads in sleep clock mode
+- [x] SharedPlaybackState for widget communication (UserDefaults + WidgetCenter sync)
 
 ### Phase 5 -- Full Feature Parity + Premium -- NOT STARTED
 
@@ -149,6 +154,105 @@ White Noise - Sleep Sounds/
 3. **WidgetKit widgets** -- Increases engagement via home/lock screen presence, requires AppIntents
 
 Alternatively, tackle the **Design Polish Backlog** first to bring the existing UI closer to the design reference before adding new features. The HomeView, DiscoverView, SoundCardView, and MiniPlayerView are key missing design-reference views.
+
+---
+
+## Required Assets Checklist
+
+Everything below is needed before the app is fully functional. Generated noises (white, pink, brown, blue) work without any files -- all other sounds need audio + images.
+
+### App Icon
+- [ ] `AppIcon` -- 1024x1024 app icon in Assets.xcassets (single size, iOS auto-generates all variants)
+
+### Launch Screen
+- [ ] Launch screen / splash -- either a `LaunchScreen.storyboard` or SwiftUI launch screen configured in Info.plist (app name + logo on dark background)
+
+### Sound Files (23 `.m4a` files)
+Place in a `Sounds/` folder added to the target bundle. Ideal: 30-60 second seamless loops, AAC format, 44.1kHz.
+
+**Rain (4 files)**
+- [ ] `light_rain.m4a`
+- [ ] `heavy_rain.m4a`
+- [ ] `rain_on_roof.m4a` (premium)
+- [ ] `thunderstorm.m4a` (premium)
+
+**Nature (5 files)**
+- [ ] `forest.m4a`
+- [ ] `birds.m4a`
+- [ ] `crickets.m4a` (premium)
+- [ ] `wind.m4a` (premium)
+- [ ] `leaves.m4a` (premium)
+
+**Urban (3 files)**
+- [ ] `city_traffic.m4a`
+- [ ] `cafe.m4a`
+- [ ] `train.m4a` (premium)
+
+**Machine (4 files)**
+- [ ] `fan.m4a`
+- [ ] `ac.m4a`
+- [ ] `dryer.m4a` (premium)
+- [ ] `washing_machine.m4a` (premium)
+
+**Fire (3 files)**
+- [ ] `campfire.m4a`
+- [ ] `fireplace.m4a`
+- [ ] `candle.m4a` (premium)
+
+**Water (4 files)**
+- [ ] `ocean_waves.m4a`
+- [ ] `river.m4a`
+- [ ] `waterfall.m4a` (premium)
+- [ ] `underwater.m4a` (premium)
+
+### Background Images (27 images in Assets.xcassets)
+Used on the Now Playing screen and mix cards. Ideal: landscape 1920x1080 or similar, dark/moody aesthetic.
+
+**Noise**
+- [ ] `bg_white_noise`
+- [ ] `bg_pink_noise`
+- [ ] `bg_brown_noise`
+- [ ] `bg_blue_noise`
+
+**Rain**
+- [ ] `bg_light_rain`
+- [ ] `bg_heavy_rain`
+- [ ] `bg_rain_on_roof`
+- [ ] `bg_thunderstorm`
+
+**Nature**
+- [ ] `bg_forest`
+- [ ] `bg_birds`
+- [ ] `bg_crickets`
+- [ ] `bg_wind`
+- [ ] `bg_leaves`
+
+**Urban**
+- [ ] `bg_city_traffic`
+- [ ] `bg_cafe`
+- [ ] `bg_train`
+
+**Machine**
+- [ ] `bg_fan`
+- [ ] `bg_ac`
+- [ ] `bg_dryer`
+- [ ] `bg_washing_machine`
+
+**Fire**
+- [ ] `bg_campfire`
+- [ ] `bg_fireplace`
+- [ ] `bg_candle`
+
+**Water**
+- [ ] `bg_ocean_waves`
+- [ ] `bg_river`
+- [ ] `bg_waterfall`
+- [ ] `bg_underwater`
+
+### Asset Sources (Royalty-Free Suggestions)
+- **Sound files:** freesound.org (CC0 license), Pixabay audio, Zapsplat (free tier)
+- **Background images:** Unsplash (free), Pexels (free), Pixabay (free)
+- **App icon:** Design in Figma/Canva or commission -- waveform + moon motif recommended
 
 ---
 

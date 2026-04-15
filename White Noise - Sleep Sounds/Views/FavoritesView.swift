@@ -20,21 +20,22 @@ struct FavoritesView: View {
                     } else {
                         List {
                             ForEach(favoriteSounds) { sound in
-                                SoundRowView(
-                                    sound: sound,
-                                    isFavorite: true,
-                                    onFavoriteToggle: { favorites.toggle(sound) }
-                                )
-                                .contentShape(Rectangle())
-                                .onTapGesture {
+                                Button {
                                     if sound.isPremium && !storeManager.isPremium {
                                         showPremiumSheet = true
                                     } else {
                                         player.play(sound: sound)
                                         selectedTab = 1
                                     }
+                                } label: {
+                                    SoundRowView(
+                                        sound: sound,
+                                        isFavorite: true,
+                                        onFavoriteToggle: { favorites.toggle(sound) }
+                                    )
                                 }
-                                .listRowBackground(Color.appBackground)
+                                .buttonStyle(.plain)
+                                .listRowBackground(Color.appSurface.opacity(0.5))
                             }
                         }
                         .listStyle(.plain)
@@ -69,5 +70,6 @@ struct FavoritesView: View {
                 .foregroundStyle(.white.opacity(0.3))
             Spacer()
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }

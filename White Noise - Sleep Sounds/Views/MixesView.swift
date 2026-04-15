@@ -93,12 +93,6 @@ struct MixesView: View {
             }
         }
         .buttonStyle(.plain)
-        .scaleEffect(createHeroPressed ? 0.98 : 1.0)
-        .onLongPressGesture(minimumDuration: 0, pressing: { pressing in
-            withAnimation(.easeInOut(duration: 0.15)) {
-                createHeroPressed = pressing
-            }
-        }, perform: {})
     }
 
     // MARK: - Saved Mixes
