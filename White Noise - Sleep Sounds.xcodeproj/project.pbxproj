@@ -29,9 +29,22 @@
 		6A24DE182F8C8B1100BC532A /* White Noise - Sleep SoundsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "White Noise - Sleep SoundsUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		6A341BED2F8F1840003FB276 /* Exceptions for "White Noise - Sleep Sounds" folder in "White Noise - Sleep Sounds" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 6A24DE002F8C8B0F00BC532A /* White Noise - Sleep Sounds */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		6A24DE032F8C8B0F00BC532A /* White Noise - Sleep Sounds */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				6A341BED2F8F1840003FB276 /* Exceptions for "White Noise - Sleep Sounds" folder in "White Noise - Sleep Sounds" target */,
+			);
 			path = "White Noise - Sleep Sounds";
 			sourceTree = "<group>";
 		};
@@ -195,6 +208,9 @@
 			);
 			mainGroup = 6A24DDF82F8C8B0F00BC532A;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				6A341BEE2F8F19AD003FB276 /* XCRemoteSwiftPackageReference "purchases-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6A24DE022F8C8B0F00BC532A /* Products */;
 			projectDirPath = "";
@@ -615,6 +631,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		6A341BEE2F8F19AD003FB276 /* XCRemoteSwiftPackageReference "purchases-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.67.2;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
 	};
 	rootObject = 6A24DDF92F8C8B0F00BC532A /* Project object */;
 }

@@ -1,24 +1,56 @@
-//
-//  ContentView.swift
-//  White Noise - Sleep Sounds
-//
-//  Created by Faisal Ali on 12/04/2026.
-//
-
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
-    }
-}
+    @State private var player = AudioPlayerViewModel()
+    @State private var favorites = FavoritesManager()
+    @State private var mixesManager = MixesManager()
+    @State private var selectedTab = 0
+    var storeManager: StoreManager
+    var settings: SettingsManager
 
-#Preview {
-    ContentView()
+    var body: some View {
+        TabView(selection: $selectedTab) {
+            Tab("Sounds", systemImage: "waveform", value: 0) {
+                SoundsListView(
+                    player: player,
+                    favorites: favorites,
+                    storeManager: storeManager,
+                    selectedTab: $selectedTab
+                )
+            }
+
+            Tab("Now Playing", systemImage: "play.circle.fill", value: 1) {
+                NowPlayingView(
+                    player: player,
+                    favorites: favorites,
+                    mixesManager: mixesManager
+                )
+            }
+
+            Tab("Mixes", systemImage: "square.stack.3d.up.fill", value: 2) {
+                MixesView(
+                    player: player,
+                    mixesManager: mixesManager
+                )
+            }
+
+            Tab("Favorites", systemImage: "heart.fill", value: 3) {
+                FavoritesView(
+                    player: player,
+                    favorites: favorites,
+                    storeManager: storeManager,
+                    selectedTab: $selectedTab
+                )
+            }
+
+            Tab("Settings", systemImage: "gearshape.fill", value: 4) {
+                SettingsView(
+                    storeManager: storeManager,
+                    settings: settings
+                )
+            }
+        }
+        .tint(Color.appAccent)
+        .preferredColorScheme(.dark)
+    }
 }
