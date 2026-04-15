@@ -5,7 +5,7 @@ A beautiful, offline-first white noise and sleep sounds app built with Swift & S
 **Developer:** Zalgo (Faisal Ali)
 **Platform:** iOS 17+ (iPhone & iPad)
 **Tech Stack:** Swift, SwiftUI, AVAudioEngine, StoreKit 2 (via RevenueCat), AdMob
-**Revenue Model:** Free with banner ads -> $0.99 IAP to remove ads + unlock premium sounds
+**Revenue Model:** Free with banner ads -> $3.99 IAP to remove ads + unlock premium sounds
 
 ---
 

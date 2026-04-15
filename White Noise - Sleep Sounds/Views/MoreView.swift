@@ -141,7 +141,7 @@ struct MoreView: View {
                                 Text("Active")
                                     .foregroundStyle(.green)
                             } else {
-                                Text("$0.99")
+                                Text("$3.99")
                                     .foregroundStyle(.white.opacity(0.5))
                             }
                         }
@@ -155,6 +155,11 @@ struct MoreView: View {
                             .foregroundStyle(.white)
                     }
                     .listRowBackground(Color.appSurface)
+                }
+
+                // MARK: - Appearance Section
+                Section("App Icon") {
+                    AppIconPicker()
                 }
 
                 // MARK: - Playback Section

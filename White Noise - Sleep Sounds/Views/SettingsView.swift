@@ -30,7 +30,7 @@ struct SettingsView: View {
                                 Text("Active")
                                     .foregroundStyle(.green)
                             } else {
-                                Text("$0.99")
+                                Text("$3.99")
                                     .foregroundStyle(.white.opacity(0.5))
                             }
                         }

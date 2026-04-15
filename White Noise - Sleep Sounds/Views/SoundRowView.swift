@@ -58,6 +58,7 @@ struct SoundRowView: View {
         case .machine: return "gearshape.fill"
         case .fire: return "flame.fill"
         case .water: return "drop.fill"
+        case .premium: return "star.fill"
         }
     }
 }

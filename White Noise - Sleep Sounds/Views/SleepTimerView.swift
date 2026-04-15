@@ -98,6 +98,7 @@ struct SleepTimerView: View {
                         timerManager.selectedMinutes = minutes
                         timerManager.fadeOutEnabled = timerManager.fadeOutEnabled
                         onStart()
+                        UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                         dismiss()
                     } label: {
                         Text(presetLabel(minutes))

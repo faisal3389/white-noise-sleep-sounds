@@ -28,8 +28,12 @@ class AudioEngine {
     private var mixBrownNoiseState: [String: Float] = [:]
     private var mixPinkNoiseState: [String: (rows: [Float], runningSum: Float, index: Int)] = [:]
 
+    var onInterruption: ((Bool) -> Void)?  // true = began, false = ended (should resume)
+    var onRouteChange: (() -> Void)?       // headphones disconnected
+
     init() {
         configureAudioSession()
+        setupNotifications()
     }
 
     private func configureAudioSession() {
@@ -39,6 +43,51 @@ class AudioEngine {
             try session.setActive(true)
         } catch {
             print("AudioSession setup failed: \(error)")
+        }
+    }
+
+    private func setupNotifications() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleInterruption),
+            name: AVAudioSession.interruptionNotification,
+            object: AVAudioSession.sharedInstance()
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(handleRouteChange),
+            name: AVAudioSession.routeChangeNotification,
+            object: AVAudioSession.sharedInstance()
+        )
+    }
+
+    @objc private func handleInterruption(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+              let type = AVAudioSession.InterruptionType(rawValue: typeValue) else { return }
+
+        switch type {
+        case .began:
+            onInterruption?(true)
+        case .ended:
+            if let optionsValue = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt {
+                let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
+                if options.contains(.shouldResume) {
+                    onInterruption?(false)
+                }
+            }
+        @unknown default:
+            break
+        }
+    }
+
+    @objc private func handleRouteChange(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let reasonValue = userInfo[AVAudioSessionRouteChangeReasonKey] as? UInt,
+              let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue) else { return }
+
+        if reason == .oldDeviceUnavailable {
+            onRouteChange?()
         }
     }
 

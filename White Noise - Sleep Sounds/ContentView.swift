@@ -9,6 +9,7 @@ struct ContentView: View {
     @State private var sleepLog = SleepLogManager()
     @State private var customSoundsManager = CustomSoundsManager()
     @State private var selectedTab = 0
+    @State private var showSleepClock = false
     var storeManager: StoreManager
     var settings: SettingsManager
     @Binding var deepLinkSoundId: String?
@@ -118,6 +119,32 @@ struct ContentView: View {
         }
         .onChange(of: favorites.favoritedIDs) { _, ids in
             SharedPlaybackState.updateFavorites(Array(ids))
+        }
+        .onChange(of: AppShortcutAction.shared.pendingAction) { _, action in
+            guard let action else { return }
+            handleShortcutAction(action)
+            AppShortcutAction.shared.pendingAction = nil
+        }
+        .fullScreenCover(isPresented: $showSleepClock) {
+            SleepClockView(player: player, timerManager: timerManager)
+        }
+    }
+
+    private func handleShortcutAction(_ action: AppShortcutAction.Action) {
+        switch action {
+        case .playSound(let soundId):
+            if let sound = SoundLibrary.allSounds.first(where: { $0.id == soundId }) {
+                player.play(sound: sound)
+                selectedTab = 2
+            }
+        case .startTimer(let minutes):
+            timerManager.startTimer(minutes: minutes)
+            selectedTab = 2
+        case .openSleepClock:
+            showSleepClock = true
+        case .toggle:
+            player.togglePlayPause()
+            selectedTab = 2
         }
     }
 

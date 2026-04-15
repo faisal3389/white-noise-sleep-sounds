@@ -105,6 +105,7 @@ struct NowPlayingView: View {
                 if let sound = player.currentSound {
                     Button {
                         favorites.toggle(sound)
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     } label: {
                         Image(systemName: favorites.isFavorite(sound) ? "heart.fill" : "heart")
                             .font(.title2)
@@ -152,7 +153,10 @@ struct NowPlayingView: View {
                         .foregroundStyle(.white)
                 }
 
-                Button { player.togglePlayPause() } label: {
+                Button {
+                    player.togglePlayPause()
+                    UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+                } label: {
                     Image(systemName: player.isPlaying ? "pause.circle.fill" : "play.circle.fill")
                         .font(.system(size: 64))
                         .foregroundStyle(.white)

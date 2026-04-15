@@ -41,7 +41,7 @@ struct PremiumUpgradeView: View {
                             .frame(maxWidth: .infinity)
                             .frame(height: 54)
                     } else {
-                        Text("Just $0.99 — One Time")
+                        Text("Just $3.99 — One Time")
                             .font(.headline)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)

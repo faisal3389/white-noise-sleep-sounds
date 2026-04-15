@@ -42,6 +42,20 @@ struct SoundLibrary {
         Sound(id: "river", name: "River Stream", category: .water, fileName: "river.m4a", backgroundImage: "bg_river", isPremium: false, isGenerated: false),
         Sound(id: "waterfall", name: "Waterfall", category: .water, fileName: "waterfall.m4a", backgroundImage: "bg_waterfall", isPremium: true, isGenerated: false),
         Sound(id: "underwater", name: "Underwater", category: .water, fileName: "underwater.m4a", backgroundImage: "bg_underwater", isPremium: true, isGenerated: false),
+
+        // MARK: - Premium (12 exclusive sounds)
+        Sound(id: "singing_bowl", name: "Tibetan Singing Bowl", category: .premium, fileName: "singing_bowl.m4a", backgroundImage: "bg_singing_bowl", isPremium: true, isGenerated: false),
+        Sound(id: "wind_chimes", name: "Wind Chimes", category: .premium, fileName: "wind_chimes.m4a", backgroundImage: "bg_wind_chimes", isPremium: true, isGenerated: false),
+        Sound(id: "underwater_bubbles", name: "Underwater Bubbles", category: .premium, fileName: "underwater_bubbles.m4a", backgroundImage: "bg_underwater_bubbles", isPremium: true, isGenerated: false),
+        Sound(id: "japanese_garden", name: "Japanese Garden", category: .premium, fileName: "japanese_garden.m4a", backgroundImage: "bg_japanese_garden", isPremium: true, isGenerated: false),
+        Sound(id: "northern_lights", name: "Northern Lights Ambience", category: .premium, fileName: "northern_lights.m4a", backgroundImage: "bg_northern_lights", isPremium: true, isGenerated: false),
+        Sound(id: "cabin_rain", name: "Cabin in the Rain", category: .premium, fileName: "cabin_rain.m4a", backgroundImage: "bg_cabin_rain", isPremium: true, isGenerated: false),
+        Sound(id: "midnight_forest", name: "Midnight Forest", category: .premium, fileName: "midnight_forest.m4a", backgroundImage: "bg_midnight_forest", isPremium: true, isGenerated: false),
+        Sound(id: "desert_wind", name: "Desert Wind", category: .premium, fileName: "desert_wind.m4a", backgroundImage: "bg_desert_wind", isPremium: true, isGenerated: false),
+        Sound(id: "snow_falling", name: "Snow Falling", category: .premium, fileName: "snow_falling.m4a", backgroundImage: "bg_snow_falling", isPremium: true, isGenerated: false),
+        Sound(id: "coffee_shop", name: "Coffee Shop", category: .premium, fileName: "coffee_shop.m4a", backgroundImage: "bg_coffee_shop", isPremium: true, isGenerated: false),
+        Sound(id: "library", name: "Library Ambience", category: .premium, fileName: "library.m4a", backgroundImage: "bg_library", isPremium: true, isGenerated: false),
+        Sound(id: "vinyl_crackle", name: "Vinyl Crackle", category: .premium, fileName: "vinyl_crackle.m4a", backgroundImage: "bg_vinyl_crackle", isPremium: true, isGenerated: false),
     ]
 
     static func sounds(for category: SoundCategory) -> [Sound] {

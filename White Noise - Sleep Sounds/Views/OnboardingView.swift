@@ -132,7 +132,7 @@ struct OnboardingView: View {
                 .font(.system(size: 32, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
 
-            Text("Enjoy free with ads, or go premium for just $0.99 to unlock all sounds and remove ads.")
+            Text("Enjoy free with ads, or go premium for just $3.99 to unlock all sounds and remove ads.")
                 .font(.body)
                 .foregroundStyle(.white.opacity(0.6))
                 .multilineTextAlignment(.center)

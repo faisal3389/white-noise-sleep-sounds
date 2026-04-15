@@ -17,6 +17,7 @@ struct SoundScene: Identifiable {
         SoundScene(id: "machines", name: "Machines & Fans", subtitle: "Mechanical white noise", category: .machine, icon: "fan.fill", backgroundImage: "bg_fan", isPremium: false),
         SoundScene(id: "fireside", name: "Fireside", subtitle: "Campfires and candlelight", category: .fire, icon: "flame.fill", backgroundImage: "bg_campfire", isPremium: false),
         SoundScene(id: "cosmic", name: "Cosmic", subtitle: "Generated noise textures", category: .noise, icon: "sparkles", backgroundImage: "bg_white_noise", isPremium: false),
+        SoundScene(id: "premium", name: "Premium Collection", subtitle: "12 exclusive sounds", category: .premium, icon: "star.fill", backgroundImage: "bg_northern_lights", isPremium: true),
     ]
 }
 
@@ -52,9 +53,15 @@ struct ScenesView: View {
         }
     }
 
+    @State private var showPremiumSheet = false
+
     private func sceneCard(_ scene: SoundScene) -> some View {
         Button {
-            selectedScene = scene
+            if scene.isPremium && !storeManager.isPremium {
+                showPremiumSheet = true
+            } else {
+                selectedScene = scene
+            }
         } label: {
             ZStack(alignment: .bottomLeading) {
                 // Background
@@ -76,6 +83,17 @@ struct ScenesView: View {
                         endPoint: .bottom
                     )
                     .clipShape(RoundedRectangle(cornerRadius: 20))
+
+                    // Lock overlay for premium scene
+                    if scene.isPremium && !storeManager.isPremium {
+                        RoundedRectangle(cornerRadius: 20)
+                            .fill(Color.appAccent.opacity(0.1))
+                            .overlay(
+                                Image(systemName: "lock.fill")
+                                    .font(.title)
+                                    .foregroundStyle(Color.appAccent)
+                            )
+                    }
                 }
                 .frame(height: 160)
 
@@ -98,7 +116,8 @@ struct ScenesView: View {
                     Spacer()
 
                     let count = SoundLibrary.sounds(for: scene.category).count
-                    Text("\(count) sounds")
+                    let label = scene.isPremium ? "\(count) sounds — Premium" : "\(count) sounds"
+                    Text(label)
                         .font(.caption2)
                         .foregroundStyle(.white.opacity(0.5))
                         .padding(.horizontal, 10)
@@ -110,6 +129,9 @@ struct ScenesView: View {
             }
         }
         .buttonStyle(.plain)
+        .sheet(isPresented: $showPremiumSheet) {
+            PremiumUpgradeView(storeManager: storeManager)
+        }
     }
 }
 

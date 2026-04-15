@@ -16,6 +16,20 @@ class AudioPlayerViewModel {
     private let audioEngine = AudioEngine()
     private(set) var soundList: [Sound] = SoundLibrary.allSounds
 
+    init() {
+        audioEngine.onInterruption = { [weak self] began in
+            guard let self else { return }
+            if began {
+                self.pause()
+            } else {
+                self.resume()
+            }
+        }
+        audioEngine.onRouteChange = { [weak self] in
+            self?.pause()
+        }
+    }
+
     // MARK: - Single Sound Playback
 
     func play(sound: Sound) {

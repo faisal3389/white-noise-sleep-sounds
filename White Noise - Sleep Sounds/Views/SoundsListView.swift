@@ -31,6 +31,7 @@ struct SoundsListView: View {
                                         showPremiumSheet = true
                                     } else {
                                         player.play(sound: sound)
+                                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
                                         selectedTab = 2
                                     }
                                 } label: {

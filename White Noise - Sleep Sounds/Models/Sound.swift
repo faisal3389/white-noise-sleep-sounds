@@ -8,8 +8,22 @@ enum SoundCategory: String, CaseIterable, Identifiable {
     case machine = "Machine"
     case fire = "Fire"
     case water = "Water"
+    case premium = "Premium"
 
     var id: String { rawValue }
+
+    var iconName: String {
+        switch self {
+        case .noise: return "waveform"
+        case .rain: return "cloud.rain.fill"
+        case .nature: return "leaf.fill"
+        case .urban: return "building.2.fill"
+        case .machine: return "fan.fill"
+        case .fire: return "flame.fill"
+        case .water: return "drop.fill"
+        case .premium: return "star.fill"
+        }
+    }
 }
 
 struct Sound: Identifiable, Hashable {
