@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>White Noise — Dev Tracker</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'SF Pro', sans-serif; background: #0D0F1A; color: #EEEEF0; padding: 32px; min-height: 100vh; }
+  h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+  .subtitle { color: #6B6D7B; font-size: 14px; margin-bottom: 32px; }
+  .accent { color: #7C6CF0; }
+
+  /* Progress bar */
+  .overall-progress { margin-bottom: 40px; }
+  .progress-bar-bg { background: #1A1D2E; border-radius: 12px; height: 20px; overflow: hidden; margin-top: 8px; }
+  .progress-bar-fill { background: linear-gradient(90deg, #7C6CF0, #A78BFA); height: 100%; border-radius: 12px; transition: width 0.5s ease; }
+  .progress-label { font-size: 13px; color: #6B6D7B; margin-top: 6px; }
+
+  /* Phase cards */
+  .phases { display: flex; flex-direction: column; gap: 20px; }
+  .phase-card { background: #1A1D2E; border-radius: 16px; padding: 24px; border-left: 4px solid #2A2D3E; }
+  .phase-card.active { border-left-color: #7C6CF0; box-shadow: 0 0 20px rgba(124, 108, 240, 0.15); }
+  .phase-card.done { border-left-color: #34D399; opacity: 0.7; }
+  .phase-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+  .phase-title { font-size: 18px; font-weight: 600; }
+  .phase-badge { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .badge-active { background: rgba(124, 108, 240, 0.2); color: #7C6CF0; }
+  .badge-pending { background: rgba(107, 109, 123, 0.2); color: #6B6D7B; }
+  .badge-done { background: rgba(52, 211, 153, 0.2); color: #34D399; }
+  .phase-desc { font-size: 13px; color: #6B6D7B; margin-bottom: 16px; }
+  .phase-timeline { font-size: 12px; color: #6B6D7B; margin-bottom: 16px; }
+
+  /* Task list */
+  .tasks { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+  .task { display: flex; align-items: flex-start; gap: 10px; font-size: 14px; line-height: 1.5; }
+  .task-icon { flex-shrink: 0; width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; margin-top: 2px; }
+  .icon-done { background: #34D399; color: #0D0F1A; }
+  .icon-wip { background: #7C6CF0; color: white; }
+  .icon-todo { background: #2A2D3E; color: #6B6D7B; border: 1px solid #3A3D4E; }
+  .task-text { color: #EEEEF0; }
+  .task-text.dimmed { color: #6B6D7B; }
+  .task-text.struck { color: #6B6D7B; text-decoration: line-through; }
+
+  /* Manual steps section */
+  .manual-section { background: #1A1D2E; border-radius: 16px; padding: 24px; margin-top: 32px; border-left: 4px solid #F59E0B; }
+  .manual-header { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+  .manual-title { font-size: 18px; font-weight: 600; }
+  .manual-badge { font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; background: rgba(245, 158, 11, 0.2); color: #F59E0B; }
+  .manual-group { margin-bottom: 20px; }
+  .manual-group:last-child { margin-bottom: 0; }
+  .manual-group-title { font-size: 14px; font-weight: 600; color: #EEEEF0; margin-bottom: 8px; }
+  .manual-steps { list-style: none; display: flex; flex-direction: column; gap: 4px; padding-left: 12px; }
+  .manual-steps li { font-size: 13px; color: #9B9DAB; line-height: 1.6; }
+  .manual-steps li::before { content: "→ "; color: #F59E0B; }
+  .manual-note { font-size: 13px; color: #9B9DAB; line-height: 1.6; padding-left: 12px; }
+  .manual-note::before { content: "• "; color: #F59E0B; }
+  .code-ref { font-family: 'SF Mono', Menlo, monospace; font-size: 12px; background: rgba(245, 158, 11, 0.1); color: #F59E0B; padding: 1px 6px; border-radius: 4px; }
+
+  /* Legend */
+  .legend { display: flex; gap: 20px; margin-top: 32px; padding-top: 20px; border-top: 1px solid #1A1D2E; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #6B6D7B; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  /* Last updated */
+  .updated { text-align: center; color: #3A3D4E; font-size: 11px; margin-top: 24px; }
+</style>
+</head>
+<body>
+
+<h1>White Noise — <span class="accent">Sleep Sounds</span></h1>
+<p class="subtitle">Development Progress Tracker</p>
+
+<!-- Overall Progress -->
+<div class="overall-progress">
+  <div style="display: flex; justify-content: space-between; align-items: baseline;">
+    <span style="font-size: 14px; font-weight: 600;">Overall Progress</span>
+    <span style="font-size: 24px; font-weight: 700;" class="accent">0%</span>
+  </div>
+  <div class="progress-bar-bg">
+    <div class="progress-bar-fill" style="width: 0%;"></div>
+  </div>
+  <p class="progress-label">Phase 1 of 6 — MVP in progress</p>
+</div>
+
+<!-- Phases -->
+<div class="phases">
+
+  <!-- PHASE 1 -->
+  <div class="phase-card active">
+    <div class="phase-header">
+      <span class="phase-title">Phase 1 — MVP</span>
+      <span class="phase-badge badge-active">In Progress</span>
+    </div>
+    <p class="phase-desc">Core playback app with beautiful UI. No ads, no payments — just sounds.</p>
+    <p class="phase-timeline">Target: Week 1–2</p>
+    <ul class="tasks">
+      <li class="task"><span class="task-icon icon-done">✓</span><span class="task-text struck">Create Xcode project</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Set up project folder structure (Models, Views, ViewModels, Audio, Resources, Utilities)</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build Sound & SoundCategory data models</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build AudioEngine with AVAudioEngine (background audio support)</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build NoiseGenerator (procedural white/pink/brown noise)</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build AudioPlayerViewModel</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build SoundsViewModel</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build NowPlayingView (full-screen immersive player)</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build PlayerControlsView (play/pause/skip, volume)</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build SoundsListView with search</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build SoundRowView</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build FavoritesManager (UserDefaults persistence)</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Set up Tab Bar (Sounds / Now Playing / Favorites)</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Add dark theme color palette & Extensions.swift</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Add bundled sound files (.m4a) to Resources/Sounds</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Add background images to Resources/Backgrounds</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Enable "Audio, AirPlay, and Picture in Picture" capability</span></li>
+    </ul>
+  </div>
+
+  <!-- PHASE 2 -->
+  <div class="phase-card">
+    <div class="phase-header">
+      <span class="phase-title">Phase 2 — Monetization & Polish</span>
+      <span class="phase-badge badge-pending">Pending</span>
+    </div>
+    <p class="phase-desc">Banner ads (AdMob), $3.99 IAP to remove ads + unlock premium, Settings, AirPlay.</p>
+    <p class="phase-timeline">Target: Week 3</p>
+    <ul class="tasks">
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Integrate Google Mobile Ads SDK</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build reusable BannerAdView (UIViewRepresentable)</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Add banners to Sounds List & Favorites (not Now Playing)</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">StoreKit 2 — Remove Ads IAP ($3.99 non-consumable)</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build Settings screen</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Add AirPlay picker (AVRoutePickerView)</span></li>
+    </ul>
+  </div>
+
+  <!-- PHASE 3 -->
+  <div class="phase-card">
+    <div class="phase-header">
+      <span class="phase-title">Phase 3 — Mixes & Customization</span>
+      <span class="phase-badge badge-pending">Pending</span>
+    </div>
+    <p class="phase-desc">Combine 2–5 sounds, individual volume sliders, save/load custom mixes.</p>
+    <p class="phase-timeline">Target: Week 4</p>
+    <ul class="tasks">
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build SoundMix & MixComponent models</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Extend AudioEngine for multi-sound mixing</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build Mix Editor UI</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build Mixes List screen</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Update Now Playing for mix playback</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Add Mixes tab to Tab Bar</span></li>
+    </ul>
+  </div>
+
+  <!-- PHASE 4 -->
+  <div class="phase-card">
+    <div class="phase-header">
+      <span class="phase-title">Phase 4 — Widgets, Timers & Sleep Clock</span>
+      <span class="phase-badge badge-pending">Pending</span>
+    </div>
+    <p class="phase-desc">Home/Lock Screen widgets, sleep timer with fade-out, alarm, bedside clock mode.</p>
+    <p class="phase-timeline">Target: Week 5</p>
+    <ul class="tasks">
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build WidgetKit extension (Home + Lock Screen)</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build Sleep Timer (presets + custom + fade-out)</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build Alarm (local notifications)</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build Sleep Clock (OLED-friendly bedside mode)</span></li>
+    </ul>
+  </div>
+
+  <!-- PHASE 5 -->
+  <div class="phase-card">
+    <div class="phase-header">
+      <span class="phase-title">Phase 5 — Full Feature Parity + Premium</span>
+      <span class="phase-badge badge-pending">Pending</span>
+    </div>
+    <p class="phase-desc">Playlist queue, premium sounds, categories/scenes, onboarding, sleep log, Siri shortcuts.</p>
+    <p class="phase-timeline">Target: Week 6</p>
+    <ul class="tasks">
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build Playlist / queue system</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Lock premium sounds behind IAP</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build sound categories / scenes UI</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build onboarding flow</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Build basic sleep log</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Import custom sounds</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">App Shortcuts (Siri integration)</span></li>
+    </ul>
+  </div>
+
+  <!-- PHASE 6 -->
+  <div class="phase-card">
+    <div class="phase-header">
+      <span class="phase-title">Phase 6 — Production Deployment & Go Live</span>
+      <span class="phase-badge badge-pending">Pending</span>
+    </div>
+    <p class="phase-desc">RevenueCat API key, App Store Connect setup, and all remaining steps to ship 100% production.</p>
+    <p class="phase-timeline">Target: Week 7</p>
+    <ul class="tasks">
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Add production RevenueCat API key in StoreManager.swift</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Create app record in App Store Connect</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Configure App Store listing (description, keywords, category)</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Upload app screenshots &amp; preview videos for all device sizes</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Set app pricing &amp; availability (regions)</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Configure IAP product in App Store Connect &amp; link to RevenueCat</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Replace test AdMob IDs with production ad unit IDs</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Set up App Privacy (data collection declarations)</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Add privacy policy &amp; terms of use URLs</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Set up signing &amp; provisioning (distribution certificate + App Store profile)</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Set version number &amp; build number for release</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Archive build in Xcode (Product &gt; Archive)</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Upload archive to App Store Connect via Xcode Organizer</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Submit for App Review</span></li>
+      <li class="task"><span class="task-icon icon-todo"></span><span class="task-text dimmed">Release to App Store (go live 100%)</span></li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- Manual Xcode Steps -->
+<div class="manual-section">
+  <div class="manual-header">
+    <span class="manual-title">Manual Xcode Steps</span>
+    <span class="manual-badge">Do in Xcode</span>
+  </div>
+
+  <div class="manual-group">
+    <div class="manual-group-title">1. Add RevenueCat SDK via SPM</div>
+    <ul class="manual-steps">
+      <li>File &gt; Add Package Dependencies...</li>
+      <li>Enter URL: <span class="code-ref">https://github.com/RevenueCat/purchases-ios</span></li>
+      <li>Version rule: Up to Next Major Version from <span class="code-ref">5.0.0</span></li>
+      <li>Add the <span class="code-ref">RevenueCat</span> product to the White Noise - Sleep Sounds target</li>
+    </ul>
+  </div>
+
+  <div class="manual-group">
+    <div class="manual-group-title">2. Add Google Mobile Ads SDK via SPM</div>
+    <ul class="manual-steps">
+      <li>File &gt; Add Package Dependencies... (again)</li>
+      <li>Enter URL: <span class="code-ref">https://github.com/googleads/swift-package-manager-google-mobile-ads</span></li>
+      <li>Version rule: Up to Next Major Version from <span class="code-ref">12.0.0</span></li>
+      <li>Add the <span class="code-ref">GoogleMobileAds</span> product to the White Noise - Sleep Sounds target</li>
+    </ul>
+  </div>
+
+  <div class="manual-group">
+    <div class="manual-group-title">3. Set Info.plist Path</div>
+    <ul class="manual-steps">
+      <li>Select the White Noise - Sleep Sounds target &gt; Build Settings</li>
+      <li>Search for <span class="code-ref">INFOPLIST_FILE</span></li>
+      <li>Set it to <span class="code-ref">White Noise - Sleep Sounds/Info.plist</span></li>
+    </ul>
+  </div>
+
+  <div class="manual-group">
+    <div class="manual-group-title">4. Replace RevenueCat API Key</div>
+    <p class="manual-note">In <span class="code-ref">StoreManager.swift</span> line 13, replace <span class="code-ref">"your_key"</span> with your actual RevenueCat public API key</p>
+  </div>
+
+  <div class="manual-group">
+    <div class="manual-group-title">5. RevenueCat Dashboard Setup</div>
+    <ul class="manual-steps">
+      <li>Create a project at <span class="code-ref">app.revenuecat.com</span></li>
+      <li>Add your iOS app with bundle ID <span class="code-ref">zalgo.White-Noise---Sleep-Sounds</span></li>
+      <li>Create an Entitlement called <span class="code-ref">premium</span></li>
+      <li>Create a Product: <span class="code-ref">com.zalgo.whitenoisesleepsounds.premium</span> (non-consumable, $3.99)</li>
+      <li>Create an Offering (set as default) containing that product as a package</li>
+    </ul>
+  </div>
+
+  <div class="manual-group">
+    <div class="manual-group-title">6. App Store Connect (for real purchases)</div>
+    <ul class="manual-steps">
+      <li>Create the IAP product <span class="code-ref">com.zalgo.whitenoisesleepsounds.premium</span> in App Store Connect</li>
+      <li>Link it in RevenueCat dashboard under Products</li>
+    </ul>
+  </div>
+
+  <div class="manual-group">
+    <div class="manual-group-title">7. AdMob Setup (for real ads later)</div>
+    <p class="manual-note">Replace the test <span class="code-ref">GADApplicationIdentifier</span> in <span class="code-ref">Info.plist</span> with your real AdMob app ID</p>
+    <p class="manual-note">Replace the test ad unit ID in <span class="code-ref">BannerAdView.swift</span> with your real banner ad unit ID</p>
+  </div>
+</div>
+
+<!-- Legend -->
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background: #34D399;"></div> Done</div>
+  <div class="legend-item"><div class="legend-dot" style="background: #7C6CF0;"></div> In Progress</div>
+  <div class="legend-item"><div class="legend-dot" style="background: #2A2D3E; border: 1px solid #3A3D4E;"></div> To Do</div>
+</div>
+
+<p class="updated">Last updated: April 13, 2026</p>
+
+</body>
+</html>
