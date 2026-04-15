@@ -5,6 +5,9 @@ struct ContentView: View {
     @State private var favorites = FavoritesManager()
     @State private var mixesManager = MixesManager()
     @State private var timerManager = TimerManager()
+    @State private var playlistManager = PlaylistManager()
+    @State private var sleepLog = SleepLogManager()
+    @State private var customSoundsManager = CustomSoundsManager()
     @State private var selectedTab = 0
     var storeManager: StoreManager
     var settings: SettingsManager
@@ -22,6 +25,17 @@ struct ContentView: View {
             }
             .tag(0)
 
+            ScenesView(
+                player: player,
+                favorites: favorites,
+                storeManager: storeManager,
+                selectedTab: $selectedTab
+            )
+            .tabItem {
+                Label("Scenes", systemImage: "sparkles.rectangle.stack")
+            }
+            .tag(1)
+
             NowPlayingView(
                 player: player,
                 favorites: favorites,
@@ -31,7 +45,7 @@ struct ContentView: View {
             .tabItem {
                 Label("Now Playing", systemImage: "play.circle.fill")
             }
-            .tag(1)
+            .tag(2)
 
             MixesView(
                 player: player,
@@ -40,25 +54,20 @@ struct ContentView: View {
             .tabItem {
                 Label("Mixes", systemImage: "square.stack.3d.up.fill")
             }
-            .tag(2)
+            .tag(3)
 
-            FavoritesView(
+            MoreView(
                 player: player,
                 favorites: favorites,
                 storeManager: storeManager,
+                settings: settings,
+                playlistManager: playlistManager,
+                sleepLog: sleepLog,
+                customSoundsManager: customSoundsManager,
                 selectedTab: $selectedTab
             )
             .tabItem {
-                Label("Favorites", systemImage: "heart.fill")
-            }
-            .tag(3)
-
-            SettingsView(
-                storeManager: storeManager,
-                settings: settings
-            )
-            .tabItem {
-                Label("Settings", systemImage: "gearshape.fill")
+                Label("More", systemImage: "ellipsis.circle.fill")
             }
             .tag(4)
         }
@@ -73,10 +82,31 @@ struct ContentView: View {
             UITabBar.appearance().scrollEdgeAppearance = appearance
 
             timerManager.onTimerComplete = {
+                // Log the sleep session before stopping
+                sleepLog.endSession()
                 player.stop()
+                playlistManager.stopPlaylist()
             }
             timerManager.onFadeOut = { volume in
                 player.setVolume(volume * player.volume)
+            }
+
+            // Wire playlist playback
+            playlistManager.onPlaySound = { sound in
+                player.play(sound: sound)
+            }
+            playlistManager.onPlaylistFinished = {
+                player.stop()
+            }
+        }
+        .onChange(of: player.isPlaying) { _, isPlaying in
+            if isPlaying {
+                let soundName = player.displayTitle
+                let soundId = player.currentSound?.id
+                let mixName = player.currentMix?.name
+                sleepLog.startSession(soundName: soundName, soundId: soundId, mixName: mixName)
+            } else if !isPlaying && player.currentSound == nil && player.currentMix == nil {
+                sleepLog.endSession()
             }
         }
     }

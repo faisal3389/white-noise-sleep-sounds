@@ -1,3 +1,7 @@
+// SettingsView is now replaced by MoreView which consolidates
+// Favorites, Playlist, Sleep Log, Import Sounds, and Settings into one tab.
+// This file is kept for backwards compatibility but MoreView is the active view.
+
 import SwiftUI
 
 struct SettingsView: View {
@@ -12,7 +16,6 @@ struct SettingsView: View {
     var body: some View {
         NavigationStack {
             List {
-                // MARK: - Premium Section
                 Section("Premium") {
                     Button {
                         if !storeManager.isPremium {
@@ -43,7 +46,6 @@ struct SettingsView: View {
                     .listRowBackground(Color.appSurface)
                 }
 
-                // MARK: - Playback Section
                 Section("Playback") {
                     HStack {
                         Label("Fade Duration", systemImage: "waveform.path")
@@ -60,7 +62,6 @@ struct SettingsView: View {
                     .listRowBackground(Color.appSurface)
                 }
 
-                // MARK: - About Section
                 Section("About") {
                     Link(destination: URL(string: "https://apps.apple.com/app/id0000000000")!) {
                         Label("Rate on App Store", systemImage: "star.bubble")

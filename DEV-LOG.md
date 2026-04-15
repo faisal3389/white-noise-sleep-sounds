@@ -27,6 +27,36 @@
 
 ---
 
+## Phase 5 -- Full Feature Parity + Premium
+
+### Session: 2026-04-14
+
+#### Features Added
+- **OnboardingView** (`Views/OnboardingView.swift`) -- 3-screen paged onboarding: welcome with app branding, feature highlights (pick/mix/sleep), get started with premium pitch. Skip button, page indicators, AppStorage-persisted `has_seen_onboarding` flag
+- **PlaylistManager** (`Models/PlaylistManager.swift`) -- @Observable queue system with drag-to-reorder, per-item optional duration (auto-advance after N minutes), start/stop/advance/previous, UserDefaults JSON persistence
+- **PlaylistView** (`Views/PlaylistView.swift`) -- Full playlist UI with numbered rows, playing indicator, duration menu per item, edit mode for reorder/delete, "Add to Playlist" sheet with full sound library
+- **SleepLogManager** (`Models/SleepLogManager.swift`) -- @Observable sleep session tracker. Auto-logs sessions >1 minute on timer complete or playback stop. Weekly grouping, total/average stats, UserDefaults persistence
+- **SleepLogView** (`Views/SleepLogView.swift`) -- Stats header (this week total, average duration, session count), weekly-grouped entry list with context menu delete
+- **ScenesView** (`Views/ScenesView.swift`) -- Portal-inspired full-width category cards with background images, gradient overlays, sound count badges. Taps into SceneDetailView showing hero header + sound list for that category
+- **CustomSoundsManager** (`Models/CustomSoundsManager.swift`) -- Import sounds from Files app (MP3/M4A/WAV/AIFF) via UIDocumentPickerViewController. Copies to app sandbox Documents/CustomSounds/, UserDefaults metadata persistence
+- **ImportSoundView** (`Views/ImportSoundView.swift`) -- Dashed import button, file picker, naming sheet with category picker, imported sounds list with play/delete
+- **MoreView** (`Views/MoreView.swift`) -- Consolidated "More" tab replacing separate Favorites and Settings tabs. NavigationLinks to: Favorites, Playlist, Sleep Log, My Sounds (import), plus inline Premium, Playback, and About sections
+
+#### Architecture Changes
+- **Tab restructure:** 5 tabs now: Sounds (0), Scenes (1), Now Playing (2), Mixes (3), More (4). Previous: Sounds/NowPlaying/Mixes/Favorites/Settings
+- **RootView:** Extracted from App struct to handle onboarding/content switching (avoids `some Scene` type issues with if/else in App body)
+- **AudioEngine:** Extended `playFile()` to support absolute file paths for custom imported sounds (detects leading `/`)
+- **Sleep log auto-tracking:** ContentView watches `player.isPlaying` changes to start/end sleep log sessions. Timer completion also triggers session end
+- **Playlist wiring:** ContentView sets `playlistManager.onPlaySound` and `onPlaylistFinished` callbacks
+- **FavoritesView:** Removed NavigationStack wrapper (now pushed inside MoreView's NavigationStack)
+- **Tab indices updated:** All `selectedTab = 1` references updated to `selectedTab = 2` across Sounds, Favorites, Scenes, Playlist, Import views
+
+#### Bug Fixes
+- **`Scene` name collision:** Named the scenes data model `Scene` which shadowed SwiftUI's `Scene` protocol, breaking `some Scene` in App struct. Renamed to `SoundScene`
+- **PlaylistManager missing import:** `remove(atOffsets:)` and `move(fromOffsets:toOffset:)` require SwiftUI import for IndexSet extensions
+
+---
+
 ## Known Bugs
 
 | # | Screen | Description | Status |

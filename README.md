@@ -25,6 +25,9 @@ White Noise - Sleep Sounds/
     SettingsManager.swift          # App settings persistence
     TimerManager.swift             # @Observable sleep timer + alarm scheduling
     SharedPlaybackState.swift      # Widget ↔ app shared state via UserDefaults
+    PlaylistManager.swift          # @Observable playlist/queue with drag-to-reorder
+    SleepLogManager.swift          # @Observable sleep session tracking + weekly stats
+    CustomSoundsManager.swift      # Import custom sounds from Files (MP3/M4A/WAV/AIFF)
   ViewModels/
     AudioPlayerViewModel.swift     # Playback state for single sounds + mixes
   Views/
@@ -41,9 +44,15 @@ White Noise - Sleep Sounds/
     PremiumUpgradeView.swift       # IAP purchase sheet
     SleepTimerView.swift           # Sleep timer sheet (presets, custom, fade, alarm)
     SleepClockView.swift           # Bedside clock mode (OLED black, auto-dim)
+    OnboardingView.swift           # 3-screen onboarding (welcome, features, get started)
+    PlaylistView.swift             # Playlist queue with drag-to-reorder + duration control
+    SleepLogView.swift             # Sleep history with weekly grouping + stats
+    ScenesView.swift               # Portal-inspired full-width category scene cards
+    ImportSoundView.swift          # Custom sound import from Files app
+    MoreView.swift                 # Consolidated tab: Favorites, Playlist, Sleep Log, Import, Settings
   Utilities/
     Color+Hex.swift                # Color tokens + hex initializer
-  ContentView.swift                # 5-tab root layout
+  ContentView.swift                # 5-tab root: Sounds, Scenes, Now Playing, Mixes, More
   White_Noise___Sleep_SoundsApp.swift  # @main entry point
 ```
 
@@ -118,14 +127,15 @@ White Noise - Sleep Sounds/
 - [x] No ads in sleep clock mode
 - [x] SharedPlaybackState for widget communication (UserDefaults + WidgetCenter sync)
 
-### Phase 5 -- Full Feature Parity + Premium -- NOT STARTED
+### Phase 5 -- Full Feature Parity + Premium -- IN PROGRESS
 
-- [ ] Playlist / queue (drag to reorder, auto-advance, per-sound duration)
+- [x] Onboarding flow (3 screens: welcome, how it works, get started)
+- [x] Playlist / queue (drag to reorder, auto-advance, per-sound duration)
+- [x] Sound categories / scenes view (Portal-inspired full-width scene cards)
+- [x] Sleep log (date, duration, sound played, weekly stats, stored in UserDefaults)
+- [x] Import custom sounds (Files picker -> copy to app sandbox, MP3/M4A/WAV/AIFF)
+- [x] "More" tab consolidating Favorites, Playlist, Sleep Log, Import, Settings
 - [ ] Premium sound pack (12 locked sounds: Singing Bowl, Wind Chimes, Underwater, etc.)
-- [ ] Sound categories / scenes view (Portal-inspired full-width scene cards)
-- [ ] Onboarding flow (3 screens: welcome, sound picker, notification permission)
-- [ ] Sleep log (basic: date, duration, sound played, stored in UserDefaults)
-- [ ] Import custom sounds (Files picker -> copy to app sandbox)
 - [ ] App Shortcuts / Siri integration (SiriKit AppIntents)
 - [ ] Alternate app icons
 

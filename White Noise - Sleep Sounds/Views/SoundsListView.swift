@@ -31,7 +31,7 @@ struct SoundsListView: View {
                                         showPremiumSheet = true
                                     } else {
                                         player.play(sound: sound)
-                                        selectedTab = 1
+                                        selectedTab = 2
                                     }
                                 } label: {
                                     SoundRowView(

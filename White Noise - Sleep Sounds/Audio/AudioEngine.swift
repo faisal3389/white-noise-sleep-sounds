@@ -135,6 +135,17 @@ class AudioEngine {
         isUsingGeneratedNoise = false
         isMixMode = false
 
+        // Support absolute paths (custom imported sounds)
+        if fileName.hasPrefix("/") {
+            let url = URL(fileURLWithPath: fileName)
+            guard FileManager.default.fileExists(atPath: fileName) else {
+                print("Custom sound file not found: \(fileName)")
+                return
+            }
+            playFileAtURL(url)
+            return
+        }
+
         let name = (fileName as NSString).deletingPathExtension
         let ext = (fileName as NSString).pathExtension
 

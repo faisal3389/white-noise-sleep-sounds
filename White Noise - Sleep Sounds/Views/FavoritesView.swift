@@ -12,8 +12,7 @@ struct FavoritesView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
+        VStack(spacing: 0) {
                 Group {
                     if favoriteSounds.isEmpty {
                         emptyState
@@ -25,7 +24,7 @@ struct FavoritesView: View {
                                         showPremiumSheet = true
                                     } else {
                                         player.play(sound: sound)
-                                        selectedTab = 1
+                                        selectedTab = 2
                                     }
                                 } label: {
                                     SoundRowView(
@@ -46,11 +45,10 @@ struct FavoritesView: View {
 
                 AdBannerContainer(isPremium: storeManager.isPremium)
             }
-            .background(Color.appBackground)
-            .navigationTitle("Favorites")
-            .sheet(isPresented: $showPremiumSheet) {
-                PremiumUpgradeView(storeManager: storeManager)
-            }
+        .background(Color.appBackground)
+        .navigationTitle("Favorites")
+        .sheet(isPresented: $showPremiumSheet) {
+            PremiumUpgradeView(storeManager: storeManager)
         }
     }
 
