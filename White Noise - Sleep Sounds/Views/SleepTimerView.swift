@@ -40,8 +40,8 @@ struct SleepTimerView: View {
                         .foregroundStyle(Color.appAccent)
                 }
             }
-            .toolbarBackground(Color.appSurface, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
         .preferredColorScheme(.dark)
     }

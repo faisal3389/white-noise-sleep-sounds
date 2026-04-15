@@ -23,15 +23,29 @@ extension Color {
         )
     }
 
-    static let appBackground = Color(hex: "0D0F1A")
-    static let appSurface = Color(hex: "1A1D2E")
-    static let appAccent = Color(hex: "7C6CF0")
+    // MARK: - PRD Section 4.2 Design Tokens (Material Design 3 Dark)
 
-    // Extended theme tokens
-    static let primaryContainer = Color(hex: "3D2FA0")
-    static let secondaryContainer = Color(hex: "2A1F6E")
-    static let onSurface = Color.white
-    static let onSurfaceVariant = Color.white.opacity(0.6)
-    static let onPrimary = Color.white
-    static let surfaceContainerHigh = Color(hex: "232640")
+    static let appBackground = Color(hex: "0C0E12")
+    static let appSurface = Color(hex: "0C0E12")
+    static let appAccent = Color(hex: "7FE6DB")           // primary
+    static let appSecondary = Color(hex: "96A5FF")
+    static let appTertiary = Color(hex: "CCF9FF")
+
+    static let surfaceContainerLow = Color(hex: "111318")
+    static let surfaceContainer = Color(hex: "171A1F")
+    static let surfaceContainerHigh = Color(hex: "1D2025")
+    static let surfaceContainerHighest = Color(hex: "23262C")
+
+    static let onBackground = Color(hex: "F6F6FC")
+    static let onSurface = Color(hex: "F6F6FC")
+    static let onSurfaceVariant = Color(hex: "AAABB0")
+    static let onPrimary = Color(hex: "00534D")
+
+    static let primaryContainer = Color(hex: "47B0A7")
+    static let secondaryContainer = Color(hex: "2F3F92")
+
+    static let outline = Color(hex: "74757A")
+    static let outlineVariant = Color(hex: "46484D")
+    static let error = Color(hex: "FF716C")
 }
+

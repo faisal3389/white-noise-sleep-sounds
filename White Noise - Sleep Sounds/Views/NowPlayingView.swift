@@ -73,35 +73,6 @@ struct NowPlayingView: View {
 
                 Spacer()
 
-                // Sleep clock button
-                Button {
-                    showSleepClock = true
-                } label: {
-                    Image(systemName: "clock.fill")
-                        .font(.title2)
-                        .foregroundStyle(.white.opacity(0.8))
-                }
-
-                // Timer button
-                Button {
-                    showTimerSheet = true
-                } label: {
-                    Image(systemName: "moon.fill")
-                        .font(.title2)
-                        .foregroundStyle(timerManager.isTimerActive ? Color.appAccent : .white.opacity(0.8))
-                }
-
-                // Mixer button (active when mix is playing)
-                if player.currentMix != nil {
-                    Button {
-                        showMixerSheet = true
-                    } label: {
-                        Image(systemName: "slider.horizontal.3")
-                            .font(.title2)
-                            .foregroundStyle(player.isMixPlaying ? Color.appAccent : .white)
-                    }
-                }
-
                 if let sound = player.currentSound {
                     Button {
                         favorites.toggle(sound)
@@ -109,7 +80,7 @@ struct NowPlayingView: View {
                     } label: {
                         Image(systemName: favorites.isFavorite(sound) ? "heart.fill" : "heart")
                             .font(.title2)
-                            .foregroundStyle(favorites.isFavorite(sound) ? Color.appAccent : .white)
+                            .foregroundStyle(favorites.isFavorite(sound) ? Color.appAccent : .white.opacity(0.8))
                     }
                 }
             }
@@ -118,16 +89,17 @@ struct NowPlayingView: View {
 
             Spacer()
 
+            // Title + subtitle
             VStack(spacing: 8) {
                 Text(player.displayTitle)
-                    .font(.title)
-                    .fontWeight(.bold)
+                    .font(.system(size: 28, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
                     .shadow(color: .black.opacity(0.5), radius: 4, y: 2)
+                    .multilineTextAlignment(.center)
 
                 Text(player.displaySubtitle)
-                    .font(.caption)
-                    .foregroundStyle(.white.opacity(0.6))
+                    .font(.system(size: 14))
+                    .foregroundStyle(Color.appSecondary)
 
                 if timerManager.isTimerActive {
                     Text("Sleep timer: \(timerManager.remainingFormatted)")
@@ -136,12 +108,17 @@ struct NowPlayingView: View {
                         .padding(.top, 4)
                 }
             }
+            .padding(.horizontal, 24)
+
+            // Gradient progress bar
+            progressBar
+                .padding(.top, 28)
+                .padding(.horizontal, 32)
 
             Spacer()
 
             // Transport controls
             HStack(spacing: 28) {
-                // Shuffle
                 Button {
                     player.toggleShuffle()
                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -153,7 +130,7 @@ struct NowPlayingView: View {
                 .frame(width: 36, height: 36)
 
                 Button {
-                    if let mix = player.currentMix, let manager = mixesManager {
+                    if player.currentMix != nil, let manager = mixesManager {
                         player.previousMix(in: manager.mixes)
                     } else {
                         player.previous()
@@ -164,17 +141,31 @@ struct NowPlayingView: View {
                         .foregroundStyle(.white)
                 }
 
+                // Play/pause button with gradient
                 Button {
                     player.togglePlayPause()
                     UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                 } label: {
-                    Image(systemName: player.isPlaying ? "pause.circle.fill" : "play.circle.fill")
-                        .font(.system(size: 64))
-                        .foregroundStyle(.white)
+                    ZStack {
+                        Circle()
+                            .fill(
+                                LinearGradient(
+                                    colors: [Color.appAccent, Color.primaryContainer],
+                                    startPoint: .topLeading,
+                                    endPoint: .bottomTrailing
+                                )
+                            )
+                            .frame(width: 72, height: 72)
+                            .shadow(color: Color.appAccent.opacity(0.4), radius: 12, y: 4)
+
+                        Image(systemName: player.isPlaying ? "pause.fill" : "play.fill")
+                            .font(.system(size: 28, weight: .bold))
+                            .foregroundStyle(Color.onPrimary)
+                    }
                 }
 
                 Button {
-                    if let mix = player.currentMix, let manager = mixesManager {
+                    if player.currentMix != nil, let manager = mixesManager {
                         player.nextMix(in: manager.mixes)
                     } else {
                         player.next()
@@ -185,7 +176,6 @@ struct NowPlayingView: View {
                         .foregroundStyle(.white)
                 }
 
-                // Loop
                 Button {
                     player.cycleLoopMode()
                     UIImpactFeedbackGenerator(style: .light).impactOccurred()
@@ -207,16 +197,112 @@ struct NowPlayingView: View {
                     get: { player.volume },
                     set: { player.setVolume($0) }
                 ), in: 0...1)
-                .tint(.white)
+                .tint(Color.appAccent)
                 .frame(width: 200)
 
                 Image(systemName: "speaker.wave.3.fill")
                     .font(.caption)
                     .foregroundStyle(.white.opacity(0.6))
             }
-            .padding(.top, 32)
-            .padding(.bottom, 60)
+            .padding(.top, 28)
+
+            // Floating action bar
+            floatingActionBar
+                .padding(.top, 20)
+                .padding(.bottom, 40)
         }
+    }
+
+    // MARK: - Progress Bar
+
+    private var progressBar: some View {
+        GeometryReader { geo in
+            ZStack(alignment: .leading) {
+                // Track
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(Color.white.opacity(0.1))
+                    .frame(height: 4)
+
+                // Filled gradient bar
+                RoundedRectangle(cornerRadius: 2)
+                    .fill(
+                        LinearGradient(
+                            colors: [Color.appAccent, Color.appSecondary],
+                            startPoint: .leading,
+                            endPoint: .trailing
+                        )
+                    )
+                    .frame(width: player.isPlaying ? geo.size.width : 0, height: 4)
+                    .shadow(color: Color.appAccent.opacity(0.5), radius: 6, y: 0)
+                    .animation(.easeInOut(duration: 0.5), value: player.isPlaying)
+            }
+        }
+        .frame(height: 4)
+    }
+
+    // MARK: - Floating Action Bar
+
+    private var floatingActionBar: some View {
+        HStack(spacing: 0) {
+            // Audio / AirPlay
+            actionBarButton(icon: "airplayaudio", label: "Audio") {
+                // AirPlay is handled by the top bar button
+            }
+
+            // Timer
+            actionBarButton(
+                icon: "moon.zzz.fill",
+                label: "Timer",
+                isActive: timerManager.isTimerActive
+            ) {
+                showTimerSheet = true
+            }
+
+            // Sleep Clock
+            actionBarButton(icon: "clock.fill", label: "Clock") {
+                showSleepClock = true
+            }
+
+            // Mixer (show when mix is playing)
+            if player.currentMix != nil {
+                actionBarButton(
+                    icon: "slider.horizontal.3",
+                    label: "Mixer",
+                    isActive: player.isMixPlaying
+                ) {
+                    showMixerSheet = true
+                }
+            }
+        }
+        .padding(.horizontal, 32)
+        .padding(.vertical, 14)
+        .background {
+            Capsule()
+                .fill(.ultraThinMaterial)
+                .environment(\.colorScheme, .dark)
+            Capsule()
+                .fill(Color.appBackground.opacity(0.7))
+            Capsule()
+                .strokeBorder(Color.white.opacity(0.05), lineWidth: 0.5)
+        }
+        .shadow(color: .black.opacity(0.3), radius: 16, y: -4)
+        .padding(.horizontal, 40)
+    }
+
+    private func actionBarButton(icon: String, label: String, isActive: Bool = false, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 4) {
+                Image(systemName: icon)
+                    .font(.system(size: 18))
+                    .foregroundStyle(isActive ? Color.appAccent : .white.opacity(0.7))
+
+                Text(label)
+                    .font(.system(size: 10, weight: .medium))
+                    .foregroundStyle(isActive ? Color.appAccent : .white.opacity(0.5))
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.plain)
     }
 
     private var emptyState: some View {
@@ -278,8 +364,8 @@ struct NowPlayingView: View {
                     .foregroundStyle(Color.appAccent)
                 }
             }
-            .toolbarBackground(Color.appSurface, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
         .presentationDetents([.medium])
         .preferredColorScheme(.dark)

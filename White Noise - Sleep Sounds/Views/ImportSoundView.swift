@@ -191,8 +191,8 @@ struct ImportSoundView: View {
                     .disabled(soundName.trimmingCharacters(in: .whitespaces).isEmpty)
                 }
             }
-            .toolbarBackground(Color.appSurface, for: .navigationBar)
-            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
         }
         .presentationDetents([.medium])
         .preferredColorScheme(.dark)

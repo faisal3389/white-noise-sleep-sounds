@@ -58,6 +58,8 @@ struct SoundsListView: View {
             }
             .background(Color.appBackground)
             .navigationTitle("Sounds")
+            .toolbarBackground(.ultraThinMaterial, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
             .searchable(text: $searchText, prompt: "Search sounds")
             .sheet(isPresented: $showPremiumSheet) {
                 PremiumUpgradeView(storeManager: storeManager)
