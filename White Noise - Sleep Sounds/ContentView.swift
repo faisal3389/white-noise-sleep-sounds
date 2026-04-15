@@ -11,6 +11,8 @@ struct ContentView: View {
     @State private var selectedTab = 0
     var storeManager: StoreManager
     var settings: SettingsManager
+    @Binding var deepLinkSoundId: String?
+    @Binding var deepLinkAction: RootView.DeepLinkAction?
 
     var body: some View {
         TabView(selection: $selectedTab) {
@@ -107,6 +109,29 @@ struct ContentView: View {
                 sleepLog.startSession(soundName: soundName, soundId: soundId, mixName: mixName)
             } else if !isPlaying && player.currentSound == nil && player.currentMix == nil {
                 sleepLog.endSession()
+            }
+        }
+        .onChange(of: deepLinkAction) { _, action in
+            guard let action else { return }
+            handleDeepLinkAction(action)
+            deepLinkAction = nil
+        }
+        .onChange(of: favorites.favoritedIDs) { _, ids in
+            SharedPlaybackState.updateFavorites(Array(ids))
+        }
+    }
+
+    private func handleDeepLinkAction(_ action: RootView.DeepLinkAction) {
+        switch action {
+        case .nowPlaying:
+            selectedTab = 2
+        case .toggle:
+            player.togglePlayPause()
+            selectedTab = 2
+        case .playSound(let soundId):
+            if let sound = SoundLibrary.allSounds.first(where: { $0.id == soundId }) {
+                player.play(sound: sound)
+                selectedTab = 2
             }
         }
     }

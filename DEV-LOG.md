@@ -25,6 +25,27 @@
 - Used `UITabBarAppearance` in `.onAppear` instead of `.toolbarBackground` modifier for tab bar styling -- more reliable across iOS versions.
 - Timer uses `Date` target comparison (not decrementing counter) to stay accurate across app backgrounding.
 
+### Session: 2026-04-14 (Widgets)
+
+#### Features Added
+- **WhiteNoiseWidgets Extension** -- WidgetKit extension target with 4 widgets
+- **NowPlayingSmallWidget** (systemSmall) -- Play/pause icon + current sound name, tap toggles playback or opens app
+- **NowPlayingMediumWidget** (systemMedium) -- Current sound with background image, EQ bars indicator, 3 quick-play capsule buttons for favorite sounds
+- **LockScreenCircularWidget** (accessoryCircular) -- Waveform icon, tap opens Now Playing
+- **LockScreenRectangularWidget** (accessoryRectangular) -- Sound name + play/pause status indicator
+- **SharedPlaybackState** upgraded to App Group (`group.com.zalgo.whitenoise`) UserDefaults for cross-process widget communication. Added `backgroundImage` and `favoriteSoundIds` fields
+- **Deep link URL scheme** (`whitenoise://`) registered in Info.plist. Handles `whitenoise://nowplaying`, `whitenoise://toggle`, `whitenoise://play/{soundId}`
+- **RootView** handles `onOpenURL` deep links and passes actions to ContentView
+- **ContentView** processes deep link actions (navigate to Now Playing, toggle playback, play specific sound) and syncs favorites to widget shared state
+
+#### Bug Fixes
+- **Widget white padding:** `.containerBackground(.clear, for: .widget)` left system default white background showing. Fix: moved background image/gradient into `.containerBackground(for: .widget) { ... }` closure so it fills edge-to-edge
+
+#### Decisions
+- Used deep link URLs instead of AppIntents for widget actions -- simpler, no shared framework target needed, widgets can't play audio directly anyway
+- Widget timeline refreshes every 15 minutes + on every playback state change via `WidgetCenter.shared.reloadAllTimelines()`
+- Quick-play buttons default to White Noise, Heavy Rain, Ocean Waves; update to user's top 3 favorites when available
+
 ---
 
 ## Phase 5 -- Full Feature Parity + Premium

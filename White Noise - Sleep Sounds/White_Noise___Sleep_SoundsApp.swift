@@ -21,12 +21,47 @@ struct RootView: View {
     @Binding var hasSeenOnboarding: Bool
     var storeManager: StoreManager
     var settings: SettingsManager
+    @State private var deepLinkSoundId: String?
+    @State private var deepLinkAction: DeepLinkAction?
+
+    enum DeepLinkAction: Equatable {
+        case nowPlaying
+        case toggle
+        case playSound(String)
+    }
 
     var body: some View {
         if hasSeenOnboarding {
-            ContentView(storeManager: storeManager, settings: settings)
+            ContentView(
+                storeManager: storeManager,
+                settings: settings,
+                deepLinkSoundId: $deepLinkSoundId,
+                deepLinkAction: $deepLinkAction
+            )
+            .onOpenURL { url in
+                handleDeepLink(url)
+            }
         } else {
             OnboardingView(hasSeenOnboarding: $hasSeenOnboarding)
+        }
+    }
+
+    private func handleDeepLink(_ url: URL) {
+        guard url.scheme == "whitenoise" else { return }
+
+        switch url.host {
+        case "nowplaying":
+            deepLinkAction = .nowPlaying
+        case "toggle":
+            deepLinkAction = .toggle
+        case "play":
+            // whitenoise://play/sound_id
+            let soundId = url.pathComponents.dropFirst().first ?? ""
+            if !soundId.isEmpty {
+                deepLinkAction = .playSound(soundId)
+            }
+        default:
+            break
         }
     }
 }

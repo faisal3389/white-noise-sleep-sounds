@@ -53,7 +53,10 @@ White Noise - Sleep Sounds/
   Utilities/
     Color+Hex.swift                # Color tokens + hex initializer
   ContentView.swift                # 5-tab root: Sounds, Scenes, Now Playing, Mixes, More
-  White_Noise___Sleep_SoundsApp.swift  # @main entry point
+  White_Noise___Sleep_SoundsApp.swift  # @main entry point + RootView (deep link handling)
+WhiteNoiseWidgets/
+  White_Noise_Widgets.swift            # 4 widgets: small, medium, lock circular, lock rectangular
+  White_Noise_WidgetsBundle.swift       # @main widget bundle entry point
 ```
 
 ---
@@ -110,13 +113,13 @@ White Noise - Sleep Sounds/
 - [x] 3 curated mixes (Rainy Forest, Ocean Breeze, Cozy Cabin)
 - [x] Context menu on mix cards (favorite, delete)
 
-### Phase 4 -- Widgets, Timers & Sleep Clock -- IN PROGRESS
+### Phase 4 -- Widgets, Timers & Sleep Clock -- COMPLETE
 
-- [ ] Home Screen widget (medium 2x2): current sound + background image + quick-play buttons
-- [ ] Home Screen widget (small 1x1): play/pause icon + thumbnail
-- [ ] Lock Screen widget (circular): waveform icon tap-to-open
-- [ ] Lock Screen widget (rectangular): sound name + play/stop
-- [ ] AppIntents for widget actions (PlaySoundIntent)
+- [x] Home Screen widget (medium 2x2): current sound + background image + quick-play buttons
+- [x] Home Screen widget (small 1x1): play/pause icon + thumbnail
+- [x] Lock Screen widget (circular): waveform icon tap-to-open
+- [x] Lock Screen widget (rectangular): sound name + play/stop
+- [x] Deep link URL scheme (whitenoise://) for widget actions (play, toggle, nowplaying)
 - [x] Sleep timer (15m/30m/45m/1h/2h/4h presets + custom picker)
 - [x] Fade-out option (volume -> 0 over last 30 seconds)
 - [x] Timer countdown display on Now Playing
@@ -125,7 +128,7 @@ White Noise - Sleep Sounds/
 - [x] Auto-dim after 5 seconds of no touch
 - [x] Prevent auto-lock in sleep clock mode
 - [x] No ads in sleep clock mode
-- [x] SharedPlaybackState for widget communication (UserDefaults + WidgetCenter sync)
+- [x] SharedPlaybackState for widget communication (App Group UserDefaults + WidgetCenter sync)
 
 ### Phase 5 -- Full Feature Parity + Premium -- IN PROGRESS
 
@@ -157,13 +160,13 @@ White Noise - Sleep Sounds/
 
 ## Next Phase Recommendation
 
-**Phase 4 (Widgets, Timers & Sleep Clock)** is the next development phase. Key priorities:
+**Phase 5 remaining items** are the next priorities:
 
-1. **Sleep Timer** -- High user value, relatively simple (Timer + volume fade)
-2. **Sleep Clock** -- Bedside mode is a strong differentiator, straightforward implementation
-3. **WidgetKit widgets** -- Increases engagement via home/lock screen presence, requires AppIntents
+1. **Premium sound pack** -- Add 12 locked premium sounds to the library
+2. **Siri Shortcuts / AppIntents** -- "Play White Noise", "Start sleep timer" voice commands
+3. **Alternate app icons** -- 3-4 alternate icons selectable from Settings
 
-Alternatively, tackle the **Design Polish Backlog** first to bring the existing UI closer to the design reference before adding new features. The HomeView, DiscoverView, SoundCardView, and MiniPlayerView are key missing design-reference views.
+Alternatively, tackle the **Design Polish Backlog** to bring the existing UI closer to the design reference. The HomeView, DiscoverView, SoundCardView, and MiniPlayerView are key missing design-reference views.
 
 ---
 

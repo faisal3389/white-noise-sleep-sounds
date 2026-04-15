@@ -37,7 +37,7 @@ class AudioPlayerViewModel {
 
         audioEngine.setVolume(volume)
         isPlaying = true
-        SharedPlaybackState.update(soundId: sound.id, soundName: sound.name, isPlaying: true)
+        SharedPlaybackState.update(soundId: sound.id, soundName: sound.name, backgroundImage: sound.backgroundImage, isPlaying: true)
     }
 
     func pause() {
@@ -46,7 +46,7 @@ class AudioPlayerViewModel {
         if isMixPlaying {
             isMixPlaying = false
         }
-        SharedPlaybackState.update(soundId: currentSound?.id ?? currentMix?.id.uuidString, soundName: displayTitle, isPlaying: false)
+        SharedPlaybackState.update(soundId: currentSound?.id ?? currentMix?.id.uuidString, soundName: displayTitle, backgroundImage: displayBackgroundImage, isPlaying: false)
     }
 
     func resume() {
@@ -55,7 +55,7 @@ class AudioPlayerViewModel {
         if currentMix != nil {
             isMixPlaying = true
         }
-        SharedPlaybackState.update(soundId: currentSound?.id ?? currentMix?.id.uuidString, soundName: displayTitle, isPlaying: true)
+        SharedPlaybackState.update(soundId: currentSound?.id ?? currentMix?.id.uuidString, soundName: displayTitle, backgroundImage: displayBackgroundImage, isPlaying: true)
     }
 
     func stop() {
@@ -106,7 +106,7 @@ class AudioPlayerViewModel {
 
         audioEngine.playMix(components: mix.components)
         audioEngine.setVolume(volume)
-        SharedPlaybackState.update(soundId: mix.id.uuidString, soundName: mix.name, isPlaying: true)
+        SharedPlaybackState.update(soundId: mix.id.uuidString, soundName: mix.name, backgroundImage: mix.backgroundImage, isPlaying: true)
     }
 
     func adjustComponentVolume(soundId: String, volume: Float) {

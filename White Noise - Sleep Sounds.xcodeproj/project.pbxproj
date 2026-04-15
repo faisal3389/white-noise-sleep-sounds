@@ -6,6 +6,12 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		6A341C102F8F2878003FB276 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A341C0F2F8F2878003FB276 /* WidgetKit.framework */; };
+		6A341C122F8F2878003FB276 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A341C112F8F2878003FB276 /* SwiftUI.framework */; };
+		6A341C1D2F8F287B003FB276 /* White​Noise​WidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6A341C0D2F8F2878003FB276 /* White​Noise​WidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		6A24DE0F2F8C8B1100BC532A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -21,12 +27,36 @@
 			remoteGlobalIDString = 6A24DE002F8C8B0F00BC532A;
 			remoteInfo = "White Noise - Sleep Sounds";
 		};
+		6A341C1B2F8F287B003FB276 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 6A24DDF92F8C8B0F00BC532A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 6A341C0C2F8F2878003FB276;
+			remoteInfo = "White​Noise​WidgetsExtension";
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		6A341C222F8F287B003FB276 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				6A341C1D2F8F287B003FB276 /* White​Noise​WidgetsExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		6A24DE012F8C8B0F00BC532A /* White Noise - Sleep Sounds.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "White Noise - Sleep Sounds.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A24DE0E2F8C8B1100BC532A /* White Noise - Sleep SoundsTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "White Noise - Sleep SoundsTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		6A24DE182F8C8B1100BC532A /* White Noise - Sleep SoundsUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "White Noise - Sleep SoundsUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A341C0D2F8F2878003FB276 /* White​Noise​WidgetsExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = "White​Noise​WidgetsExtension.appex"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6A341C0F2F8F2878003FB276 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		6A341C112F8F2878003FB276 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -36,6 +66,13 @@
 				Info.plist,
 			);
 			target = 6A24DE002F8C8B0F00BC532A /* White Noise - Sleep Sounds */;
+		};
+		6A341C212F8F287B003FB276 /* Exceptions for "White​Noise​Widgets" folder in "White​Noise​WidgetsExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 6A341C0C2F8F2878003FB276 /* White​Noise​WidgetsExtension */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -56,6 +93,14 @@
 		6A24DE1B2F8C8B1100BC532A /* White Noise - Sleep SoundsUITests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "White Noise - Sleep SoundsUITests";
+			sourceTree = "<group>";
+		};
+		6A341C132F8F2878003FB276 /* White​Noise​Widgets */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				6A341C212F8F287B003FB276 /* Exceptions for "White​Noise​Widgets" folder in "White​Noise​WidgetsExtension" target */,
+			);
+			path = "White​Noise​Widgets";
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -82,6 +127,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6A341C0A2F8F2878003FB276 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				6A341C122F8F2878003FB276 /* SwiftUI.framework in Frameworks */,
+				6A341C102F8F2878003FB276 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -91,6 +145,8 @@
 				6A24DE032F8C8B0F00BC532A /* White Noise - Sleep Sounds */,
 				6A24DE112F8C8B1100BC532A /* White Noise - Sleep SoundsTests */,
 				6A24DE1B2F8C8B1100BC532A /* White Noise - Sleep SoundsUITests */,
+				6A341C132F8F2878003FB276 /* White​Noise​Widgets */,
+				6A341C0E2F8F2878003FB276 /* Frameworks */,
 				6A24DE022F8C8B0F00BC532A /* Products */,
 			);
 			sourceTree = "<group>";
@@ -101,8 +157,18 @@
 				6A24DE012F8C8B0F00BC532A /* White Noise - Sleep Sounds.app */,
 				6A24DE0E2F8C8B1100BC532A /* White Noise - Sleep SoundsTests.xctest */,
 				6A24DE182F8C8B1100BC532A /* White Noise - Sleep SoundsUITests.xctest */,
+				6A341C0D2F8F2878003FB276 /* White​Noise​WidgetsExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		6A341C0E2F8F2878003FB276 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				6A341C0F2F8F2878003FB276 /* WidgetKit.framework */,
+				6A341C112F8F2878003FB276 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -115,10 +181,12 @@
 				6A24DDFD2F8C8B0F00BC532A /* Sources */,
 				6A24DDFE2F8C8B0F00BC532A /* Frameworks */,
 				6A24DDFF2F8C8B0F00BC532A /* Resources */,
+				6A341C222F8F287B003FB276 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				6A341C1C2F8F287B003FB276 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				6A24DE032F8C8B0F00BC532A /* White Noise - Sleep Sounds */,
@@ -176,6 +244,28 @@
 			productReference = 6A24DE182F8C8B1100BC532A /* White Noise - Sleep SoundsUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
+		6A341C0C2F8F2878003FB276 /* White​Noise​WidgetsExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 6A341C1E2F8F287B003FB276 /* Build configuration list for PBXNativeTarget "White​Noise​WidgetsExtension" */;
+			buildPhases = (
+				6A341C092F8F2878003FB276 /* Sources */,
+				6A341C0A2F8F2878003FB276 /* Frameworks */,
+				6A341C0B2F8F2878003FB276 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				6A341C132F8F2878003FB276 /* White​Noise​Widgets */,
+			);
+			name = "White​Noise​WidgetsExtension";
+			packageProductDependencies = (
+			);
+			productName = "White​Noise​WidgetsExtension";
+			productReference = 6A341C0D2F8F2878003FB276 /* White​Noise​WidgetsExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -196,6 +286,9 @@
 					6A24DE172F8C8B1100BC532A = {
 						CreatedOnToolsVersion = 26.4;
 						TestTargetID = 6A24DE002F8C8B0F00BC532A;
+					};
+					6A341C0C2F8F2878003FB276 = {
+						CreatedOnToolsVersion = 26.4;
 					};
 				};
 			};
@@ -219,6 +312,7 @@
 				6A24DE002F8C8B0F00BC532A /* White Noise - Sleep Sounds */,
 				6A24DE0D2F8C8B1100BC532A /* White Noise - Sleep SoundsTests */,
 				6A24DE172F8C8B1100BC532A /* White Noise - Sleep SoundsUITests */,
+				6A341C0C2F8F2878003FB276 /* White​Noise​WidgetsExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -239,6 +333,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		6A24DE162F8C8B1100BC532A /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		6A341C0B2F8F2878003FB276 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -269,6 +370,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		6A341C092F8F2878003FB276 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -281,6 +389,11 @@
 			isa = PBXTargetDependency;
 			target = 6A24DE002F8C8B0F00BC532A /* White Noise - Sleep Sounds */;
 			targetProxy = 6A24DE192F8C8B1100BC532A /* PBXContainerItemProxy */;
+		};
+		6A341C1C2F8F287B003FB276 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 6A341C0C2F8F2878003FB276 /* White​Noise​WidgetsExtension */;
+			targetProxy = 6A341C1B2F8F287B003FB276 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -406,6 +519,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "White Noise - Sleep Sounds/White Noise - Sleep Sounds.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6A695EU2KW;
@@ -450,6 +564,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "White Noise - Sleep Sounds/White Noise - Sleep Sounds.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 6A695EU2KW;
@@ -591,6 +706,71 @@
 			};
 			name = Release;
 		};
+		6A341C1F2F8F287B003FB276 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6A695EU2KW;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "White​Noise​Widgets/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "White​Noise​Widgets";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "zalgo.White-Noise---Sleep-Sounds.White-Noise-Widgets";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		6A341C202F8F287B003FB276 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 6A695EU2KW;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "White​Noise​Widgets/Info.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "White​Noise​Widgets";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "zalgo.White-Noise---Sleep-Sounds.White-Noise-Widgets";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -626,6 +806,15 @@
 			buildConfigurations = (
 				6A24DE292F8C8B1100BC532A /* Debug */,
 				6A24DE2A2F8C8B1100BC532A /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		6A341C1E2F8F287B003FB276 /* Build configuration list for PBXNativeTarget "White​Noise​WidgetsExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				6A341C1F2F8F287B003FB276 /* Debug */,
+				6A341C202F8F287B003FB276 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

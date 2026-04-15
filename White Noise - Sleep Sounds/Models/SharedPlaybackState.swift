@@ -1,11 +1,10 @@
 import Foundation
 import WidgetKit
 
-/// Manages shared playback state between the main app and widgets via UserDefaults.
-/// When an App Group is configured, change `suiteName` to your App Group identifier.
+/// Manages shared playback state between the main app and widgets via App Group UserDefaults.
 struct SharedPlaybackState {
-    // Change this to your App Group ID when you set one up (e.g., "group.com.zalgo.whitenoisesleepsounds")
-    private static let defaults = UserDefaults.standard
+    static let appGroupId = "group.com.zalgo.whitenoise"
+    private static let defaults = UserDefaults(suiteName: appGroupId) ?? .standard
 
     static var currentSoundId: String? {
         get { defaults.string(forKey: "widget_currentSoundId") }
@@ -17,21 +16,39 @@ struct SharedPlaybackState {
         set { defaults.set(newValue, forKey: "widget_currentSoundName") }
     }
 
+    static var currentBackgroundImage: String? {
+        get { defaults.string(forKey: "widget_currentBackgroundImage") }
+        set { defaults.set(newValue, forKey: "widget_currentBackgroundImage") }
+    }
+
     static var isPlaying: Bool {
         get { defaults.bool(forKey: "widget_isPlaying") }
         set { defaults.set(newValue, forKey: "widget_isPlaying") }
     }
 
-    static func update(soundId: String?, soundName: String?, isPlaying: Bool) {
+    /// IDs of the user's top 3 favorite sounds for quick-play widget buttons
+    static var favoriteSoundIds: [String] {
+        get { defaults.stringArray(forKey: "widget_favoriteSoundIds") ?? [] }
+        set { defaults.set(newValue, forKey: "widget_favoriteSoundIds") }
+    }
+
+    static func update(soundId: String?, soundName: String?, backgroundImage: String? = nil, isPlaying: Bool) {
         self.currentSoundId = soundId
         self.currentSoundName = soundName
+        self.currentBackgroundImage = backgroundImage
         self.isPlaying = isPlaying
+        WidgetCenter.shared.reloadAllTimelines()
+    }
+
+    static func updateFavorites(_ ids: [String]) {
+        favoriteSoundIds = Array(ids.prefix(3))
         WidgetCenter.shared.reloadAllTimelines()
     }
 
     static func clear() {
         currentSoundId = nil
         currentSoundName = nil
+        currentBackgroundImage = nil
         isPlaying = false
         WidgetCenter.shared.reloadAllTimelines()
     }
