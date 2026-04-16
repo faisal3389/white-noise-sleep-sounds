@@ -5,19 +5,35 @@ struct White_Noise___Sleep_SoundsApp: App {
     @State private var storeManager = StoreManager()
     @State private var settings = SettingsManager()
     @AppStorage("has_seen_onboarding") private var hasSeenOnboarding = false
+    @State private var showSplash = true
 
     var body: some Scene {
         WindowGroup {
-            RootView(
-                hasSeenOnboarding: $hasSeenOnboarding,
-                storeManager: storeManager,
-                settings: settings
-            )
-            .onAppear {
-                AnalyticsManager.shared.track(.appLaunched, properties: [
-                    "is_premium": storeManager.isPremium,
-                    "has_seen_onboarding": hasSeenOnboarding
-                ])
+            ZStack {
+                RootView(
+                    hasSeenOnboarding: $hasSeenOnboarding,
+                    storeManager: storeManager,
+                    settings: settings
+                )
+                .onAppear {
+                    AnalyticsManager.shared.track(.appLaunched, properties: [
+                        "is_premium": storeManager.isPremium,
+                        "has_seen_onboarding": hasSeenOnboarding
+                    ])
+                }
+
+                if showSplash {
+                    SplashScreenView()
+                        .transition(.opacity)
+                        .zIndex(1)
+                        .onAppear {
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 2.8) {
+                                withAnimation(.easeOut(duration: 0.6)) {
+                                    showSplash = false
+                                }
+                            }
+                        }
+                }
             }
         }
     }
