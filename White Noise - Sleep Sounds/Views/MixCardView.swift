@@ -9,14 +9,14 @@ struct MixCardView: View {
     @State private var isHovered = false
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: DS.Spacing.sm) {
             // Image area with 2-column grid
             ZStack(alignment: .topTrailing) {
                 imageGrid
                     .aspectRatio(16/9, contentMode: .fill)
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .clipShape(RoundedRectangle(cornerRadius: DS.Radius.xl))
                     .overlay(
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: DS.Radius.xl)
                             .fill(isHovered ? Color.black.opacity(0.4) : .clear)
                     )
                     .overlay {
@@ -45,7 +45,7 @@ struct MixCardView: View {
                                 .foregroundStyle(.white)
                         }
                 }
-                .padding(8)
+                .padding(DS.Spacing.sm)
             }
             .onTapGesture {
                 onPlay()
@@ -60,12 +60,12 @@ struct MixCardView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(mix.name)
-                        .font(.system(size: 18, weight: .bold, design: .rounded))
+                        .font(DS.Typography.headlineSm)
                         .foregroundStyle(Color.onSurface)
                         .lineLimit(1)
 
                     Text(mix.componentNames)
-                        .font(.system(size: 14))
+                        .font(DS.Typography.bodyMd)
                         .foregroundStyle(Color.onSurfaceVariant)
                         .lineLimit(1)
                 }
@@ -74,7 +74,7 @@ struct MixCardView: View {
 
                 if isActive {
                     Text("ACTIVE")
-                        .font(.system(size: 10, weight: .bold))
+                        .font(DS.Typography.pill)
                         .tracking(1.5)
                         .foregroundStyle(Color.appAccent)
                         .padding(.horizontal, 10)

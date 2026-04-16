@@ -55,7 +55,7 @@ struct SleepTimerView: View {
                 .foregroundStyle(Color.onSurfaceVariant)
 
             Text(timerManager.remainingFormatted)
-                .font(.system(size: 64, weight: .light, design: .monospaced))
+                .font(DS.Typography.timerDisplay)
                 .foregroundStyle(.white)
 
             if timerManager.fadeOutEnabled {
@@ -70,12 +70,12 @@ struct SleepTimerView: View {
                 dismiss()
             } label: {
                 Text("Cancel Timer")
-                    .font(.headline)
+                    .font(DS.Typography.button)
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
                     .background(Color.red.opacity(0.8))
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .clipShape(RoundedRectangle(cornerRadius: DS.Radius.lg))
             }
             .padding(.top, 8)
         }
@@ -104,16 +104,12 @@ struct SleepTimerView: View {
                         dismiss()
                     } label: {
                         Text(presetLabel(minutes))
-                            .font(.system(size: 15, weight: .semibold))
+                            .font(DS.Typography.labelLg)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background(Color.appSurface)
-                            .clipShape(RoundedRectangle(cornerRadius: 12))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 12)
-                                    .strokeBorder(Color.appAccent.opacity(0.3), lineWidth: 1)
-                            )
+                            .padding(.vertical, DS.Spacing.lg)
+                            .background(Color.surfaceContainerHigh)
+                            .clipShape(RoundedRectangle(cornerRadius: DS.Radius.md))
                     }
                 }
             }
@@ -156,12 +152,12 @@ struct SleepTimerView: View {
                 dismiss()
             } label: {
                 Text("Start Timer")
-                    .font(.headline)
+                    .font(DS.Typography.button)
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 14)
-                    .background(Color.appAccent)
-                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                    .background(LinearGradient.jewelButton)
+                    .clipShape(RoundedRectangle(cornerRadius: DS.Radius.lg))
             }
         }
     }
@@ -190,9 +186,9 @@ struct SleepTimerView: View {
             }
         }
         .tint(Color.appAccent)
-        .padding(16)
-        .background(Color.appSurface)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(DS.Spacing.lg)
+        .background(Color.surfaceContainerLow)
+        .clipShape(RoundedRectangle(cornerRadius: DS.Radius.lg))
     }
 
     // MARK: - Alarm
@@ -237,9 +233,9 @@ struct SleepTimerView: View {
                 .frame(maxWidth: .infinity)
             }
         }
-        .padding(16)
-        .background(Color.appSurface)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(DS.Spacing.lg)
+        .background(Color.surfaceContainerLow)
+        .clipShape(RoundedRectangle(cornerRadius: DS.Radius.lg))
     }
 
     private func presetLabel(_ minutes: Int) -> String {

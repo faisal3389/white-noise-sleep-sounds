@@ -50,8 +50,8 @@ struct PremiumUpgradeView: View {
                             .frame(height: 54)
                     }
                 }
-                .background(Color.appAccent)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .background(LinearGradient.jewelButton)
+                .clipShape(RoundedRectangle(cornerRadius: DS.Radius.lg))
                 .padding(.horizontal, 32)
 
                 if let error = storeManager.purchaseError {

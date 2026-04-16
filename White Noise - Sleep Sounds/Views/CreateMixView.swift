@@ -83,23 +83,23 @@ struct CreateMixView: View {
                 // Mix name field
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Mix Name")
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .font(DS.Typography.buttonSm)
                         .foregroundStyle(Color.onSurfaceVariant)
 
                     TextField("e.g. Rainy Cabin", text: $mixName)
                         .textFieldStyle(.plain)
-                        .padding(12)
-                        .background(Color.appSurface)
-                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        .padding(DS.Spacing.md)
+                        .background(Color.surfaceContainerLow)
+                        .clipShape(RoundedRectangle(cornerRadius: DS.Radius.md))
                         .foregroundStyle(.white)
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 16)
 
                 Text("Select 2-5 sounds")
-                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    .font(DS.Typography.buttonSm)
                     .foregroundStyle(Color.onSurfaceVariant)
-                    .padding(.horizontal, 16)
+                    .padding(.horizontal, DS.Spacing.lg)
 
                 LazyVGrid(columns: [
                     GridItem(.flexible(), spacing: 12),
@@ -133,24 +133,26 @@ struct CreateMixView: View {
         } label: {
             VStack(spacing: 6) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(Color.appSurface)
+                    RoundedRectangle(cornerRadius: DS.Radius.md)
+                        .fill(isSelected ? Color.surfaceContainerHighest : Color.appSurface)
                         .aspectRatio(1, contentMode: .fit)
                         .overlay {
                             Image(sound.backgroundImage)
                                 .resizable()
                                 .aspectRatio(contentMode: .fill)
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .clipShape(RoundedRectangle(cornerRadius: DS.Radius.md))
                                 .opacity(0.6)
                         }
 
+                    // Selected state: glow + check (no stroke per DESIGN.md)
                     if isSelected {
-                        RoundedRectangle(cornerRadius: 12)
-                            .strokeBorder(Color.appAccent, lineWidth: 2)
+                        RoundedRectangle(cornerRadius: DS.Radius.md)
+                            .fill(Color.appAccent.opacity(0.12))
 
                         Circle()
                             .fill(Color.appAccent)
                             .frame(width: 28, height: 28)
+                            .shadow(color: Color.appAccent.opacity(0.10), radius: 32)
                             .overlay {
                                 Image(systemName: "checkmark")
                                     .font(.caption.bold())
@@ -198,14 +200,12 @@ struct CreateMixView: View {
                         Image(systemName: isPreviewing ? "stop.fill" : "play.fill")
                         Text(isPreviewing ? "Stop" : "Preview")
                     }
-                    .font(.system(size: 14, weight: .semibold))
+                    .font(DS.Typography.buttonSm)
                     .foregroundStyle(Color.appAccent)
                     .padding(.horizontal, 20)
                     .padding(.vertical, 10)
-                    .background(
-                        RoundedRectangle(cornerRadius: 10)
-                            .strokeBorder(Color.appAccent, lineWidth: 1.5)
-                    )
+                    .background(Color.appAccent.opacity(0.12))
+                    .clipShape(RoundedRectangle(cornerRadius: DS.Radius.md))
                 }
 
                 Spacer()
@@ -216,11 +216,11 @@ struct CreateMixView: View {
             }
             .padding(.bottom, 8)
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, DS.Spacing.lg)
         .background(
             Color.appSurface
-                .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
-                .shadow(color: .black.opacity(0.3), radius: 20, y: -5)
+                .clipShape(RoundedRectangle(cornerRadius: DS.Radius.xl, style: .continuous))
+                .dsShadow(DS.ShadowToken.floating)
         )
     }
 

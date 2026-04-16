@@ -19,9 +19,9 @@ struct SoundCardView: View {
 
     private var cornerRadius: CGFloat {
         switch style {
-        case .portrait: return 20
-        case .landscape: return 16
-        case .hero: return 24
+        case .portrait: return DS.Radius.xl
+        case .landscape: return DS.Radius.lg
+        case .hero: return DS.Radius.xl
         }
     }
 
@@ -55,16 +55,15 @@ struct SoundCardView: View {
                 // Content overlay
                 cardContent
 
-                // Playing glow border
+                // Playing glow effect (no stroke borders per DESIGN.md "No-Line" rule)
                 if isPlaying {
                     RoundedRectangle(cornerRadius: cornerRadius)
-                        .strokeBorder(
-                            LinearGradient(
-                                colors: [Color.appAccent, Color.appAccent.opacity(0.3)],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 2
+                        .fill(Color.appAccent.opacity(0.08))
+                        .overlay(
+                            RoundedRectangle(cornerRadius: cornerRadius)
+                                .fill(Color.clear)
+                                .shadow(color: Color.appAccent.opacity(0.25), radius: 12)
+                                .clipShape(RoundedRectangle(cornerRadius: cornerRadius))
                         )
                 }
             }
@@ -91,22 +90,22 @@ struct SoundCardView: View {
             VStack(alignment: .leading, spacing: 6) {
                 // Category pill
                 Text(sound.category.rawValue.uppercased())
-                    .font(.system(size: 10, weight: .bold))
+                    .font(DS.Typography.pill)
                     .tracking(1.5)
                     .foregroundStyle(Color.appAccent)
-                    .padding(.horizontal, 8)
+                    .padding(.horizontal, DS.Spacing.sm)
                     .padding(.vertical, 3)
                     .background(Color.appAccent.opacity(0.15))
                     .clipShape(Capsule())
 
                 Text(sound.name)
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .font(DS.Typography.headlineLg)
                     .foregroundStyle(.white)
                     .lineLimit(2)
                     .minimumScaleFactor(0.8)
 
                 Text(sound.category.rawValue)
-                    .font(.system(size: 12))
+                    .font(DS.Typography.labelSm)
                     .foregroundStyle(.white.opacity(0.6))
             }
 
@@ -121,7 +120,7 @@ struct SoundCardView: View {
                 playButton(size: 40)
             }
         }
-        .padding(16)
+        .padding(DS.Spacing.lg)
     }
 
     private var portraitContent: some View {
@@ -134,27 +133,27 @@ struct SoundCardView: View {
                         Image(systemName: isFavorite ? "heart.fill" : "heart")
                             .font(.system(size: 14))
                             .foregroundStyle(isFavorite ? Color.appAccent : .white.opacity(0.6))
-                            .padding(8)
+                            .padding(DS.Spacing.sm)
                             .background(.ultraThinMaterial.opacity(0.5))
                             .clipShape(Circle())
                     }
                     .buttonStyle(.plain)
                 }
             }
-            .padding(.top, 10)
-            .padding(.trailing, 10)
+            .padding(.top, DS.Spacing.md)
+            .padding(.trailing, DS.Spacing.md)
 
             Spacer()
 
             HStack(alignment: .bottom) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text(sound.name)
-                        .font(.system(size: 15, weight: .bold, design: .rounded))
+                        .font(DS.Typography.labelLg)
                         .foregroundStyle(.white)
                         .lineLimit(1)
 
                     Text(sound.category.rawValue)
-                        .font(.system(size: 11))
+                        .font(DS.Typography.labelSm)
                         .foregroundStyle(.white.opacity(0.5))
                 }
 
@@ -168,13 +167,13 @@ struct SoundCardView: View {
                     smallPlayingIndicator
                 }
             }
-            .padding(.horizontal, 12)
-            .padding(.bottom, 10)
+            .padding(.horizontal, DS.Spacing.md)
+            .padding(.bottom, DS.Spacing.md)
         }
     }
 
     private var landscapeContent: some View {
-        HStack(spacing: 12) {
+        HStack(spacing: DS.Spacing.md) {
             // Icon
             ZStack {
                 Circle()
@@ -188,12 +187,12 @@ struct SoundCardView: View {
 
             VStack(alignment: .leading, spacing: 1) {
                 Text(sound.name)
-                    .font(.system(size: 14, weight: .semibold, design: .rounded))
+                    .font(DS.Typography.buttonSm)
                     .foregroundStyle(.white)
                     .lineLimit(1)
 
                 Text(sound.category.rawValue)
-                    .font(.system(size: 11))
+                    .font(DS.Typography.labelSm)
                     .foregroundStyle(.white.opacity(0.5))
             }
 
@@ -205,11 +204,11 @@ struct SoundCardView: View {
                 smallPlayingIndicator
             } else {
                 Image(systemName: "play.fill")
-                    .font(.system(size: 13))
+                    .font(DS.Typography.bodySm)
                     .foregroundStyle(.white.opacity(0.6))
             }
         }
-        .padding(.horizontal, 14)
+        .padding(.horizontal, DS.Spacing.lg)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
@@ -286,7 +285,7 @@ struct EQBar: View {
 struct CardPressStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.96 : 1.0)
-            .animation(.easeInOut(duration: 0.15), value: configuration.isPressed)
+            .scaleEffect(configuration.isPressed ? 0.98 : 1.0)
+            .animation(.spring(response: 0.3, dampingFraction: 0.7), value: configuration.isPressed)
     }
 }

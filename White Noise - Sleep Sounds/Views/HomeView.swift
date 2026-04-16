@@ -34,7 +34,7 @@ struct HomeView: View {
 
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 28) {
+            VStack(alignment: .leading, spacing: DS.Spacing.section) {
                 // MARK: - Greeting Header
                 greetingHeader
 
@@ -55,7 +55,7 @@ struct HomeView: View {
 
                 Spacer(minLength: 120)
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, DS.Spacing.xl)
         }
         .background(Color.appBackground.ignoresSafeArea())
         .sheet(isPresented: $showPremiumSheet) {
@@ -66,16 +66,16 @@ struct HomeView: View {
     // MARK: - Greeting
 
     private var greetingHeader: some View {
-        VStack(alignment: .leading, spacing: 4) {
+        VStack(alignment: .leading, spacing: DS.Spacing.xs) {
             Text(greetingText)
-                .font(.system(size: 14))
+                .font(DS.Typography.bodyMd)
                 .foregroundStyle(.white.opacity(0.5))
 
             Text("White Noise")
-                .font(.system(size: 34, weight: .bold, design: .rounded))
+                .font(DS.Typography.displayLg)
                 .foregroundStyle(.white)
         }
-        .padding(.top, 16)
+        .padding(.top, DS.Spacing.lg)
     }
 
     private var greetingText: String {
@@ -134,7 +134,7 @@ struct HomeView: View {
 
     private var quickPicksRow: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 12) {
+            HStack(spacing: DS.Spacing.md) {
                 ForEach(Array(quickPicks.enumerated()), id: \.element.id) { index, sound in
                     soundCard(sound, style: .portrait)
                         .frame(width: 140, height: 180)
@@ -160,8 +160,8 @@ struct HomeView: View {
     // MARK: - Category Grid
 
     private var categoryGrid: some View {
-        let columns = [GridItem(.flexible(), spacing: 12), GridItem(.flexible(), spacing: 12)]
-        return LazyVGrid(columns: columns, spacing: 12) {
+        let columns = [GridItem(.flexible(), spacing: DS.Spacing.md), GridItem(.flexible(), spacing: DS.Spacing.md)]
+        return LazyVGrid(columns: columns, spacing: DS.Spacing.md) {
             ForEach(Array(SoundCategory.allCases.enumerated()), id: \.element) { index, category in
                 categoryCard(category)
                     .staggeredAppear(index: index, appearedCards: $appearedCards, id: "cat_\(category.rawValue)")
@@ -174,12 +174,12 @@ struct HomeView: View {
     private func sectionHeader(_ title: String, subtitle: String?) -> some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(title)
-                .font(.system(size: 22, weight: .bold, design: .rounded))
+                .font(DS.Typography.headlineLg)
                 .foregroundStyle(.white)
 
             if let subtitle {
                 Text(subtitle)
-                    .font(.system(size: 13))
+                    .font(DS.Typography.bodySm)
                     .foregroundStyle(.white.opacity(0.4))
             }
         }
@@ -221,7 +221,7 @@ struct HomeView: View {
         } label: {
             ZStack(alignment: .bottomLeading) {
                 ZStack {
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: DS.Radius.xl)
                         .fill(Color.appSurface)
 
                     if !bgImage.isEmpty {
@@ -229,7 +229,7 @@ struct HomeView: View {
                             .resizable()
                             .aspectRatio(contentMode: .fill)
                             .frame(height: 100)
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .clipShape(RoundedRectangle(cornerRadius: DS.Radius.xl))
                             .opacity(0.5)
                     }
 
@@ -238,7 +238,7 @@ struct HomeView: View {
                         startPoint: .top,
                         endPoint: .bottom
                     )
-                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                    .clipShape(RoundedRectangle(cornerRadius: DS.Radius.xl))
                 }
                 .frame(height: 100)
 
@@ -249,17 +249,17 @@ struct HomeView: View {
                             .foregroundStyle(Color.appAccent)
 
                         Text(category.rawValue)
-                            .font(.system(size: 15, weight: .bold, design: .rounded))
+                            .font(DS.Typography.labelLg)
                             .foregroundStyle(.white)
 
                         Text("\(sounds.count) sounds")
-                            .font(.system(size: 11))
+                            .font(DS.Typography.labelSm)
                             .foregroundStyle(.white.opacity(0.5))
                     }
 
                     Spacer()
                 }
-                .padding(14)
+                .padding(DS.Spacing.lg)
             }
         }
         .buttonStyle(CardPressStyle())

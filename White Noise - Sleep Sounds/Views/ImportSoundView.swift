@@ -77,7 +77,7 @@ struct ImportSoundView: View {
                     .foregroundStyle(Color.appAccent)
 
                 Text("Import Sound")
-                    .font(.system(size: 17, weight: .semibold))
+                    .font(DS.Typography.button)
                     .foregroundStyle(.white)
 
                 Text("MP3, M4A, WAV, AIFF")
@@ -85,13 +85,9 @@ struct ImportSoundView: View {
                     .foregroundStyle(.white.opacity(0.4))
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, 32)
-            .background(Color.appSurface)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .strokeBorder(Color.appAccent.opacity(0.3), style: StrokeStyle(lineWidth: 1, dash: [8]))
-            )
+            .padding(.vertical, DS.Spacing.xxl)
+            .background(Color.surfaceContainerHigh)
+            .clipShape(RoundedRectangle(cornerRadius: DS.Radius.lg))
         }
     }
 
@@ -139,9 +135,9 @@ struct ImportSoundView: View {
                     .foregroundStyle(Color.appAccent)
             }
         }
-        .padding(12)
-        .background(Color.appSurface.opacity(0.5))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(DS.Spacing.md)
+        .background(Color.surfaceContainerLow)
+        .clipShape(RoundedRectangle(cornerRadius: DS.Radius.md))
         .contextMenu {
             Button(role: .destructive) {
                 AnalyticsManager.shared.track(.customSoundDeleted, properties: ["sound_name": customSound.name])

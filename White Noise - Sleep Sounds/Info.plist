@@ -54,5 +54,9 @@
 	<string>This allows us to show you relevant ads. You can still use the app if you decline.</string>
 	<key>GADApplicationIdentifier</key>
 	<string>ca-app-pub-3940256099942544~1458002511</string>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Manrope-VariableFont_wght.ttf</string>
+	</array>
 </dict>
 </plist>

@@ -187,7 +187,7 @@ struct SplashScreenView: View {
                     Circle()
                         .stroke(Color.white.opacity(0.08), lineWidth: 1)
                 )
-                .shadow(color: Color.appAccent.opacity(0.1), radius: 30)
+                .shadow(color: Color.appAccent.opacity(0.08), radius: 32)
                 .frame(width: 120, height: 120)
                 .overlay(
                     // Animated waveform bars
@@ -206,8 +206,8 @@ struct SplashScreenView: View {
                 .tracking(6)
                 .multilineTextAlignment(.center)
                 .foregroundStyle(Color.appAccent)
-                .shadow(color: Color.appAccent.opacity(0.25), radius: 20)
-                .shadow(color: Color.appAccent.opacity(0.08), radius: 40)
+                .shadow(color: Color.appAccent.opacity(0.10), radius: 32)
+                .shadow(color: Color.appAccent.opacity(0.06), radius: 48)
 
             Text("YOUR PERSONAL SOUND SANCTUARY")
                 .font(.system(size: 12, weight: .light, design: .default))
@@ -384,7 +384,7 @@ struct WaveformIcon: View {
                 }
             }
         }
-        .shadow(color: Color.appAccent.opacity(0.5), radius: 6)
+        .shadow(color: Color.appAccent.opacity(0.10), radius: 32)
     }
 }
 

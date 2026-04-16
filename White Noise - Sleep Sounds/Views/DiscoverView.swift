@@ -37,10 +37,10 @@ struct DiscoverView: View {
             // MARK: - Header
             VStack(alignment: .leading, spacing: 16) {
                 Text("Discover")
-                    .font(.system(size: 34, weight: .bold, design: .rounded))
+                    .font(DS.Typography.displayLg)
                     .foregroundStyle(.white)
-                    .padding(.horizontal, 16)
-                    .padding(.top, 16)
+                    .padding(.horizontal, DS.Spacing.lg)
+                    .padding(.top, DS.Spacing.lg)
 
                 // Search bar
                 searchBar
@@ -54,11 +54,11 @@ struct DiscoverView: View {
                 // Results count
                 HStack {
                     Text("\(filteredSounds.count) sounds")
-                        .font(.system(size: 13))
+                        .font(DS.Typography.bodySm)
                         .foregroundStyle(.white.opacity(0.4))
                     Spacer()
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, DS.Spacing.lg)
                 .padding(.top, 12)
 
                 LazyVGrid(columns: columns, spacing: 12) {
@@ -89,7 +89,7 @@ struct DiscoverView: View {
                         .staggeredAppear(index: index, appearedCards: $appearedCards, id: "disc_\(sound.id)")
                     }
                 }
-                .padding(.horizontal, 16)
+                .padding(.horizontal, DS.Spacing.lg)
                 .padding(.bottom, 120)
             }
 
@@ -140,17 +140,13 @@ struct DiscoverView: View {
                 }
             }
         }
-        .padding(.horizontal, 14)
-        .padding(.vertical, 12)
+        .padding(.horizontal, DS.Spacing.lg)
+        .padding(.vertical, DS.Spacing.md)
         .background(
-            RoundedRectangle(cornerRadius: 14)
-                .fill(Color.appSurface)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 14)
-                        .strokeBorder(Color.white.opacity(0.06), lineWidth: 1)
-                )
+            RoundedRectangle(cornerRadius: DS.Radius.lg)
+                .fill(Color.surfaceContainerLow)
         )
-        .padding(.horizontal, 16)
+        .padding(.horizontal, DS.Spacing.lg)
     }
 
     // MARK: - Category Pills
@@ -177,7 +173,7 @@ struct DiscoverView: View {
                     }
                 }
             }
-            .padding(.horizontal, 16)
+            .padding(.horizontal, DS.Spacing.lg)
         }
     }
 
@@ -188,20 +184,13 @@ struct DiscoverView: View {
                     .font(.system(size: 12))
 
                 Text(title)
-                    .font(.system(size: 13, weight: .medium))
+                    .font(DS.Typography.labelMd)
             }
-            .padding(.horizontal, 14)
-            .padding(.vertical, 8)
+            .padding(.horizontal, DS.Spacing.lg)
+            .padding(.vertical, DS.Spacing.sm)
             .background(
                 Capsule()
-                    .fill(isSelected ? Color.appAccent : Color.appSurface)
-            )
-            .overlay(
-                Capsule()
-                    .strokeBorder(
-                        isSelected ? Color.clear : Color.white.opacity(0.08),
-                        lineWidth: 1
-                    )
+                    .fill(isSelected ? Color.appAccent : Color.surfaceContainerHigh)
             )
             .foregroundStyle(isSelected ? .white : .white.opacity(0.6))
         }

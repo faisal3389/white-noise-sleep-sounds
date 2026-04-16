@@ -55,17 +55,17 @@ struct SleepLogView: View {
                 .foregroundStyle(Color.appAccent)
 
             Text(value)
-                .font(.system(size: 18, weight: .bold, design: .rounded))
+                .font(DS.Typography.headlineSm)
                 .foregroundStyle(.white)
 
             Text(title)
-                .font(.caption2)
+                .font(DS.Typography.labelSm)
                 .foregroundStyle(.white.opacity(0.5))
         }
         .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
-        .background(Color.appSurface)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .padding(.vertical, DS.Spacing.lg)
+        .background(Color.surfaceContainerLow)
+        .clipShape(RoundedRectangle(cornerRadius: DS.Radius.md))
     }
 
     // MARK: - Weekly Entries
@@ -107,12 +107,12 @@ struct SleepLogView: View {
             Spacer()
 
             Text(entry.durationFormatted)
-                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                .font(DS.Typography.buttonSm)
                 .foregroundStyle(Color.appAccent)
         }
-        .padding(12)
-        .background(Color.appSurface.opacity(0.5))
-        .clipShape(RoundedRectangle(cornerRadius: 10))
+        .padding(DS.Spacing.md)
+        .background(Color.surfaceContainerLow)
+        .clipShape(RoundedRectangle(cornerRadius: DS.Radius.md))
         .contextMenu {
             Button(role: .destructive) {
                 AnalyticsManager.shared.track(.sleepLogEntryDeleted, properties: ["sound_name": entry.soundName])

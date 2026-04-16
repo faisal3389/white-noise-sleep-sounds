@@ -18,7 +18,7 @@ struct SleepClockView: View {
             TimelineView(.periodic(from: .now, by: 1.0)) { context in
                 VStack(spacing: 8) {
                     Text(timeString(from: context.date))
-                        .font(.system(size: 72, weight: .thin, design: .monospaced))
+                        .font(DS.Typography.clockDisplay)
                         .foregroundStyle(.white.opacity(dimmed ? 0.3 : 0.8))
 
                     Text(dateString(from: context.date))

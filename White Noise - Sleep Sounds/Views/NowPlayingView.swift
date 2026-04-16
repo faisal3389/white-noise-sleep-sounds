@@ -91,33 +91,44 @@ struct NowPlayingView: View {
                             .font(.title2)
                             .foregroundStyle(favorites.isFavorite(sound) ? Color.appAccent : .white.opacity(0.8))
                     }
+                } else if let mix = player.currentMix, let manager = mixesManager {
+                    Button {
+                        let wasFavorite = mix.isFavorite
+                        manager.toggleFavorite(mix)
+                        analytics.track(wasFavorite ? .soundUnfavorited : .soundFavorited, properties: ["mix_id": mix.id.uuidString, "mix_name": mix.name, "source": "now_playing"])
+                        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+                    } label: {
+                        Image(systemName: mix.isFavorite ? "heart.fill" : "heart")
+                            .font(.title2)
+                            .foregroundStyle(mix.isFavorite ? Color.appAccent : .white.opacity(0.8))
+                    }
                 }
             }
-            .padding(.horizontal, 24)
-            .padding(.top, 16)
+            .padding(.horizontal, DS.Spacing.xl)
+            .padding(.top, DS.Spacing.lg)
 
             Spacer()
 
             // Title + subtitle
-            VStack(spacing: 8) {
+            VStack(spacing: DS.Spacing.sm) {
                 Text(player.displayTitle)
-                    .font(.system(size: 28, weight: .bold, design: .rounded))
+                    .font(DS.Typography.displayHero)
                     .foregroundStyle(.white)
-                    .shadow(color: .black.opacity(0.5), radius: 4, y: 2)
+                    .dsShadow(DS.ShadowToken.ambient)
                     .multilineTextAlignment(.center)
 
                 Text(player.displaySubtitle)
-                    .font(.system(size: 14))
+                    .font(DS.Typography.bodyMd)
                     .foregroundStyle(Color.appSecondary)
 
                 if timerManager.isTimerActive {
                     Text("Sleep timer: \(timerManager.remainingFormatted)")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(DS.Typography.labelMd)
                         .foregroundStyle(Color.appAccent)
-                        .padding(.top, 4)
+                        .padding(.top, DS.Spacing.xs)
                 }
             }
-            .padding(.horizontal, 24)
+            .padding(.horizontal, DS.Spacing.xl)
 
             // Gradient progress bar
             progressBar
@@ -157,15 +168,9 @@ struct NowPlayingView: View {
                 } label: {
                     ZStack {
                         Circle()
-                            .fill(
-                                LinearGradient(
-                                    colors: [Color.appAccent, Color.primaryContainer],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
+                            .fill(LinearGradient.jewelButton)
                             .frame(width: 72, height: 72)
-                            .shadow(color: Color.appAccent.opacity(0.4), radius: 12, y: 4)
+                            .dsShadow(DS.ShadowToken.playButton)
 
                         Image(systemName: player.isPlaying ? "pause.fill" : "play.fill")
                             .font(.system(size: 28, weight: .bold))
@@ -242,7 +247,7 @@ struct NowPlayingView: View {
                         )
                     )
                     .frame(width: player.isPlaying ? geo.size.width : 0, height: 4)
-                    .shadow(color: Color.appAccent.opacity(0.5), radius: 6, y: 0)
+                    .shadow(color: Color.appAccent.opacity(0.10), radius: 32, y: 0)
                     .animation(.easeInOut(duration: 0.5), value: player.isPlaying)
             }
         }
@@ -306,8 +311,8 @@ struct NowPlayingView: View {
             Capsule()
                 .strokeBorder(Color.white.opacity(0.05), lineWidth: 0.5)
         }
-        .shadow(color: .black.opacity(0.3), radius: 16, y: -4)
-        .padding(.horizontal, 16)
+        .dsShadow(DS.ShadowToken.floating)
+        .padding(.horizontal, DS.Spacing.lg)
     }
 
     private var airPlayActionBarButton: some View {
@@ -379,9 +384,9 @@ struct NowPlayingView: View {
                     VStack(spacing: 16) {
                         if let mix = player.currentMix {
                             Text(mix.name)
-                                .font(.system(size: 20, weight: .bold, design: .rounded))
+                                .font(DS.Typography.headlineMd)
                                 .foregroundStyle(Color.onSurface)
-                                .padding(.top, 8)
+                                .padding(.top, DS.Spacing.sm)
 
                             ForEach(player.activeComponents) { component in
                                 if let sound = component.sound {
@@ -411,9 +416,9 @@ struct NowPlayingView: View {
     }
 
     private func mixerRow(sound: Sound, component: MixComponent) -> some View {
-        HStack(spacing: 12) {
+        HStack(spacing: DS.Spacing.md) {
             ZStack {
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: DS.Radius.sm)
                     .fill(Color.appSurface)
                     .frame(width: 40, height: 40)
 
@@ -421,12 +426,12 @@ struct NowPlayingView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 40, height: 40)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .clipShape(RoundedRectangle(cornerRadius: DS.Radius.sm))
                     .opacity(0.6)
             }
 
             Text(sound.name)
-                .font(.system(size: 14, weight: .medium))
+                .font(DS.Typography.bodyMd.weight(.medium))
                 .foregroundStyle(Color.onSurface)
                 .frame(width: 80, alignment: .leading)
 
@@ -440,12 +445,12 @@ struct NowPlayingView: View {
             .tint(Color.appAccent)
 
             Text("\(Int(component.volume * 100))%")
-                .font(.system(size: 12))
+                .font(DS.Typography.labelMd)
                 .foregroundStyle(Color.onSurfaceVariant)
                 .frame(width: 36)
         }
-        .padding(12)
+        .padding(DS.Spacing.md)
         .background(Color.appSurface.opacity(0.5))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .clipShape(RoundedRectangle(cornerRadius: DS.Radius.md))
     }
 }

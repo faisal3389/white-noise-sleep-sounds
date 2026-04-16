@@ -73,14 +73,14 @@ struct ScenesView: View {
             ZStack(alignment: .bottomLeading) {
                 // Background
                 ZStack {
-                    RoundedRectangle(cornerRadius: 20)
+                    RoundedRectangle(cornerRadius: DS.Radius.xl)
                         .fill(Color.appSurface)
 
                     Image(scene.backgroundImage)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(height: 160)
-                        .clipShape(RoundedRectangle(cornerRadius: 20))
+                        .clipShape(RoundedRectangle(cornerRadius: DS.Radius.xl))
                         .opacity(0.6)
 
                     // Gradient overlay
@@ -89,11 +89,11 @@ struct ScenesView: View {
                         startPoint: .top,
                         endPoint: .bottom
                     )
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .clipShape(RoundedRectangle(cornerRadius: DS.Radius.xl))
 
                     // Lock overlay for premium scene
                     if scene.isPremium && !storeManager.isPremium {
-                        RoundedRectangle(cornerRadius: 20)
+                        RoundedRectangle(cornerRadius: DS.Radius.xl)
                             .fill(Color.appAccent.opacity(0.1))
                             .overlay(
                                 Image(systemName: "lock.fill")
@@ -112,11 +112,11 @@ struct ScenesView: View {
                             .foregroundStyle(Color.appAccent)
 
                         Text(scene.name)
-                            .font(.system(size: 22, weight: .bold, design: .rounded))
+                            .font(DS.Typography.headlineLg)
                             .foregroundStyle(.white)
 
                         Text(scene.subtitle)
-                            .font(.caption)
+                            .font(DS.Typography.bodySm)
                             .foregroundStyle(.white.opacity(0.6))
                     }
 
@@ -125,7 +125,7 @@ struct ScenesView: View {
                     let count = SoundLibrary.sounds(for: scene.category).count
                     let label = scene.isPremium ? "\(count) sounds — Premium" : "\(count) sounds"
                     Text(label)
-                        .font(.caption2)
+                        .font(DS.Typography.labelSm)
                         .foregroundStyle(.white.opacity(0.5))
                         .padding(.horizontal, 10)
                         .padding(.vertical, 4)
@@ -183,7 +183,7 @@ struct SceneDetailView: View {
                                 .foregroundStyle(Color.appAccent)
 
                             Text(scene.name)
-                                .font(.system(size: 32, weight: .bold, design: .rounded))
+                                .font(DS.Typography.displayLg)
                                 .foregroundStyle(.white)
 
                             Text(scene.subtitle)

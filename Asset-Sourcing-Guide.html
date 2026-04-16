@@ -439,7 +439,7 @@
 
     <h3>Recommended Workflow Order</h3>
     <ol>
-      <li><strong style="color:var(--accent);">Sound files ✅ IN PROGRESS</strong> — 16/35 done (Rain 4/4, Nature 5/5, Urban 3/3, Machine 4/4). Remaining: Fire (3), Water (4), Premium (12). Download from Pixabay → drop in <code>Raw assets/</code> → Claude processes with ffmpeg → copy to <code>Sounds/</code> folder.</li>
+      <li><strong style="color:var(--success);">Sound files ✅ COMPLETE</strong> — 35/35 done (Rain 4/4, Nature 5/5, Urban 3/3, Machine 4/4, Fire 3/3, Water 4/4, Premium 12/12). All sounds processed and in Xcode <code>Sounds/</code> folder.</li>
       <li><strong>Background images</strong> — one AI session, batch-generate all 35 in a consistent style.</li>
       <li><strong>Thumbnails</strong> — automated crop from backgrounds (scripted).</li>
       <li><strong>Scene cards</strong> — 8 more AI generations in the same session.</li>
@@ -738,6 +738,28 @@ for i in 1 2 3; do afplay "Raw assets/processed/output_name.m4a"; done</code></p
         <tr><td><code>ac.m4a</code></td><td>45s</td><td>716 KB</td><td>bretbernhoft — Air Conditioner (mono)</td></tr>
         <tr><td><code>dryer.m4a</code></td><td>16s</td><td>256 KB</td><td>derrickmckinnon — Dryer Running (mono)</td></tr>
         <tr><td><code>washing_machine.m4a</code></td><td>16s</td><td>256 KB</td><td>freesound_community — Washing Machine (mono)</td></tr>
+        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Fire (3/3 done)</td></tr>
+        <tr><td><code>campfire.m4a</code></td><td>45s</td><td>720 KB</td><td>DRAGON-STUDIO — Campfire in the Woods</td></tr>
+        <tr><td><code>fireplace.m4a</code></td><td>17s</td><td>276 KB</td><td>fireplace (Pixabay)</td></tr>
+        <tr><td><code>candle.m4a</code></td><td>26s</td><td>400 KB</td><td>freesound_community — Firework Candle</td></tr>
+        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Water (4/4 done)</td></tr>
+        <tr><td><code>ocean_waves.m4a</code></td><td>45s</td><td>716 KB</td><td>DRAGON-STUDIO — Soothing Ocean Waves</td></tr>
+        <tr><td><code>river.m4a</code></td><td>30s</td><td>480 KB</td><td>creative_spark — Flowing Water</td></tr>
+        <tr><td><code>waterfall.m4a</code></td><td>45s</td><td>716 KB</td><td>soundsforyou — Waterfall Ambient Sounds</td></tr>
+        <tr><td><code>underwater.m4a</code></td><td>45s</td><td>716 KB</td><td>DRAGON-STUDIO — Deep Sea Underwater Ambience</td></tr>
+        <tr><td colspan="4" style="background:var(--premium-light);color:var(--premium);font-weight:700;">Premium Exclusive (12/12 done)</td></tr>
+        <tr><td><code>singing_bowl.m4a</code></td><td>45s</td><td>712 KB</td><td>freesound_community — Singing Bowl Long</td></tr>
+        <tr><td><code>wind_chimes.m4a</code></td><td>45s</td><td>712 KB</td><td>soundsforyou — Wind Chimes Bells</td></tr>
+        <tr><td><code>underwater_bubbles.m4a</code></td><td>45s</td><td>716 KB</td><td>liecio — Bubbles Underwater</td></tr>
+        <tr><td><code>japanese_garden.m4a</code></td><td>42s</td><td>668 KB</td><td>alex_jauk — Zen Fountain Ambience</td></tr>
+        <tr><td><code>northern_lights.m4a</code></td><td>45s</td><td>404 KB</td><td>freesound_community — Evolving Drone</td></tr>
+        <tr><td><code>cabin_rain.m4a</code></td><td>45s</td><td>716 KB</td><td>dbsound — Cabin Calm Rain Dancing on the Roof</td></tr>
+        <tr><td><code>midnight_forest.m4a</code></td><td>45s</td><td>716 KB</td><td>Night Forest Soundscape (Pixabay)</td></tr>
+        <tr><td><code>desert_wind.m4a</code></td><td>32s</td><td>512 KB</td><td>tanweraman — Desert Wind</td></tr>
+        <tr><td><code>snow_falling.m4a</code></td><td>45s</td><td>720 KB</td><td>freesound_community — Snow Falling from the Trees</td></tr>
+        <tr><td><code>coffee_shop.m4a</code></td><td>45s</td><td>712 KB</td><td>freesound_community — Coffee Shop Chatter</td></tr>
+        <tr><td><code>library.m4a</code></td><td>45s</td><td>716 KB</td><td>freesound_community — Library Ambiance</td></tr>
+        <tr><td><code>vinyl_crackle.m4a</code></td><td>45s</td><td>712 KB</td><td>danevaer — Vinyl Crackle Noise</td></tr>
       </tbody>
     </table>
 
@@ -1194,11 +1216,11 @@ Requirements:
   <div id="tab-xcode" class="tab-content">
     <h2>Adding Assets to Xcode — Exact Steps</h2>
 
-    <h3>Sound Files (.m4a) <span class="badge badge-free" style="font-size:0.7em;vertical-align:middle;">16/35 DONE</span></h3>
+    <h3>Sound Files (.m4a) <span class="badge badge-free" style="font-size:0.7em;vertical-align:middle;">35/35 DONE</span></h3>
 
     <div class="callout callout-success">
       <div class="callout-title">Current Status</div>
-      <p>16 sounds are processed and copied to the Xcode project. The <code>Sounds/</code> folder exists and Xcode auto-syncs it via <code>PBXFileSystemSynchronizedRootGroup</code> — no manual drag-and-drop needed.</p>
+      <p>All 35 sounds are processed and copied to the Xcode project. The <code>Sounds/</code> folder exists and Xcode auto-syncs it via <code>PBXFileSystemSynchronizedRootGroup</code> — no manual drag-and-drop needed.</p>
     </div>
 
     <div class="step">
@@ -1206,7 +1228,7 @@ Requirements:
       <div class="step-content">
         <p><strong>The "Sounds" folder lives at:</strong></p>
         <pre><code>White Noise - Sleep Sounds/White Noise - Sleep Sounds/Sounds/</code></pre>
-        <p>This folder already exists with 16 .m4a files. To add more, just copy new processed files here.</p>
+        <p>This folder contains all 35 .m4a files. All sounds are complete.</p>
       </div>
     </div>
 
@@ -1298,7 +1320,7 @@ cp "Raw assets/processed/"*.m4a "White Noise - Sleep Sounds/Sounds/"</code></pre
     <h2>Master Checklist</h2>
     <p>Print this or keep it open. Check off each item as you complete it.</p>
 
-    <h3>Phase 1: Sound Files (16/35 done — 4 categories complete)</h3>
+    <h3>Phase 1: Sound Files (35/35 done — all categories complete)</h3>
 
     <p style="color:var(--accent);margin-bottom:12px;"><strong>Rain (4/4)</strong> — all done and in Xcode</p>
     <ul class="checklist">
@@ -1332,44 +1354,40 @@ cp "Raw assets/processed/"*.m4a "White Noise - Sleep Sounds/Sounds/"</code></pre
       <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>washing_machine.m4a</code> — Washing Machine (16s, 256 KB)</li>
     </ul>
 
-    <p style="color:var(--warning);margin-bottom:12px;"><strong>Fire (0/3)</strong> — next up</p>
+    <p style="color:var(--accent);margin-bottom:12px;"><strong>Fire (3/3)</strong> — all done and in Xcode</p>
     <ul class="checklist">
-      <li><code>campfire.m4a</code> — Campfire</li>
-      <li><code>fireplace.m4a</code> — Fireplace</li>
-      <li><code>candle.m4a</code> — Candle Flicker</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>campfire.m4a</code> — Campfire (45s, 720 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>fireplace.m4a</code> — Fireplace (17s, 276 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>candle.m4a</code> — Candle Flicker (26s, 400 KB)</li>
     </ul>
 
-    <p style="color:var(--warning);margin-bottom:12px;"><strong>Water (0/4)</strong></p>
+    <p style="color:var(--accent);margin-bottom:12px;"><strong>Water (4/4)</strong> — all done and in Xcode</p>
     <ul class="checklist">
-      <li><code>ocean_waves.m4a</code> — Ocean Waves</li>
-      <li><code>river.m4a</code> — River Stream</li>
-      <li><code>waterfall.m4a</code> — Waterfall</li>
-      <li><code>underwater.m4a</code> — Underwater</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>ocean_waves.m4a</code> — Ocean Waves (45s, 716 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>river.m4a</code> — River Stream (30s, 480 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>waterfall.m4a</code> — Waterfall (45s, 716 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>underwater.m4a</code> — Underwater (45s, 716 KB)</li>
     </ul>
 
-    <p style="color:var(--warning);margin-bottom:12px;"><strong>Premium (0/12)</strong></p>
+    <p style="color:var(--accent);margin-bottom:12px;"><strong>Premium (12/12)</strong> — all done and in Xcode</p>
     <ul class="checklist">
-      <li><code>singing_bowl.m4a</code> — Tibetan Singing Bowl</li>
-      <li><code>wind_chimes.m4a</code> — Wind Chimes</li>
-      <li><code>underwater_bubbles.m4a</code> — Underwater Bubbles</li>
-      <li><code>japanese_garden.m4a</code> — Japanese Garden</li>
-      <li><code>northern_lights.m4a</code> — Northern Lights</li>
-      <li><code>cabin_rain.m4a</code> — Cabin in the Rain</li>
-      <li><code>midnight_forest.m4a</code> — Midnight Forest</li>
-      <li><code>desert_wind.m4a</code> — Desert Wind</li>
-      <li><code>snow_falling.m4a</code> — Snow Falling</li>
-      <li><code>coffee_shop.m4a</code> — Coffee Shop</li>
-      <li><code>library.m4a</code> — Library Ambience</li>
-      <li><code>vinyl_crackle.m4a</code> — Vinyl Crackle</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>singing_bowl.m4a</code> — Tibetan Singing Bowl (45s, 712 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>wind_chimes.m4a</code> — Wind Chimes (45s, 712 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>underwater_bubbles.m4a</code> — Underwater Bubbles (45s, 716 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>japanese_garden.m4a</code> — Japanese Garden (42s, 668 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>northern_lights.m4a</code> — Northern Lights (45s, 404 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>cabin_rain.m4a</code> — Cabin in the Rain (45s, 716 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>midnight_forest.m4a</code> — Midnight Forest (45s, 716 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>desert_wind.m4a</code> — Desert Wind (32s, 512 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>snow_falling.m4a</code> — Snow Falling (45s, 720 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>coffee_shop.m4a</code> — Coffee Shop (45s, 712 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>library.m4a</code> — Library Ambience (45s, 716 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>vinyl_crackle.m4a</code> — Vinyl Crackle (45s, 712 KB)</li>
     </ul>
 
-    <div class="callout callout-insight">
-      <div class="callout-title">Next Session: Pick Up Here</div>
-      <p><strong>Step 1:</strong> Search Pixabay for the Fire sounds (campfire crackling, fireplace, candle flicker).<br>
-      <strong>Step 2:</strong> Download the MP3s into <code>Raw assets/</code>.<br>
-      <strong>Step 3:</strong> Ask Claude to process them — same workflow as before.<br>
-      <strong>Step 4:</strong> Copy processed files to <code>White Noise - Sleep Sounds/Sounds/</code>.<br>
-      Then repeat for Water (4) and Premium (12). After all sounds are done, move to background images.</p>
+    <div class="callout callout-success">
+      <div class="callout-title">All Sound Files Complete!</div>
+      <p>All 35 file-based sounds (+ 4 procedurally generated noise sounds) are processed and in the Xcode project. Total audio bundle: ~22 MB. Next step: background images.</p>
     </div>
 
     <h3>Phase 2: Background Images (35 images)</h3>

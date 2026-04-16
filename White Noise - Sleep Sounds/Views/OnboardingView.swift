@@ -40,12 +40,12 @@ struct OnboardingView: View {
                         }
                     } label: {
                         Text(currentPage < 2 ? "Next" : "Get Started")
-                            .font(.system(size: 17, weight: .semibold))
+                            .font(DS.Typography.button)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: 54)
-                            .background(Color.appAccent)
-                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .background(LinearGradient.jewelButton)
+                            .clipShape(RoundedRectangle(cornerRadius: DS.Radius.lg))
                     }
                     .padding(.horizontal, 32)
 
@@ -72,15 +72,15 @@ struct OnboardingView: View {
             Image(systemName: "waveform.circle.fill")
                 .font(.system(size: 100))
                 .foregroundStyle(Color.appAccent)
-                .shadow(color: Color.appAccent.opacity(0.4), radius: 20)
+                .shadow(color: Color.appAccent.opacity(0.10), radius: 32)
 
             VStack(spacing: 12) {
                 Text("Your Personal")
-                    .font(.system(size: 36, weight: .bold, design: .rounded))
+                    .font(DS.Typography.displayHero)
                     .foregroundStyle(.white)
 
                 Text("Sound Sanctuary")
-                    .font(.system(size: 36, weight: .bold, design: .rounded))
+                    .font(DS.Typography.displayHero)
                     .foregroundStyle(Color.appAccent)
             }
 
@@ -134,7 +134,7 @@ struct OnboardingView: View {
                 .foregroundStyle(Color.appAccent)
 
             Text("Ready to Relax?")
-                .font(.system(size: 32, weight: .bold, design: .rounded))
+                .font(DS.Typography.displayHero)
                 .foregroundStyle(.white)
 
             Text("Enjoy free with ads, or go premium for just $3.99 to unlock all sounds and remove ads.")
@@ -149,15 +149,15 @@ struct OnboardingView: View {
     }
 
     private func featureRow(icon: String, title: String, description: String) -> some View {
-        HStack(spacing: 16) {
+        HStack(spacing: DS.Spacing.lg) {
             Image(systemName: icon)
                 .font(.system(size: 32))
                 .foregroundStyle(Color.appAccent)
-                .frame(width: 48, height: 48)
+                .frame(width: DS.Spacing.sectionLg, height: DS.Spacing.sectionLg)
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: DS.Spacing.xs) {
                 Text(title)
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(DS.Typography.headlineSm)
                     .foregroundStyle(.white)
 
                 Text(description)

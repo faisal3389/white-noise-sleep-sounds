@@ -12,19 +12,19 @@ struct MiniPlayerView: View {
                 AnalyticsManager.shared.track(.miniPlayerTapped, properties: ["sound_name": player.displayTitle])
                 onTap()
             }) {
-                HStack(spacing: 10) {
+                HStack(spacing: DS.Spacing.md) {
                     // Thumbnail
                     thumbnailView
 
                     // Title + subtitle
                     VStack(alignment: .leading, spacing: 1) {
                         Text(player.displayTitle)
-                            .font(.system(size: 13, weight: .semibold))
+                            .font(DS.Typography.labelMd.weight(.semibold))
                             .foregroundStyle(.white)
                             .lineLimit(1)
 
                         Text(player.displaySubtitle)
-                            .font(.system(size: 11))
+                            .font(DS.Typography.labelSm)
                             .foregroundStyle(.white.opacity(0.45))
                             .lineLimit(1)
                     }
@@ -56,26 +56,19 @@ struct MiniPlayerView: View {
                 .background {
                     ZStack {
                         // Tinted glass
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: DS.Radius.lg)
                             .fill(.ultraThinMaterial)
                             .environment(\.colorScheme, .dark)
 
-                        // Subtle top highlight
-                        RoundedRectangle(cornerRadius: 16)
+                        // Ghost border fallback (felt, not seen — DESIGN.md §4)
+                        RoundedRectangle(cornerRadius: DS.Radius.lg)
                             .strokeBorder(
-                                LinearGradient(
-                                    colors: [
-                                        Color.white.opacity(0.12),
-                                        Color.white.opacity(0.04)
-                                    ],
-                                    startPoint: .top,
-                                    endPoint: .bottom
-                                ),
+                                Color.outlineVariant.opacity(0.15),
                                 lineWidth: 0.5
                             )
                     }
                 }
-                .shadow(color: Color.black.opacity(0.35), radius: 8, y: 3)
+                .dsShadow(DS.ShadowToken.card)
             }
             .buttonStyle(.plain)
             .padding(.horizontal, 10)
@@ -104,7 +97,7 @@ struct MiniPlayerView: View {
 
     private var thumbnailView: some View {
         ZStack {
-            RoundedRectangle(cornerRadius: 8)
+            RoundedRectangle(cornerRadius: DS.Radius.sm)
                 .fill(Color.appSurface)
                 .frame(width: 36, height: 36)
 
@@ -113,12 +106,13 @@ struct MiniPlayerView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 36, height: 36)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .clipShape(RoundedRectangle(cornerRadius: DS.Radius.sm))
             }
 
+            // Playing glow (no stroke border per DESIGN.md)
             if player.isPlaying {
-                RoundedRectangle(cornerRadius: 8)
-                    .strokeBorder(Color.appAccent.opacity(0.6), lineWidth: 1)
+                RoundedRectangle(cornerRadius: DS.Radius.sm)
+                    .fill(Color.appAccent.opacity(0.08))
                     .frame(width: 36, height: 36)
             }
         }
