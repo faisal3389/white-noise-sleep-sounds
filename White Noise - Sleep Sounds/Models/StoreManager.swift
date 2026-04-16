@@ -51,10 +51,14 @@ class StoreManager {
         do {
             let result = try await Purchases.shared.purchase(package: package)
             isPremium = result.customerInfo.entitlements["premium"]?.isActive == true
+            if isPremium {
+                AnalyticsManager.shared.track(.premiumPurchaseCompleted)
+            }
         } catch {
             if let rcError = error as? RevenueCat.ErrorCode, rcError == .purchaseCancelledError {
-                // User cancelled
+                AnalyticsManager.shared.track(.premiumPurchaseCancelled)
             } else {
+                AnalyticsManager.shared.track(.premiumPurchaseFailed, properties: ["error": error.localizedDescription])
                 purchaseError = error.localizedDescription
             }
         }
@@ -72,6 +76,7 @@ class StoreManager {
         do {
             let customerInfo = try await Purchases.shared.restorePurchases()
             isPremium = customerInfo.entitlements["premium"]?.isActive == true
+            AnalyticsManager.shared.track(.restorePurchasesCompleted, properties: ["is_premium": isPremium])
         } catch {
             purchaseError = error.localizedDescription
         }

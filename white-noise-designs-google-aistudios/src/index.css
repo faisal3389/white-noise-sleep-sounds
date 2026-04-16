@@ -1,0 +1,93 @@
+@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&family=Inter:wght@400;500;600&display=swap');
+
+@theme {
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-headline: "Manrope", sans-serif;
+
+  --color-on-secondary: #0f2176;
+  --color-primary-fixed-dim: #71d7cd;
+  --color-error-container: #9f0519;
+  --color-surface-container: #171a1f;
+  --color-on-primary: #00534d;
+  --color-on-error: #490006;
+  --color-on-tertiary-container: #005b63;
+  --color-on-secondary-container: #c7cdff;
+  --color-primary-container: #47b0a7;
+  --color-error: #ff716c;
+  --color-on-background: #f6f6fc;
+  --color-on-surface-variant: #aaabb0;
+  --color-secondary-container: #2f3f92;
+  --color-outline-variant: #46484d;
+  --color-secondary: #96a5ff;
+  --color-outline: #74757a;
+  --color-tertiary-container: #93f1fd;
+  --color-inverse-on-surface: #53555a;
+  --color-tertiary-fixed-dim: #85e3ef;
+  --color-on-tertiary-fixed-variant: #00666f;
+  --color-secondary-fixed-dim: #b7c0ff;
+  --color-on-tertiary-fixed: #00474d;
+  --color-surface: #0c0e12;
+  --color-surface-container-low: #111318;
+  --color-secondary-dim: #8998f0;
+  --color-on-error-container: #ffa8a3;
+  --color-on-primary-fixed: #003e39;
+  --color-surface-variant: #23262c;
+  --color-background: #0c0e12;
+  --color-surface-bright: #292c32;
+  --color-primary: #7fe6db;
+  --color-inverse-primary: #006b64;
+  --color-surface-container-lowest: #000000;
+  --color-on-primary-fixed-variant: #005d57;
+  --color-surface-container-high: #1d2025;
+  --color-on-secondary-fixed-variant: #3a499c;
+  --color-tertiary-dim: #85e3ef;
+  --color-on-tertiary: #00646d;
+  --color-tertiary: #ccf9ff;
+  --color-secondary-fixed: #c9cfff;
+  --color-tertiary-fixed: #93f1fd;
+  --color-surface-container-highest: #23262c;
+  --color-on-primary-container: #002825;
+  --color-surface-tint: #7fe6db;
+  --color-surface-dim: #0c0e12;
+  --color-inverse-surface: #f9f9ff;
+  --color-on-secondary-fixed: #1a2b7e;
+  --color-on-surface: #f6f6fc;
+  --color-primary-fixed: #7fe6db;
+  --color-error-dim: #d7383b;
+  --color-primary-dim: #71d7cd;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-on-background font-sans selection:bg-primary/30;
+  }
+}
+
+@layer components {
+  .glass-panel {
+    @apply bg-slate-950/60 backdrop-blur-xl border border-white/5;
+  }
+  
+  .glass-card {
+    @apply bg-surface-container-high/40 backdrop-blur-md border border-white/5;
+  }
+
+  .ios-scrollbar::-webkit-scrollbar {
+    @apply w-1;
+  }
+  
+  .ios-scrollbar::-webkit-scrollbar-thumb {
+    @apply bg-white/10 rounded-full;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    @apply hidden;
+  }
+  
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+

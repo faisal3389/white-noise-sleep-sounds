@@ -9,6 +9,7 @@ struct PlaylistView: View {
 
     @State private var showAddSheet = false
     @State private var editMode: EditMode = .inactive
+    private let analytics = AnalyticsManager.shared
 
     var body: some View {
         NavigationStack {
@@ -91,8 +92,9 @@ struct PlaylistView: View {
             if !playlistManager.items.isEmpty {
                 HStack(spacing: 12) {
                     Button {
+                        analytics.track(.playlistStarted, properties: ["item_count": playlistManager.items.count])
                         playlistManager.startPlaylist()
-                        selectedTab = 2 // Switch to Now Playing
+                        selectedTab = 2
                     } label: {
                         Label(
                             playlistManager.isActive ? "Restart" : "Play All",
@@ -108,6 +110,7 @@ struct PlaylistView: View {
 
                     if playlistManager.isActive {
                         Button {
+                            analytics.track(.playlistStopped)
                             playlistManager.stopPlaylist()
                         } label: {
                             Label("Stop", systemImage: "stop.fill")
@@ -123,6 +126,7 @@ struct PlaylistView: View {
                     Spacer()
 
                     Button {
+                        analytics.track(.playlistCleared, properties: ["item_count": playlistManager.items.count])
                         playlistManager.clearPlaylist()
                     } label: {
                         Text("Clear")
@@ -146,9 +150,11 @@ struct PlaylistView: View {
                     }
                 }
                 .onDelete { offsets in
+                    analytics.track(.playlistSoundRemoved)
                     playlistManager.removeItem(at: offsets)
                 }
                 .onMove { source, destination in
+                    analytics.track(.playlistSoundMoved)
                     playlistManager.moveItem(from: source, to: destination)
                 }
             }
@@ -211,10 +217,12 @@ struct PlaylistView: View {
                 // Duration menu
                 Menu {
                     Button("No limit") {
+                        analytics.track(.playlistDurationSet, properties: ["sound_id": sound.id, "duration_minutes": "none"])
                         playlistManager.setDuration(for: item.id, minutes: nil)
                     }
                     ForEach([5, 10, 15, 30, 60], id: \.self) { mins in
                         Button("\(mins) minutes") {
+                            analytics.track(.playlistDurationSet, properties: ["sound_id": sound.id, "duration_minutes": mins])
                             playlistManager.setDuration(for: item.id, minutes: mins)
                         }
                     }
@@ -250,6 +258,7 @@ struct AddToPlaylistSheet: View {
                                     if sound.isPremium && !storeManager.isPremium {
                                         // Skip premium sounds for free users
                                     } else {
+                                        AnalyticsManager.shared.track(.playlistSoundAdded, properties: ["sound_id": sound.id, "sound_name": sound.name])
                                         playlistManager.addSound(sound)
                                     }
                                 } label: {

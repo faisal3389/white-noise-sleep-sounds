@@ -194,6 +194,7 @@ struct HomeView: View {
             isLocked: sound.isPremium && !storeManager.isPremium,
             onTap: {
                 if sound.isPremium && !storeManager.isPremium {
+                    AnalyticsManager.shared.track(.premiumLockedContentTapped, properties: ["sound_id": sound.id, "source": "home"])
                     showPremiumSheet = true
                 } else {
                     player.play(sound: sound)
@@ -201,7 +202,11 @@ struct HomeView: View {
                     selectedTab = 2
                 }
             },
-            onFavorite: { favorites.toggle(sound) }
+            onFavorite: {
+                let wasFavorite = favorites.isFavorite(sound)
+                favorites.toggle(sound)
+                AnalyticsManager.shared.track(wasFavorite ? .soundUnfavorited : .soundFavorited, properties: ["sound_id": sound.id, "sound_name": sound.name, "source": "home"])
+            }
         )
     }
 
@@ -210,6 +215,7 @@ struct HomeView: View {
         let bgImage = sounds.first?.backgroundImage ?? ""
 
         return Button {
+            AnalyticsManager.shared.track(.categoryBrowsed, properties: ["category": category.rawValue, "source": "home"])
             discoverCategory = category
             selectedTab = 1
         } label: {

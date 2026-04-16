@@ -8,5 +8,6 @@ struct White_Noise_WidgetsBundle: WidgetBundle {
         NowPlayingMediumWidget()
         LockScreenCircularWidget()
         LockScreenRectangularWidget()
+        WhiteNoiseLiveActivity()
     }
 }

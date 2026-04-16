@@ -63,8 +63,10 @@ struct ScenesView: View {
     private func sceneCard(_ scene: SoundScene) -> some View {
         Button {
             if scene.isPremium && !storeManager.isPremium {
+                AnalyticsManager.shared.track(.premiumLockedContentTapped, properties: ["scene": scene.name, "source": "scenes"])
                 showPremiumSheet = true
             } else {
+                AnalyticsManager.shared.track(.sceneViewed, properties: ["scene": scene.name, "category": scene.category.rawValue])
                 selectedScene = scene
             }
         } label: {
@@ -197,6 +199,7 @@ struct SceneDetailView: View {
                         ForEach(sounds) { sound in
                             Button {
                                 if sound.isPremium && !storeManager.isPremium {
+                                    AnalyticsManager.shared.track(.premiumLockedContentTapped, properties: ["sound_id": sound.id, "source": "scene_detail"])
                                     showPremiumSheet = true
                                 } else {
                                     player.play(sound: sound)
@@ -206,7 +209,11 @@ struct SceneDetailView: View {
                                 SoundRowView(
                                     sound: sound,
                                     isFavorite: favorites.isFavorite(sound),
-                                    onFavoriteToggle: { favorites.toggle(sound) }
+                                    onFavoriteToggle: {
+                                        let wasFav = favorites.isFavorite(sound)
+                                        favorites.toggle(sound)
+                                        AnalyticsManager.shared.track(wasFav ? .soundUnfavorited : .soundFavorited, properties: ["sound_id": sound.id, "sound_name": sound.name, "source": "scene_detail"])
+                                    }
                                 )
                             }
                             .buttonStyle(.plain)

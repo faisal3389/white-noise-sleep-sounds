@@ -11,6 +11,7 @@ struct MoreView: View {
     @Binding var selectedTab: Int
 
     @State private var showPremiumSheet = false
+    private let analytics = AnalyticsManager.shared
 
     private var appVersion: String {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
@@ -187,6 +188,7 @@ struct MoreView: View {
                 Section("Premium") {
                     Button {
                         if !storeManager.isPremium {
+                            analytics.track(.premiumSheetViewed, properties: ["source": "more_tab"])
                             showPremiumSheet = true
                         }
                     } label: {
@@ -206,6 +208,7 @@ struct MoreView: View {
                     .listRowBackground(Color.appSurface)
 
                     Button {
+                        analytics.track(.restorePurchasesTapped)
                         Task { await storeManager.restorePurchases() }
                     } label: {
                         Label("Restore Purchases", systemImage: "arrow.clockwise")
@@ -219,13 +222,45 @@ struct MoreView: View {
                     AppIconPicker()
                 }
 
+                // MARK: - Lock Screen Section
+                Section {
+                    Toggle(isOn: Binding(
+                        get: { settings.liveActivitiesEnabled },
+                        set: { newValue in
+                            settings.liveActivitiesEnabled = newValue
+                            analytics.track(.liveActivityToggled, properties: ["enabled": newValue])
+                        }
+                    )) {
+                        Label("Live Activity", systemImage: "rectangle.badge.person.crop")
+                            .foregroundStyle(.white)
+                    }
+                    .tint(Color.appAccent)
+                    .listRowBackground(Color.appSurface)
+                    .onChange(of: settings.liveActivitiesEnabled) { _, enabled in
+                        player.liveActivityManager.onSettingsChanged(enabled: enabled)
+                    }
+
+                    Text("Shows the current sound and sleep timer on your Lock Screen and Dynamic Island.")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.4))
+                        .listRowBackground(Color.appSurface)
+                } header: {
+                    Text("Lock Screen")
+                }
+
                 // MARK: - Playback Section
                 Section("Playback") {
                     HStack {
                         Label("Fade Duration", systemImage: "waveform.path")
                             .foregroundStyle(.white)
                         Spacer()
-                        Picker("", selection: $settings.fadeDuration) {
+                        Picker("", selection: Binding(
+                            get: { settings.fadeDuration },
+                            set: { newValue in
+                                settings.fadeDuration = newValue
+                                analytics.track(.fadeDurationChanged, properties: ["duration": newValue])
+                            }
+                        )) {
                             Text("0s").tag(0.0)
                             Text("2s").tag(2.0)
                             Text("5s").tag(5.0)
@@ -242,18 +277,21 @@ struct MoreView: View {
                         Label("Rate on App Store", systemImage: "star.bubble")
                             .foregroundStyle(.white)
                     }
+                    .simultaneousGesture(TapGesture().onEnded { analytics.track(.rateAppTapped) })
                     .listRowBackground(Color.appSurface)
 
                     ShareLink(item: URL(string: "https://apps.apple.com/app/id0000000000")!) {
                         Label("Share with Friends", systemImage: "square.and.arrow.up")
                             .foregroundStyle(.white)
                     }
+                    .simultaneousGesture(TapGesture().onEnded { analytics.track(.shareAppTapped) })
                     .listRowBackground(Color.appSurface)
 
                     Link(destination: URL(string: "https://example.com/privacy")!) {
                         Label("Privacy Policy", systemImage: "hand.raised")
                             .foregroundStyle(.white)
                     }
+                    .simultaneousGesture(TapGesture().onEnded { analytics.track(.privacyPolicyTapped) })
                     .listRowBackground(Color.appSurface)
 
                     HStack {

@@ -51,6 +51,7 @@ struct SleepClockView: View {
         }
         .statusBarHidden()
         .onAppear {
+            AnalyticsManager.shared.track(.sleepClockOpened)
             #if os(iOS)
             previousBrightness = UIScreen.main.brightness
             UIApplication.shared.isIdleTimerDisabled = true
@@ -58,6 +59,7 @@ struct SleepClockView: View {
             scheduleDim()
         }
         .onDisappear {
+            AnalyticsManager.shared.track(.sleepClockClosed)
             #if os(iOS)
             UIScreen.main.brightness = previousBrightness
             UIApplication.shared.isIdleTimerDisabled = false

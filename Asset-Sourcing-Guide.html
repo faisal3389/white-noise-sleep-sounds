@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>White Noise App — Asset Sourcing Guide</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@700;800&display=swap');
+
+  :root {
+    --bg: #0C0E12;
+    --surface: #161820;
+    --surface-2: #1E2028;
+    --surface-3: #262830;
+    --text: #F6F6FC;
+    --text-muted: #AAABB0;
+    --accent: #7FE6DB;
+    --accent-light: rgba(127, 230, 219, 0.15);
+    --accent-dim: rgba(127, 230, 219, 0.08);
+    --warning: #FFB86C;
+    --warning-light: rgba(255, 184, 108, 0.15);
+    --success: #50FA7B;
+    --success-light: rgba(80, 250, 123, 0.12);
+    --premium: #96A5FF;
+    --premium-light: rgba(150, 165, 255, 0.15);
+    --border: rgba(255,255,255,0.06);
+    --code-bg: #1A1C24;
+    --new-badge: #7FE6DB;
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 32px 24px;
+  }
+
+  /* Header */
+  .header {
+    text-align: center;
+    margin-bottom: 40px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+  .header h1 {
+    font-family: 'Manrope', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    background: linear-gradient(135deg, var(--accent), var(--premium));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 8px;
+  }
+  .header .subtitle {
+    color: var(--text-muted);
+    font-size: 16px;
+    margin-bottom: 16px;
+  }
+  .header .meta {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+  .meta-item strong {
+    color: var(--accent);
+  }
+
+  /* Tabs */
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    margin-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+    scrollbar-width: thin;
+    scrollbar-color: var(--surface-3) transparent;
+  }
+  .tab-bar::-webkit-scrollbar { height: 4px; }
+  .tab-bar::-webkit-scrollbar-track { background: transparent; }
+  .tab-bar::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 2px; }
+
+  .tab {
+    padding: 10px 18px;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    position: relative;
+  }
+  .tab:hover { color: var(--text); background: var(--surface); border-radius: 8px 8px 0 0; }
+  .tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    background: var(--accent-dim);
+    border-radius: 8px 8px 0 0;
+  }
+
+  /* Tab Content */
+  .tab-content { display: none; animation: fadeIn 0.3s ease; }
+  .tab-content.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+  /* Typography */
+  h2 {
+    font-family: 'Manrope', sans-serif;
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    color: var(--text);
+  }
+  h3 {
+    font-size: 18px;
+    font-weight: 700;
+    margin: 24px 0 12px;
+    color: var(--text);
+  }
+  h4 {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 16px 0 8px;
+    color: var(--accent);
+  }
+  p { margin-bottom: 12px; color: var(--text-muted); }
+  p strong, li strong { color: var(--text); }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  ul, ol { margin: 8px 0 16px 24px; color: var(--text-muted); }
+  li { margin-bottom: 6px; }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+  }
+  .card.accent-border { border-left: 3px solid var(--accent); }
+  .card.warning-border { border-left: 3px solid var(--warning); }
+  .card.premium-border { border-left: 3px solid var(--premium); }
+  .card.success-border { border-left: 3px solid var(--success); }
+
+  /* Callout */
+  .callout {
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 14px;
+  }
+  .callout-insight { background: var(--accent-light); border-left: 3px solid var(--accent); }
+  .callout-warning { background: var(--warning-light); border-left: 3px solid var(--warning); }
+  .callout-premium { background: var(--premium-light); border-left: 3px solid var(--premium); }
+  .callout-success { background: var(--success-light); border-left: 3px solid var(--success); }
+  .callout .callout-title { font-weight: 700; color: var(--text); margin-bottom: 4px; }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+  th, td {
+    padding: 10px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    background: var(--surface-2);
+    color: var(--accent);
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  td { color: var(--text-muted); }
+  tr:hover td { background: var(--surface); }
+
+  /* Code */
+  code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    color: var(--accent);
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    overflow-x: auto;
+    margin: 12px 0;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  pre code { background: none; padding: 0; color: var(--text-muted); }
+
+  /* Badge */
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .badge-free { background: var(--success-light); color: var(--success); }
+  .badge-premium { background: var(--premium-light); color: var(--premium); }
+  .badge-ai { background: var(--accent-light); color: var(--accent); }
+  .badge-manual { background: var(--warning-light); color: var(--warning); }
+
+  /* Step numbering */
+  .step {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    align-items: flex-start;
+  }
+  .step-num {
+    flex-shrink: 0;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 14px;
+  }
+  .step-content { flex: 1; }
+  .step-content p:first-child { margin-top: 4px; }
+
+  /* Checklist */
+  .checklist { list-style: none; margin-left: 0; }
+  .checklist li {
+    padding: 8px 12px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 6px;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .checklist li::before {
+    content: '☐';
+    font-size: 16px;
+    color: var(--text-muted);
+  }
+
+  /* Scroll to top */
+  .scroll-top {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(127, 230, 219, 0.3);
+    z-index: 100;
+  }
+
+  /* Section divider */
+  .divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 32px 0;
+  }
+
+  /* Responsive */
+  @media (max-width: 640px) {
+    .container { padding: 16px; }
+    .header h1 { font-size: 28px; }
+    .meta { gap: 8px; }
+    table { font-size: 12px; }
+    th, td { padding: 8px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>Asset Sourcing Guide</h1>
+    <p class="subtitle">White Noise — Sleep Sounds &middot; Every asset you need, exactly how to get it, where to put it</p>
+    <div class="meta">
+      <span class="meta-item"><strong>16/35</strong> Sound Files</span>
+      <span class="meta-item"><strong>0/35</strong> Background Images</span>
+      <span class="meta-item"><strong>0/35</strong> Thumbnails</span>
+      <span class="meta-item"><strong>0/8</strong> Scene Cards</span>
+      <span class="meta-item"><strong>0/4</strong> App Icons</span>
+      <span class="meta-item"><strong>0/6</strong> Screenshots</span>
+    </div>
+    <p style="color:var(--accent);margin-top:12px;font-size:0.9em;">Last updated: April 15, 2026 — 16 sounds processed &amp; added to Xcode</p>
+  </div>
+
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <button class="tab active" onclick="showTab('overview')">Overview</button>
+    <button class="tab" onclick="showTab('sounds')">Sound Files</button>
+    <button class="tab" onclick="showTab('audacity')">Audio Processing</button>
+    <button class="tab" onclick="showTab('backgrounds')">Background Images</button>
+    <button class="tab" onclick="showTab('thumbnails')">Thumbnails & Cards</button>
+    <button class="tab" onclick="showTab('icons')">App Icons</button>
+    <button class="tab" onclick="showTab('screenshots')">Screenshots</button>
+    <button class="tab" onclick="showTab('xcode')">Adding to Xcode</button>
+    <button class="tab" onclick="showTab('checklist')">Master Checklist</button>
+  </div>
+
+  <!-- ==================== OVERVIEW TAB ==================== -->
+  <div id="tab-overview" class="tab-content active">
+    <h2>The Strategy: Consistent, Free, AI-Powered</h2>
+
+    <div class="callout callout-insight">
+      <div class="callout-title">Key Principle — Visual Consistency</div>
+      <p>The #1 mistake with free assets is mixing sources, which creates a "frankenstein" look. This guide gives you <strong>one primary source per asset type</strong> so everything feels cohesive and professional.</p>
+    </div>
+
+    <h3>Source Strategy per Asset Type</h3>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Asset Type</th>
+          <th>Count</th>
+          <th>Primary Source</th>
+          <th>Cost</th>
+          <th>Why This Source</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Sound files (.m4a)</strong></td>
+          <td>31 files</td>
+          <td>Pixabay Audio</td>
+          <td>Free</td>
+          <td>No attribution required, commercial-use OK, consistent recording quality</td>
+        </tr>
+        <tr>
+          <td><strong>Background images</strong></td>
+          <td>35 images</td>
+          <td>ChatGPT (DALL-E) or Google Gemini image gen</td>
+          <td>Free*</td>
+          <td>Same AI model = same art style across ALL images. Moody, cinematic, uniform</td>
+        </tr>
+        <tr>
+          <td><strong>Thumbnails</strong></td>
+          <td>35 thumbs</td>
+          <td>Cropped from backgrounds</td>
+          <td>Free</td>
+          <td>Auto-consistent since they come from the same source images</td>
+        </tr>
+        <tr>
+          <td><strong>Scene cards</strong></td>
+          <td>8 cards</td>
+          <td>Same AI model as backgrounds</td>
+          <td>Free</td>
+          <td>Same art style, just different composition (wide/landscape)</td>
+        </tr>
+        <tr>
+          <td><strong>App icons</strong></td>
+          <td>4 variants</td>
+          <td>ChatGPT (DALL-E) + Figma polish</td>
+          <td>Free</td>
+          <td>AI generates the concept, Figma/Canva refines for App Store standards</td>
+        </tr>
+        <tr>
+          <td><strong>App Store screenshots</strong></td>
+          <td>6 screens</td>
+          <td>Xcode Simulator + Figma frames</td>
+          <td>Free</td>
+          <td>Real app screenshots with marketing text overlays</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><em>* ChatGPT image generation is free on the free tier (limited per day). Google Gemini (via AI Studio) is also free. Between both, you can generate all ~40 images in 1-2 sessions.</em></p>
+
+    <h3>Why AI-Generated Images Beat Stock Photos for This App</h3>
+
+    <div class="card accent-border">
+      <h4>Uniform Art Direction</h4>
+      <p>When you use the <strong>same AI model with a consistent prompt style</strong>, every image shares the same color temperature, lighting approach, and artistic feel. Stock photos from Unsplash/Pexels are taken by different photographers with different cameras and styles — they'll never look as cohesive.</p>
+    </div>
+
+    <div class="card accent-border">
+      <h4>Portal-Inspired Aesthetic</h4>
+      <p>Your PRD calls for "moody, cinematic, slightly desaturated" backgrounds. AI lets you bake this into every prompt with phrases like <em>"cinematic, dark moody atmosphere, desaturated colors, film grain"</em> — and you get exactly that, every time.</p>
+    </div>
+
+    <div class="card accent-border">
+      <h4>No License Worries</h4>
+      <p>ChatGPT and Gemini image outputs are yours to use commercially with no attribution required. No hunting through license fine print.</p>
+    </div>
+
+    <hr class="divider">
+
+    <h3>Recommended Workflow Order</h3>
+    <ol>
+      <li><strong style="color:var(--accent);">Sound files ✅ IN PROGRESS</strong> — 16/35 done (Rain 4/4, Nature 5/5, Urban 3/3, Machine 4/4). Remaining: Fire (3), Water (4), Premium (12). Download from Pixabay → drop in <code>Raw assets/</code> → Claude processes with ffmpeg → copy to <code>Sounds/</code> folder.</li>
+      <li><strong>Background images</strong> — one AI session, batch-generate all 35 in a consistent style.</li>
+      <li><strong>Thumbnails</strong> — automated crop from backgrounds (scripted).</li>
+      <li><strong>Scene cards</strong> — 8 more AI generations in the same session.</li>
+      <li><strong>App icons</strong> — AI generate + Figma polish.</li>
+      <li><strong>Screenshots</strong> — last, once the app looks good with real assets.</li>
+    </ol>
+  </div>
+
+  <!-- ==================== SOUNDS TAB ==================== -->
+  <div id="tab-sounds" class="tab-content">
+    <h2>Sound Files — 31 Files Needed</h2>
+
+    <div class="callout callout-insight">
+      <div class="callout-title">4 sounds are procedural (generated in code) — no files needed</div>
+      <p>White Noise, Pink Noise, Brown Noise, and Blue Noise are generated by <code>AVAudioSourceNode</code> in your AudioEngine. You only need files for the other 31 sounds.</p>
+    </div>
+
+    <h3>Step-by-Step: Getting All Sound Files</h3>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <p><strong>Go to <a href="https://pixabay.com/sound-effects/" target="_blank">Pixabay Sound Effects</a></strong></p>
+        <p>This is your primary source. All sounds are free for commercial use, no attribution required, and the quality is consistently good. Search using the exact terms in the table below.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <p><strong>If Pixabay doesn't have what you need, use <a href="https://freesound.org" target="_blank">Freesound.org</a> as backup</strong></p>
+        <p>Freesound has the largest library. Filter by license: choose <strong>"Creative Commons 0"</strong> (CC0) only — this means no attribution required. Avoid CC-BY unless you want to add credits.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <p><strong>Download as MP3 or WAV, then convert to .m4a in Audacity</strong></p>
+        <p>Open Audacity (free, <a href="https://www.audacityteam.org" target="_blank">audacityteam.org</a>). For each sound:</p>
+        <ol>
+          <li>Open the downloaded file</li>
+          <li>Trim to <strong>30-60 seconds</strong> of the best section</li>
+          <li>Make it a <strong>seamless loop</strong>: select last 2-3 seconds → Edit → Duplicate onto a new track → time-shift to overlap the beginning → use "Crossfade Tracks" effect → flatten/mix</li>
+          <li>Export as: <strong>File → Export → Export as M4A (AAC)</strong></li>
+          <li>Settings: Quality = 128 kbps, Channels = Stereo, Sample rate = 44100 Hz</li>
+          <li>Name the file <strong>exactly</strong> as shown in the table below</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <p><strong>Test the loop</strong></p>
+        <p>In Audacity: Edit → Preferences → Playback → check "Loop Play". Hit Play and listen for clicks or jumps at the loop point. If you hear a click, redo the crossfade.</p>
+      </div>
+    </div>
+
+    <div class="callout callout-warning">
+      <div class="callout-title">Alternative: Quick Seamless Loop Method</div>
+      <p>If crossfading feels complex, use this trick: find sounds on Pixabay/Freesound that are already labeled as "loop" or "ambient loop." Many uploaders specifically create seamless loops. Search for terms like <em>"rain loop"</em> or <em>"campfire ambient loop"</em>. These often need zero editing — just trim and export.</p>
+    </div>
+
+    <h3>Complete Sound File List</h3>
+    <p>File names must match <code>SoundLibrary.swift</code> exactly:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>File Name</th>
+          <th>Sound</th>
+          <th>Category</th>
+          <th>Search Term on Pixabay</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="6" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Rain (4 sounds)</td></tr>
+        <tr><td>1</td><td><code>light_rain.m4a</code></td><td>Light Rain</td><td>Rain</td><td>"light rain ambient" or "gentle rain"</td><td><span class="badge badge-free">Free</span></td></tr>
+        <tr><td>2</td><td><code>heavy_rain.m4a</code></td><td>Heavy Rain</td><td>Rain</td><td>"heavy rain downpour"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>3</td><td><code>rain_on_roof.m4a</code></td><td>Rain on Roof</td><td>Rain</td><td>"rain on roof" or "rain on tin roof"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>4</td><td><code>thunderstorm.m4a</code></td><td>Thunderstorm</td><td>Rain</td><td>"thunderstorm ambient" or "thunder rain"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+
+        <tr><td colspan="6" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Nature (5 sounds)</td></tr>
+        <tr><td>5</td><td><code>forest.m4a</code></td><td>Forest</td><td>Nature</td><td>"forest ambience birds" or "forest atmosphere"</td><td><span class="badge badge-free">Free</span></td></tr>
+        <tr><td>6</td><td><code>birds.m4a</code></td><td>Birds Singing</td><td>Nature</td><td>"birds singing morning" or "bird song"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>7</td><td><code>crickets.m4a</code></td><td>Crickets</td><td>Nature</td><td>"crickets night" or "cricket sounds"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>8</td><td><code>wind.m4a</code></td><td>Wind</td><td>Nature</td><td>"wind blowing ambient" or "wind howling"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>9</td><td><code>leaves.m4a</code></td><td>Rustling Leaves</td><td>Nature</td><td>"leaves rustling wind" or "autumn leaves"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+
+        <tr><td colspan="6" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Urban (3 sounds)</td></tr>
+        <tr><td>10</td><td><code>city_traffic.m4a</code></td><td>City Traffic</td><td>Urban</td><td>"city traffic ambient" or "urban background"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>11</td><td><code>cafe.m4a</code></td><td>Cafe Ambience</td><td>Urban</td><td>"coffee shop ambience" or "cafe background"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>12</td><td><code>train.m4a</code></td><td>Train Ride</td><td>Urban</td><td>"train ride ambient" or "train interior"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+
+        <tr><td colspan="6" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Machine (4 sounds)</td></tr>
+        <tr><td>13</td><td><code>fan.m4a</code></td><td>Fan</td><td>Machine</td><td>"fan white noise" or "electric fan"</td><td><span class="badge badge-free">Free</span></td></tr>
+        <tr><td>14</td><td><code>ac.m4a</code></td><td>Air Conditioner</td><td>Machine</td><td>"air conditioner hum" or "AC ambient"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>15</td><td><code>dryer.m4a</code></td><td>Clothes Dryer</td><td>Machine</td><td>"dryer running" or "clothes dryer"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>16</td><td><code>washing_machine.m4a</code></td><td>Washing Machine</td><td>Machine</td><td>"washing machine running" or "washer"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+
+        <tr><td colspan="6" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Fire (3 sounds)</td></tr>
+        <tr><td>17</td><td><code>campfire.m4a</code></td><td>Campfire</td><td>Fire</td><td>"campfire crackling" or "fire crackling"</td><td><span class="badge badge-free">Free</span></td></tr>
+        <tr><td>18</td><td><code>fireplace.m4a</code></td><td>Fireplace</td><td>Fire</td><td>"fireplace crackling" or "log fire"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>19</td><td><code>candle.m4a</code></td><td>Candle Flicker</td><td>Fire</td><td>"candle flame" or "soft fire ambience"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+
+        <tr><td colspan="6" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Water (4 sounds)</td></tr>
+        <tr><td>20</td><td><code>ocean_waves.m4a</code></td><td>Ocean Waves</td><td>Water</td><td>"ocean waves" or "sea waves crashing"</td><td><span class="badge badge-free">Free</span></td></tr>
+        <tr><td>21</td><td><code>river.m4a</code></td><td>River Stream</td><td>Water</td><td>"river stream flowing" or "creek water"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>22</td><td><code>waterfall.m4a</code></td><td>Waterfall</td><td>Water</td><td>"waterfall ambient" or "waterfall nature"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>23</td><td><code>underwater.m4a</code></td><td>Underwater</td><td>Water</td><td>"underwater ambient" or "underwater bubbles"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+
+        <tr><td colspan="6" style="background:var(--premium-light);color:var(--premium);font-weight:700;">Premium Exclusive (12 sounds)</td></tr>
+        <tr><td>24</td><td><code>singing_bowl.m4a</code></td><td>Tibetan Singing Bowl</td><td>Premium</td><td>"tibetan singing bowl" or "singing bowl meditation"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>25</td><td><code>wind_chimes.m4a</code></td><td>Wind Chimes</td><td>Premium</td><td>"wind chimes" or "bamboo chimes"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>26</td><td><code>underwater_bubbles.m4a</code></td><td>Underwater Bubbles</td><td>Premium</td><td>"underwater bubbles" or "bubble sounds"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>27</td><td><code>japanese_garden.m4a</code></td><td>Japanese Garden</td><td>Premium</td><td>"japanese garden water fountain zen"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>28</td><td><code>northern_lights.m4a</code></td><td>Northern Lights Ambience</td><td>Premium</td><td>"ambient drone" or "ethereal atmosphere"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>29</td><td><code>cabin_rain.m4a</code></td><td>Cabin in the Rain</td><td>Premium</td><td>"rain on cabin" or "rain on wood roof"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>30</td><td><code>midnight_forest.m4a</code></td><td>Midnight Forest</td><td>Premium</td><td>"night forest owls crickets" or "dark forest"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>31</td><td><code>desert_wind.m4a</code></td><td>Desert Wind</td><td>Premium</td><td>"desert wind" or "sand wind blowing"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>32</td><td><code>snow_falling.m4a</code></td><td>Snow Falling</td><td>Premium</td><td>"snow falling quiet" or "winter silence wind"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>33</td><td><code>coffee_shop.m4a</code></td><td>Coffee Shop</td><td>Premium</td><td>"coffee shop chatter" or "busy cafe"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>34</td><td><code>library.m4a</code></td><td>Library Ambience</td><td>Premium</td><td>"library ambient" or "quiet room pages"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+        <tr><td>35</td><td><code>vinyl_crackle.m4a</code></td><td>Vinyl Crackle</td><td>Premium</td><td>"vinyl crackle" or "record player noise"</td><td><span class="badge badge-premium">Premium</span></td></tr>
+      </tbody>
+    </table>
+
+    <h3>Where to Put the Files</h3>
+    <pre><code>White Noise - Sleep Sounds/
+  └── White Noise - Sleep Sounds/
+      └── Resources/
+          └── Sounds/
+              ├── light_rain.m4a
+              ├── heavy_rain.m4a
+              ├── rain_on_roof.m4a
+              ├── thunderstorm.m4a
+              ├── forest.m4a
+              ├── ... (all 31 .m4a files)
+              └── vinyl_crackle.m4a</code></pre>
+
+    <div class="callout callout-warning">
+      <div class="callout-title">Important: Add to Xcode Target</div>
+      <p>After placing files in the folder, you must add them to the Xcode project. Drag the <code>Sounds/</code> folder into the Xcode navigator → check <strong>"Copy items if needed"</strong> and <strong>"Add to target: White Noise - Sleep Sounds"</strong>. See the "Adding to Xcode" tab for full details.</p>
+    </div>
+
+    <h3>Recording Your Own (Free & Easy)</h3>
+    <p>Some sounds are trivially easy to record with your iPhone:</p>
+    <ul>
+      <li><strong>Fan</strong> — point iPhone at a running fan, Voice Memos app, 60 seconds</li>
+      <li><strong>Air Conditioner</strong> — same approach near an AC unit</li>
+      <li><strong>Clothes Dryer / Washing Machine</strong> — place phone on top, record</li>
+      <li><strong>Candle Flicker</strong> — very quiet, best to use a Pixabay source instead</li>
+    </ul>
+    <p>Transfer via AirDrop to your Mac, then process in Audacity as described above.</p>
+  </div>
+
+  <!-- ==================== AUDIO PROCESSING TAB ==================== -->
+  <div id="tab-audacity" class="tab-content">
+    <h2>Audio Processing — ffmpeg Workflow</h2>
+
+    <div class="callout callout-success">
+      <div class="callout-title">Setup: ffmpeg is installed locally</div>
+      <p>You have <code>ffmpeg</code> installed on your Mac via Homebrew. This is the only tool you need — one command per sound file, no GUI apps required.</p>
+    </div>
+
+    <h3>Your Workflow</h3>
+
+    <div class="card accent-border">
+      <h4>The Process (What We've Been Doing)</h4>
+      <ol>
+        <li><strong>Search Pixabay</strong> → find the right sound → download MP3</li>
+        <li><strong>Drop the MP3</strong> into <code>Raw assets/</code> folder in the project</li>
+        <li><strong>Claude processes it</strong> with ffmpeg → trimmed, faded, normalized, converted to .m4a</li>
+        <li><strong>Output lands in</strong> <code>Raw assets/processed/</code> → ready for Xcode</li>
+      </ol>
+    </div>
+
+    <hr class="divider">
+
+    <h3>How to Pick the Right Sound on Pixabay</h3>
+
+    <p>When you search <a href="https://pixabay.com/sound-effects/" target="_blank">Pixabay Sound Effects</a> and get 50+ results:</p>
+
+    <div class="card accent-border">
+      <h4>Selection Criteria</h4>
+      <ul>
+        <li><strong>Duration: 30 seconds to 3 minutes</strong> — you need at least 30s of clean audio. Longer gives more material to pick the best section from.</li>
+        <li><strong>Look for "loop" in the title</strong> — search <em>"light rain loop"</em> instead of just <em>"light rain"</em>. Pre-made loops need less editing.</li>
+        <li><strong>Listen before downloading</strong> — click play on Pixabay. You want even, consistent sound. No sudden volume changes, no voices, no music mixed in.</li>
+        <li><strong>Check the waveform</strong> — a flat, even waveform = a sound that loops well. Big spikes = problems.</li>
+        <li><strong>Avoid clips under 20 seconds</strong> — too short to loop cleanly.</li>
+      </ul>
+    </div>
+
+    <hr class="divider">
+
+    <h3>The ffmpeg Command (What Happens Behind the Scenes)</h3>
+
+    <p>For each sound, Claude runs a command like this:</p>
+
+    <pre><code>ffmpeg -y -ss 10 -i "Raw assets/calming-rain-loop.mp3" \
+  -t 45 \
+  -af "afade=t=in:d=3,afade=t=out:st=42:d=3,loudnorm=I=-14:TP=-2:LRA=11" \
+  -c:a aac -b:a 128k -ar 44100 -ac 2 \
+  "Raw assets/processed/light_rain.m4a"</code></pre>
+
+    <p>Here's what each part does:</p>
+
+    <table>
+      <thead><tr><th>Flag</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><code>-y</code></td><td>Overwrite output file if it exists</td></tr>
+        <tr><td><code>-ss 10</code></td><td>Start at 10 seconds in (skip intros/fade-ins). Placed BEFORE <code>-i</code> for reliable seeking</td></tr>
+        <tr><td><code>-i "file.mp3"</code></td><td>Input file (the raw Pixabay download)</td></tr>
+        <tr><td><code>-t 45</code></td><td>Take 45 seconds of audio (sweet spot: long enough to not feel repetitive, small file size)</td></tr>
+        <tr><td><code>afade=t=in:d=3</code></td><td>Fade in over 3 seconds (smooth loop start)</td></tr>
+        <tr><td><code>afade=t=out:st=42:d=3</code></td><td>Fade out starting at second 42, over 3 seconds (smooth loop end)</td></tr>
+        <tr><td><code>loudnorm=I=-14:TP=-2:LRA=11</code></td><td>Normalize volume to -14 LUFS — makes ALL sounds the same perceived volume</td></tr>
+        <tr><td><code>-c:a aac</code></td><td>Encode as AAC (the .m4a codec iOS uses natively)</td></tr>
+        <tr><td><code>-b:a 128k</code></td><td>128 kbps bitrate (good quality, small file)</td></tr>
+        <tr><td><code>-ar 44100</code></td><td>44.1 kHz sample rate (CD quality)</td></tr>
+        <tr><td><code>-ac 2</code></td><td>Stereo (2 channels)</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout-warning">
+      <div class="callout-title">Important: High Dynamic Range Sounds (Thunder, etc.)</div>
+      <p>For sounds with big volume swings (thunderstorms, fireworks), <code>loudnorm</code> can crush the audio to near-silence. In those cases, we skip <code>loudnorm</code> and use only fades. The <code>-ss</code> flag must go <strong>before</strong> <code>-i</code> (input seeking) — placing it after <code>-i</code> causes silent output when combined with audio filters on some files.</p>
+    </div>
+
+    <h3>Adjustments for Short Source Files</h3>
+
+    <p>Not every Pixabay clip is 3 minutes long. Here's how the command adapts:</p>
+
+    <table>
+      <thead><tr><th>Source Duration</th><th>What Changes</th><th>Example</th></tr></thead>
+      <tbody>
+        <tr><td><strong>2+ minutes</strong></td><td>Standard: <code>-ss 10 -t 45</code>, 3s fades</td><td>forest.m4a → 45s, ~700 KB</td></tr>
+        <tr><td><strong>1-2 minutes</strong></td><td>Earlier start: <code>-ss 5 -t 45</code></td><td>crickets.m4a → 45s, ~700 KB</td></tr>
+        <tr><td><strong>30-60 seconds</strong></td><td>Shorter clip, shorter fades: <code>-ss 2 -t 27</code>, 2s fades</td><td>wind.m4a → 27s, ~430 KB</td></tr>
+        <tr><td><strong>Under 30 seconds</strong></td><td>Take almost all of it: <code>-ss 2 -t 26</code>, 2s fades</td><td>heavy_rain.m4a → 26s, ~414 KB</td></tr>
+      </tbody>
+    </table>
+
+    <hr class="divider">
+
+    <h3>If You Want to Run It Yourself</h3>
+
+    <p>You can also run these commands directly in your Mac Terminal. Just <code>cd</code> into the project and run:</p>
+
+    <pre><code>cd "/Users/faisalali/workspace/ios apps/White Noise - Sleep Sounds"
+
+# Process a single file:
+ffmpeg -y -ss 10 -i "Raw assets/some-download.mp3" \
+  -t 45 \
+  -af "afade=t=in:d=3,afade=t=out:st=42:d=3,loudnorm=I=-14:TP=-2:LRA=11" \
+  -c:a aac -b:a 128k -ar 44100 -ac 2 \
+  "Raw assets/processed/output_name.m4a"
+
+# Check the result:
+ls -lh "Raw assets/processed/output_name.m4a"
+
+# Listen to it:
+afplay "Raw assets/processed/output_name.m4a"
+
+# Loop test (plays 3 times back-to-back):
+for i in 1 2 3; do afplay "Raw assets/processed/output_name.m4a"; done</code></pre>
+
+    <hr class="divider">
+
+    <h3>Completed Sounds So Far</h3>
+
+    <table>
+      <thead><tr><th>File</th><th>Duration</th><th>Size</th><th>Source</th></tr></thead>
+      <tbody>
+        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Rain (4/4 done)</td></tr>
+        <tr><td><code>light_rain.m4a</code></td><td>45s</td><td>560 KB</td><td>DRAGON-STUDIO — Calming Rain Loop</td></tr>
+        <tr><td><code>heavy_rain.m4a</code></td><td>26s</td><td>414 KB</td><td>juliush — Heavy Rain Nature Sounds</td></tr>
+        <tr><td><code>rain_on_roof.m4a</code></td><td>45s</td><td>744 KB</td><td>nils_vega — Rain</td></tr>
+        <tr><td><code>thunderstorm.m4a</code></td><td>50s</td><td>796 KB</td><td>calystheranylen — Rain with Thunderstorm (no loudnorm)</td></tr>
+        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Nature (5/5 done)</td></tr>
+        <tr><td><code>forest.m4a</code></td><td>45s</td><td>719 KB</td><td>audiopapkin — Forest Ambience</td></tr>
+        <tr><td><code>birds.m4a</code></td><td>45s</td><td>715 KB</td><td>freesound_community — Birds in the Morning</td></tr>
+        <tr><td><code>crickets.m4a</code></td><td>45s</td><td>714 KB</td><td>freesound_community — Night Cricket Ambience</td></tr>
+        <tr><td><code>wind.m4a</code></td><td>27s</td><td>432 KB</td><td>DRAGON-STUDIO — Wind Sounds</td></tr>
+        <tr><td><code>leaves.m4a</code></td><td>32s</td><td>510 KB</td><td>freesound_community — Leaves Rustling in Wind</td></tr>
+        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Urban (3/3 done)</td></tr>
+        <tr><td><code>city_traffic.m4a</code></td><td>45s</td><td>718 KB</td><td>imgmidi — City Sounds Traffic</td></tr>
+        <tr><td><code>cafe.m4a</code></td><td>45s</td><td>716 KB</td><td>freesound_community — Ambience Coffee Shop</td></tr>
+        <tr><td><code>train.m4a</code></td><td>24s</td><td>382 KB</td><td>freesound_community — Train Station Ambient</td></tr>
+        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Machine (4/4 done)</td></tr>
+        <tr><td><code>fan.m4a</code></td><td>18s</td><td>288 KB</td><td>freesound_community — Desk Fan (mono)</td></tr>
+        <tr><td><code>ac.m4a</code></td><td>45s</td><td>716 KB</td><td>bretbernhoft — Air Conditioner (mono)</td></tr>
+        <tr><td><code>dryer.m4a</code></td><td>16s</td><td>256 KB</td><td>derrickmckinnon — Dryer Running (mono)</td></tr>
+        <tr><td><code>washing_machine.m4a</code></td><td>16s</td><td>256 KB</td><td>freesound_community — Washing Machine (mono)</td></tr>
+      </tbody>
+    </table>
+
+    <hr class="divider">
+
+    <!-- ===== FILE SIZE REFERENCE ===== -->
+    <h2>File Size Reference</h2>
+
+    <div class="card accent-border">
+      <h4>Target sizes per file:</h4>
+      <table>
+        <thead><tr><th>Duration</th><th>Expected .m4a Size (128kbps)</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>30 seconds</td><td>~250-350 KB</td><td><span class="badge badge-free">Good</span></td></tr>
+          <tr><td>45 seconds</td><td>~400-500 KB</td><td><span class="badge badge-free">Ideal</span></td></tr>
+          <tr><td>60 seconds</td><td>~500-700 KB</td><td><span class="badge badge-free">Good</span></td></tr>
+          <tr><td>90+ seconds</td><td>~900+ KB</td><td><span class="badge badge-manual">Too large</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p><strong>Quick math:</strong> 128 kbps AAC ≈ <strong>16 KB per second</strong>. A 45-second file = ~720 KB theoretical, ~400-500 KB actual (AAC compresses efficiently).</p>
+
+    <p><strong>If a file is too large:</strong></p>
+    <ul>
+      <li>Trim shorter (45 seconds is the sweet spot)</li>
+      <li>Drop to 96 kbps: change <code>-b:a 128k</code> to <code>-b:a 96k</code> (still sounds good for ambient)</li>
+      <li>Go mono for machine sounds (fan, AC, dryer): add <code>-ac 1</code> to the ffmpeg command</li>
+    </ul>
+
+    <p><strong>Total budget:</strong> 31 files × ~450 KB = <strong>~14 MB</strong>. Well under the 200 MB App Store limit.</p>
+
+    <hr class="divider">
+
+    <h3>Troubleshooting</h3>
+
+    <div class="card warning-border">
+      <h4>"command not found: ffmpeg"</h4>
+      <p>ffmpeg isn't installed. Run: <code>brew install ffmpeg</code>. If <code>brew</code> isn't found either, install Homebrew first: <code>/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"</code></p>
+    </div>
+
+    <div class="card warning-border">
+      <h4>"Click" or "pop" at the loop point</h4>
+      <p>The fade duration is too short. Increase from 3 to 5 seconds in your ffmpeg command: <code>afade=t=in:d=5,afade=t=out:st=40:d=5</code> (and adjust <code>-t</code> accordingly).</p>
+    </div>
+
+    <div class="card warning-border">
+      <h4>File is too large (over 700 KB)</h4>
+      <p>Trim shorter (45 seconds is the sweet spot), or drop bitrate to 96k: <code>-b:a 96k</code></p>
+    </div>
+
+    <div class="card warning-border">
+      <h4>Output file is silent or tiny (under 30 KB)</h4>
+      <p>This happens with high dynamic range audio (thunderstorms, etc.) when <code>loudnorm</code> is used. Remove <code>loudnorm</code> from the filter chain and rely on just <code>afade</code>. Also make sure <code>-ss</code> is placed <strong>before</strong> <code>-i</code> (input seeking), not after.</p>
+    </div>
+
+  </div>
+
+  <!-- ==================== BACKGROUNDS TAB ==================== -->
+  <div id="tab-backgrounds" class="tab-content">
+    <h2>Background Images — 35 Images Needed</h2>
+
+    <div class="callout callout-insight">
+      <div class="callout-title">Use ONE AI Model for ALL Backgrounds</div>
+      <p>Generate all 35 backgrounds in <strong>one or two sessions using the same AI model</strong> (ChatGPT with DALL-E or Google Gemini). This guarantees a unified art style. Do NOT mix AI models or stock photos — that breaks the visual cohesion.</p>
+    </div>
+
+    <h3>Step-by-Step: Generating All Backgrounds</h3>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <p><strong>Open <a href="https://chatgpt.com" target="_blank">ChatGPT</a> (free tier works)</strong></p>
+        <p>ChatGPT's DALL-E generates images for free (with daily limits). If you hit the limit, switch to <a href="https://aistudio.google.com" target="_blank">Google AI Studio</a> (Gemini image gen, also free).</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <p><strong>Use this master prompt template for EVERY image:</strong></p>
+        <pre><code>Generate a landscape image (16:9 aspect ratio) for a sleep/relaxation app background.
+
+Subject: [SUBJECT FROM TABLE BELOW]
+
+Style requirements:
+- Cinematic, moody, dark atmosphere
+- Slightly desaturated colors
+- Subtle film grain texture
+- Dark enough that white text would be readable over it
+- Rich shadows, low-key lighting
+- No people, no text, no UI elements
+- Photorealistic quality
+- Color palette leaning toward [THEME COLOR]
+
+The image should feel peaceful, immersive, and premium — like a scene from a high-end meditation app.</code></pre>
+        <p>Replace <code>[SUBJECT]</code> and <code>[THEME COLOR]</code> for each sound from the table below.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <p><strong>Download and resize to 2796×1290px</strong></p>
+        <p>ChatGPT outputs 1792×1024 or 1024×1024. You need to upscale to <strong>2796×1290px</strong> (iPhone 15 Pro Max landscape). Use one of these free tools:</p>
+        <ul>
+          <li><a href="https://www.iloveimg.com/resize-image" target="_blank">iLoveImg.com</a> — batch resize, free, browser-based</li>
+          <li><strong>macOS Preview</strong> — open image → Tools → Adjust Size → set to 2796×1290</li>
+          <li><strong>Batch with sips (Terminal):</strong> <code>sips -z 1290 2796 *.jpg</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <p><strong>Add a dark vignette overlay</strong></p>
+        <p>Your PRD requires a dark overlay so white text is always readable. The quickest free method:</p>
+        <ul>
+          <li><strong>macOS Preview:</strong> Not great for this. Use Figma instead.</li>
+          <li><strong><a href="https://www.figma.com" target="_blank">Figma</a> (free):</strong> Place image on canvas → add a rectangle on top → fill with linear gradient from <code>rgba(0,0,0,0.6)</code> at bottom to <code>rgba(0,0,0,0.1)</code> at top → flatten/export as JPEG 80%.</li>
+          <li><strong>Or skip this step</strong> — your SwiftUI code can apply the overlay programmatically with <code>.overlay(LinearGradient(...))</code>, which is actually better because it adapts to screen size.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-content">
+        <p><strong>Export as JPEG at 80% quality, name exactly as shown below</strong></p>
+        <p>~200KB per image. Use the <strong>exact file names</strong> from the table — these match the <code>backgroundImage</code> field in <code>SoundLibrary.swift</code>.</p>
+      </div>
+    </div>
+
+    <h3>Complete Background Image List</h3>
+    <p>Asset catalog name must match what's in <code>SoundLibrary.swift</code>:</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Asset Catalog Name</th>
+          <th>AI Prompt Subject</th>
+          <th>Theme Color</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Noise</td></tr>
+        <tr><td>1</td><td><code>bg_white_noise</code></td><td>Abstract flowing gradient with soft gray and silver waves, ethereal mist</td><td>Cool gray #2C2C3A</td></tr>
+        <tr><td>2</td><td><code>bg_pink_noise</code></td><td>Abstract flowing gradient with soft pink and magenta waves, silk-like</td><td>Pink #3A2040</td></tr>
+        <tr><td>3</td><td><code>bg_brown_noise</code></td><td>Warm brown abstract texture with wood grain feel, organic patterns</td><td>Warm brown #2E1F14</td></tr>
+        <tr><td>4</td><td><code>bg_blue_noise</code></td><td>Cool blue digital static pattern, abstract crystalline structure</td><td>Deep blue #142040</td></tr>
+
+        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Rain</td></tr>
+        <tr><td>5</td><td><code>bg_light_rain</code></td><td>Foggy forest with gentle drizzle, soft diffused light through trees</td><td>Forest green #1E2A1E</td></tr>
+        <tr><td>6</td><td><code>bg_heavy_rain</code></td><td>Dark window with heavy rain streaks, blurred city lights in background</td><td>Dark blue #1A2030</td></tr>
+        <tr><td>7</td><td><code>bg_rain_on_roof</code></td><td>View from inside a tent or cabin looking out at rain, warm lantern light</td><td>Warm amber #2A2015</td></tr>
+        <tr><td>8</td><td><code>bg_thunderstorm</code></td><td>Dramatic dark sky with distant lightning, rolling storm clouds</td><td>Storm blue #15182A</td></tr>
+
+        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Nature</td></tr>
+        <tr><td>9</td><td><code>bg_forest</code></td><td>Deep green forest with tall trees, filtered sunlight through canopy</td><td>Deep green #0A1A0A</td></tr>
+        <tr><td>10</td><td><code>bg_birds</code></td><td>Sunrise through trees, warm golden light, morning mist</td><td>Golden #2A2510</td></tr>
+        <tr><td>11</td><td><code>bg_crickets</code></td><td>Night meadow under moonlight with fireflies, tall grass</td><td>Night green #101A15</td></tr>
+        <tr><td>12</td><td><code>bg_wind</code></td><td>Open plains hilltop with dramatic sky, tall grass blowing in wind</td><td>Cool green #1A2020</td></tr>
+        <tr><td>13</td><td><code>bg_leaves</code></td><td>Close-up of autumn leaves on forest floor, warm dappled light</td><td>Autumn #2A1E10</td></tr>
+
+        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Urban</td></tr>
+        <tr><td>14</td><td><code>bg_city_traffic</code></td><td>Urban night street, neon reflections on wet pavement, car tail lights</td><td>Neon purple #1A1025</td></tr>
+        <tr><td>15</td><td><code>bg_cafe</code></td><td>Warm coffee shop interior, bokeh lights, cozy atmosphere, wooden tables</td><td>Warm brown #251A10</td></tr>
+        <tr><td>16</td><td><code>bg_train</code></td><td>Night train window view, passing city lights, rain on glass</td><td>Night blue #15152A</td></tr>
+
+        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Machine</td></tr>
+        <tr><td>17</td><td><code>bg_fan</code></td><td>Clean modern bedroom at night, soft blue-white moonlight, minimal</td><td>Cool white #1A1E2A</td></tr>
+        <tr><td>18</td><td><code>bg_ac</code></td><td>Modern minimalist room, cool blue tones, soft ambient light</td><td>Cool blue #1A1E2A</td></tr>
+        <tr><td>19</td><td><code>bg_dryer</code></td><td>Cozy laundry room, warm overhead light, soft towels visible</td><td>Warm #25201A</td></tr>
+        <tr><td>20</td><td><code>bg_washing_machine</code></td><td>Clean laundry room with soft warm lighting, water droplets</td><td>Clean #202025</td></tr>
+
+        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Fire</td></tr>
+        <tr><td>21</td><td><code>bg_campfire</code></td><td>Close-up campfire with glowing embers and sparks, dark forest behind</td><td>Orange #2E1A0A</td></tr>
+        <tr><td>22</td><td><code>bg_fireplace</code></td><td>Stone fireplace in cozy interior, warm amber light, wood mantle</td><td>Warm amber #2A1A0E</td></tr>
+        <tr><td>23</td><td><code>bg_candle</code></td><td>Single candle flame in dark room, soft warm glow, bokeh</td><td>Warm gold #2A1E0A</td></tr>
+
+        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Water</td></tr>
+        <tr><td>24</td><td><code>bg_ocean_waves</code></td><td>Beach at dusk, deep blue tones, white foam on dark sand</td><td>Ocean blue #0D1A2E</td></tr>
+        <tr><td>25</td><td><code>bg_river</code></td><td>Forest stream over mossy rocks, dappled sunlight through trees</td><td>Forest #152515</td></tr>
+        <tr><td>26</td><td><code>bg_waterfall</code></td><td>Tall waterfall in tropical setting, mist, lush green surroundings</td><td>Teal #1A2A2A</td></tr>
+        <tr><td>27</td><td><code>bg_underwater</code></td><td>Deep blue underwater scene, light rays filtering from surface above</td><td>Deep blue #0A1530</td></tr>
+
+        <tr><td colspan="4" style="background:var(--premium-light);color:var(--premium);font-weight:700;">Premium</td></tr>
+        <tr><td>28</td><td><code>bg_singing_bowl</code></td><td>Tibetan temple interior with candlelight, singing bowls on altar</td><td>Amber #1A1520</td></tr>
+        <tr><td>29</td><td><code>bg_wind_chimes</code></td><td>Bamboo wind chimes on a porch with sunset garden in background</td><td>Sunset #2A2510</td></tr>
+        <tr><td>30</td><td><code>bg_underwater_bubbles</code></td><td>Underwater scene with rising bubbles, deep ocean blue, light from above</td><td>Ocean #0A1535</td></tr>
+        <tr><td>31</td><td><code>bg_japanese_garden</code></td><td>Japanese zen garden at twilight, stone lantern, bamboo, still water</td><td>Green #152015</td></tr>
+        <tr><td>32</td><td><code>bg_northern_lights</code></td><td>Aurora borealis over snowy mountains, green and purple sky, starry</td><td>Aurora green #0A2020</td></tr>
+        <tr><td>33</td><td><code>bg_cabin_rain</code></td><td>Cozy cabin interior looking out window at heavy rain, warm firelight</td><td>Warm #251A10</td></tr>
+        <tr><td>34</td><td><code>bg_midnight_forest</code></td><td>Dense dark forest at midnight, blue moonlight filtering through</td><td>Night blue #0A0A1A</td></tr>
+        <tr><td>35</td><td><code>bg_desert_wind</code></td><td>Desert dunes at dusk, warm orange tones, wind ripples in sand</td><td>Desert #2A1A0A</td></tr>
+        <tr><td>36</td><td><code>bg_snow_falling</code></td><td>Snow falling gently in a quiet forest, soft white and blue tones</td><td>Winter #1A1E2A</td></tr>
+        <tr><td>37</td><td><code>bg_coffee_shop</code></td><td>Warm bustling coffee shop, bokeh lights, steaming cups, wooden decor</td><td>Coffee #251A10</td></tr>
+        <tr><td>38</td><td><code>bg_library</code></td><td>Grand old library interior, warm lamp light, tall bookshelves, leather</td><td>Warm brown #201510</td></tr>
+        <tr><td>39</td><td><code>bg_vinyl_crackle</code></td><td>Vintage record player in dim room, vinyl spinning, warm golden light</td><td>Vintage #251810</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Where to Put the Files</h3>
+    <p>Background images go into the <strong>Asset Catalog</strong> in Xcode:</p>
+    <pre><code>White Noise - Sleep Sounds/
+  └── White Noise - Sleep Sounds/
+      └── Assets.xcassets/
+          └── Backgrounds/
+              ├── bg_white_noise.imageset/
+              │   ├── bg_white_noise.jpg
+              │   └── Contents.json
+              ├── bg_pink_noise.imageset/
+              │   ├── bg_pink_noise.jpg
+              │   └── Contents.json
+              └── ... (35 total imagesets)</code></pre>
+    <p>See the "Adding to Xcode" tab for the easy drag-and-drop method.</p>
+  </div>
+
+  <!-- ==================== THUMBNAILS TAB ==================== -->
+  <div id="tab-thumbnails" class="tab-content">
+    <h2>Thumbnails (35) & Scene Cards (8)</h2>
+
+    <h3>Thumbnails — Crop from Backgrounds</h3>
+
+    <div class="callout callout-success">
+      <div class="callout-title">These are free — they come from your backgrounds</div>
+      <p>Don't generate thumbnails separately. Crop the center of each background image to a 120×120px square. This keeps the visual language 100% consistent.</p>
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <p><strong>Batch crop with a Terminal command (after you have all backgrounds):</strong></p>
+        <pre><code># In Terminal, cd to the folder with your background JPEGs:
+mkdir thumbnails
+for f in bg_*.jpg; do
+  name=$(basename "$f" .jpg)
+  # Crop center 120x120 from the image
+  sips -c 1290 1290 "$f" --out "temp_$f"
+  sips -z 120 120 "temp_$f" --out "thumbnails/thumb_${name#bg_}.png"
+  rm "temp_$f"
+done</code></pre>
+        <p>This crops each background to a center square, then resizes to 120×120 PNG.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <p><strong>Or use Preview (manual):</strong> Open image → Tools → Adjust Size → make it square → resize to 120×120 → Export as PNG.</p>
+      </div>
+    </div>
+
+    <h3>Thumbnail Naming Convention</h3>
+    <p>Your code references thumbnails via the same image name. If your <code>SoundCardView</code> uses a separate thumbnail field, name them like:</p>
+    <pre><code>thumb_white_noise.png
+thumb_pink_noise.png
+thumb_brown_noise.png
+... (35 total)</code></pre>
+
+    <hr class="divider">
+
+    <h3>Scene Cards — 8 Wide Images</h3>
+
+    <p>These are for the Scenes/Categories view. Each category needs a <strong>1200×600px landscape card</strong>.</p>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <p><strong>Generate in the same ChatGPT/Gemini session as your backgrounds</strong></p>
+        <p>Use this prompt template:</p>
+        <pre><code>Generate a wide landscape image (2:1 ratio) for a sleep app category card.
+
+Subject: [CATEGORY THEME]
+
+Style: Same cinematic, moody, dark atmosphere as before.
+This is a category banner — it should feel like a wide establishing shot.
+Leave the right side slightly darker/emptier for text overlay.
+No text, no people, no UI.</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <p><strong>The 8 scene cards to generate:</strong></p>
+        <table>
+          <thead><tr><th>#</th><th>Category</th><th>File Name</th><th>AI Prompt Subject</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Noise</td><td><code>scene_noise.jpg</code></td><td>Abstract colorful waveforms and gradients, digital art, spectrum</td></tr>
+            <tr><td>2</td><td>Rain</td><td><code>scene_rain.jpg</code></td><td>Rain falling on a dark lake at night, ripples, moody atmosphere</td></tr>
+            <tr><td>3</td><td>Nature</td><td><code>scene_nature.jpg</code></td><td>Misty forest at dawn, wide panoramic, ethereal light</td></tr>
+            <tr><td>4</td><td>Urban</td><td><code>scene_urban.jpg</code></td><td>Rainy city street at night from above, neon reflections, cinematic</td></tr>
+            <tr><td>5</td><td>Machine</td><td><code>scene_machine.jpg</code></td><td>Minimalist modern bedroom at night, clean lines, soft blue light</td></tr>
+            <tr><td>6</td><td>Fire</td><td><code>scene_fire.jpg</code></td><td>Campfire embers floating up into starry night sky, wide shot</td></tr>
+            <tr><td>7</td><td>Water</td><td><code>scene_water.jpg</code></td><td>Calm ocean horizon at twilight, deep blues and purples, wide</td></tr>
+            <tr><td>8</td><td>Premium</td><td><code>scene_premium.jpg</code></td><td>Cosmic aurora over mountains, ethereal, premium feel, gold accents</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <p><strong>Resize to 1200×600px</strong> and export as JPEG 80%.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== ICONS TAB ==================== -->
+  <div id="tab-icons" class="tab-content">
+    <h2>App Icons — 4 Variants</h2>
+
+    <div class="callout callout-warning">
+      <div class="callout-title">App icons need to be pixel-perfect</div>
+      <p>App Store icons are the first thing users see. AI can generate the concept, but you'll want to refine in Figma or Canva for clean edges, proper padding, and Apple's icon guidelines (no transparency, no alpha channel).</p>
+    </div>
+
+    <h3>Step-by-Step</h3>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <p><strong>Generate icon concepts in ChatGPT:</strong></p>
+        <pre><code>Generate an iOS app icon (square, no rounded corners — iOS adds those automatically).
+
+Design: [VARIANT DESCRIPTION]
+
+Requirements:
+- 1024x1024px
+- Bold, simple, recognizable at 60x60px
+- No text
+- Dark background
+- Clean, modern, minimal
+- Gradient or subtle glow allowed
+- Should convey "sleep", "relaxation", "sound"</code></pre>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <p><strong>The 4 variants:</strong></p>
+        <table>
+          <thead><tr><th>Variant</th><th>File Name</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td>Default</td><td><code>AppIcon-Default.png</code></td><td>Moon crescent + sound waveform, dark purple-to-blue gradient background</td></tr>
+            <tr><td>Minimal</td><td><code>AppIcon-Minimal.png</code></td><td>Single white sound waveform on pure black background</td></tr>
+            <tr><td>Nature</td><td><code>AppIcon-Nature.png</code></td><td>Leaf + water ripple icon on dark green gradient</td></tr>
+            <tr><td>Ocean</td><td><code>AppIcon-Ocean.png</code></td><td>Stylized wave icon on deep blue gradient</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <p><strong>Polish in Figma (free):</strong></p>
+        <ol>
+          <li>Import the AI-generated icon into <a href="https://www.figma.com" target="_blank">Figma</a></li>
+          <li>Create a 1024×1024 frame</li>
+          <li>Place the AI image, adjust/crop</li>
+          <li>Optionally recreate the icon elements as vectors for maximum sharpness</li>
+          <li>Export as PNG, 1024×1024, no transparency</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <p><strong>Alternative: <a href="https://www.canva.com" target="_blank">Canva</a> (free tier)</strong></p>
+        <p>Search "app icon" templates, customize colors to match your app's cyan/dark theme. Export at 1024×1024 PNG.</p>
+      </div>
+    </div>
+
+    <h3>Adding to Xcode</h3>
+    <pre><code>Assets.xcassets/
+  └── AppIcon.appiconset/
+      ├── AppIcon-Default.png    (1024×1024)
+      └── Contents.json          (Xcode generates all sizes from the 1024px)</code></pre>
+    <p>For alternate icons, add each as a separate image set and register in your app's <code>Info.plist</code> under <code>CFBundleAlternateIcons</code>.</p>
+  </div>
+
+  <!-- ==================== SCREENSHOTS TAB ==================== -->
+  <div id="tab-screenshots" class="tab-content">
+    <h2>App Store Screenshots — 6 Required</h2>
+
+    <div class="callout callout-insight">
+      <div class="callout-title">Do this LAST — after all other assets are in the app</div>
+      <p>Screenshots should show your app with real content. Wait until sounds and images are loaded, then capture from the Xcode Simulator.</p>
+    </div>
+
+    <h3>Step-by-Step</h3>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <p><strong>Run the app in Xcode Simulator → iPhone 15 Pro Max</strong></p>
+        <p>This gives you the correct 1290×2796 resolution.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <p><strong>Take screenshots with ⌘+S in Simulator</strong></p>
+        <p>Navigate to each screen and capture. The 6 screenshots to capture:</p>
+        <table>
+          <thead><tr><th>#</th><th>Screen</th><th>Marketing Caption</th></tr></thead>
+          <tbody>
+            <tr><td>1</td><td>Now Playing (full-screen, rain theme playing)</td><td>"Fall asleep to beautiful sounds"</td></tr>
+            <tr><td>2</td><td>Sounds list showing all categories</td><td>"40+ free sounds — rain, nature, noise & more"</td></tr>
+            <tr><td>3</td><td>Mix editor with 3 sounds mixed</td><td>"Create your perfect sound mix"</td></tr>
+            <tr><td>4</td><td>Sleep timer + sleep clock view</td><td>"Set it and forget it — sleep timer & clock"</td></tr>
+            <tr><td>5</td><td>Home screen with widget visible</td><td>"One tap to relax — home screen widgets"</td></tr>
+            <tr><td>6</td><td>Settings/Premium showing $3.99</td><td>"No subscriptions — just $3.99 for everything"</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <p><strong>Add marketing text frames in Figma or Canva</strong></p>
+        <p>The standard App Store screenshot format:</p>
+        <ul>
+          <li>Device frame (optional but professional) — search "iPhone mockup" in Figma Community</li>
+          <li>Large marketing headline text above/below the screenshot</li>
+          <li>Background color matching your app theme (#0C0E12 or gradient)</li>
+          <li>Final size: <strong>1290×2796px</strong></li>
+        </ul>
+        <p><strong>Free Figma templates:</strong> search "App Store Screenshots" in <a href="https://www.figma.com/community" target="_blank">Figma Community</a> — there are dozens of free templates.</p>
+      </div>
+    </div>
+
+    <h3>Additional Sizes Needed</h3>
+    <table>
+      <thead><tr><th>Device</th><th>Size</th><th>How</th></tr></thead>
+      <tbody>
+        <tr><td>iPhone 6.7" (required)</td><td>1290×2796px</td><td>Primary — capture from iPhone 15 Pro Max sim</td></tr>
+        <tr><td>iPhone 6.1" (required if different)</td><td>1170×2532px</td><td>Scale down from 6.7" in Preview/Figma</td></tr>
+        <tr><td>iPad 12.9" (if supporting iPad)</td><td>2048×2732px</td><td>Capture from iPad Pro sim</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ==================== XCODE TAB ==================== -->
+  <div id="tab-xcode" class="tab-content">
+    <h2>Adding Assets to Xcode — Exact Steps</h2>
+
+    <h3>Sound Files (.m4a) <span class="badge badge-free" style="font-size:0.7em;vertical-align:middle;">16/35 DONE</span></h3>
+
+    <div class="callout callout-success">
+      <div class="callout-title">Current Status</div>
+      <p>16 sounds are processed and copied to the Xcode project. The <code>Sounds/</code> folder exists and Xcode auto-syncs it via <code>PBXFileSystemSynchronizedRootGroup</code> — no manual drag-and-drop needed.</p>
+    </div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <p><strong>The "Sounds" folder lives at:</strong></p>
+        <pre><code>White Noise - Sleep Sounds/White Noise - Sleep Sounds/Sounds/</code></pre>
+        <p>This folder already exists with 16 .m4a files. To add more, just copy new processed files here.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <p><strong>Copy processed files from Raw assets:</strong></p>
+        <pre><code># After processing new sounds, copy them to the Xcode project:
+cp "Raw assets/processed/NEW_FILE.m4a" "White Noise - Sleep Sounds/Sounds/"
+
+# Or copy all at once:
+cp "Raw assets/processed/"*.m4a "White Noise - Sleep Sounds/Sounds/"</code></pre>
+        <p>Xcode auto-syncs — files appear in the project navigator automatically.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <p><strong>Verify:</strong> Build the project (⌘+B). The AudioEngine loads sounds with:</p>
+        <pre><code>Bundle.main.url(forResource: "light_rain", withExtension: "m4a", subdirectory: "Sounds")</code></pre>
+        <p>File name (without extension) must match <code>fileName</code> in SoundLibrary.swift.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <h3>Background Images (Asset Catalog)</h3>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <p><strong>Open Assets.xcassets in Xcode</strong></p>
+        <p>Click on <code>Assets.xcassets</code> in the Xcode navigator.</p>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-content">
+        <p><strong>Create a "Backgrounds" folder group:</strong></p>
+        <ol>
+          <li>Right-click in the asset catalog sidebar → <strong>New Folder</strong></li>
+          <li>Name it <code>Backgrounds</code></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-content">
+        <p><strong>Drag all background JPEGs into the Backgrounds folder:</strong></p>
+        <ol>
+          <li>Select all your <code>bg_*.jpg</code> files in Finder</li>
+          <li>Drag them into the Backgrounds folder in the asset catalog</li>
+          <li>Xcode automatically creates an <code>.imageset</code> for each with the file name (minus extension) as the asset name</li>
+          <li>Each image lands in the <strong>"1x"</strong> slot — this is fine since we're using the full resolution</li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-content">
+        <p><strong>Verify the names match SoundLibrary.swift:</strong></p>
+        <p>The asset catalog name must exactly match the <code>backgroundImage</code> string in your Sound model. For example, if you drag in <code>bg_light_rain.jpg</code>, the asset catalog name will be <code>bg_light_rain</code> — which matches <code>Sound(... backgroundImage: "bg_light_rain" ...)</code>.</p>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <h3>Thumbnails (Asset Catalog)</h3>
+    <p>Same process as backgrounds — create a <code>Thumbnails</code> folder in the asset catalog and drag in all <code>thumb_*.png</code> files. If your code uses the background image name for thumbnails too (just scaled down in SwiftUI), you may not need separate thumbnail assets at all.</p>
+
+    <hr class="divider">
+
+    <h3>App Icon</h3>
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-content">
+        <p><strong>Open <code>Assets.xcassets</code> → click <code>AppIcon</code></strong></p>
+        <p>Drag your 1024×1024 PNG into the <strong>"All Sizes (1024pt)"</strong> slot. Xcode auto-generates every size from this single image.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== CHECKLIST TAB ==================== -->
+  <div id="tab-checklist" class="tab-content">
+    <h2>Master Checklist</h2>
+    <p>Print this or keep it open. Check off each item as you complete it.</p>
+
+    <h3>Phase 1: Sound Files (16/35 done — 4 categories complete)</h3>
+
+    <p style="color:var(--accent);margin-bottom:12px;"><strong>Rain (4/4)</strong> — all done and in Xcode</p>
+    <ul class="checklist">
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>light_rain.m4a</code> — Light Rain (45s, 560 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>heavy_rain.m4a</code> — Heavy Rain (26s, 414 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>rain_on_roof.m4a</code> — Rain on Roof (45s, 744 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>thunderstorm.m4a</code> — Thunderstorm (50s, 796 KB)</li>
+    </ul>
+
+    <p style="color:var(--accent);margin-bottom:12px;"><strong>Nature (5/5)</strong> — all done and in Xcode</p>
+    <ul class="checklist">
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>forest.m4a</code> — Forest (45s, 719 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>birds.m4a</code> — Birds Singing (45s, 715 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>crickets.m4a</code> — Crickets (45s, 714 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>wind.m4a</code> — Wind (27s, 432 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>leaves.m4a</code> — Rustling Leaves (32s, 510 KB)</li>
+    </ul>
+
+    <p style="color:var(--accent);margin-bottom:12px;"><strong>Urban (3/3)</strong> — all done and in Xcode</p>
+    <ul class="checklist">
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>city_traffic.m4a</code> — City Traffic (45s, 718 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>cafe.m4a</code> — Cafe Ambience (45s, 716 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>train.m4a</code> — Train Ride (24s, 382 KB)</li>
+    </ul>
+
+    <p style="color:var(--accent);margin-bottom:12px;"><strong>Machine (4/4)</strong> — all done and in Xcode</p>
+    <ul class="checklist">
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>fan.m4a</code> — Fan (18s, 288 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>ac.m4a</code> — Air Conditioner (45s, 716 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>dryer.m4a</code> — Clothes Dryer (16s, 256 KB)</li>
+      <li style="color:var(--success);text-decoration:line-through;">&#x2705; <code>washing_machine.m4a</code> — Washing Machine (16s, 256 KB)</li>
+    </ul>
+
+    <p style="color:var(--warning);margin-bottom:12px;"><strong>Fire (0/3)</strong> — next up</p>
+    <ul class="checklist">
+      <li><code>campfire.m4a</code> — Campfire</li>
+      <li><code>fireplace.m4a</code> — Fireplace</li>
+      <li><code>candle.m4a</code> — Candle Flicker</li>
+    </ul>
+
+    <p style="color:var(--warning);margin-bottom:12px;"><strong>Water (0/4)</strong></p>
+    <ul class="checklist">
+      <li><code>ocean_waves.m4a</code> — Ocean Waves</li>
+      <li><code>river.m4a</code> — River Stream</li>
+      <li><code>waterfall.m4a</code> — Waterfall</li>
+      <li><code>underwater.m4a</code> — Underwater</li>
+    </ul>
+
+    <p style="color:var(--warning);margin-bottom:12px;"><strong>Premium (0/12)</strong></p>
+    <ul class="checklist">
+      <li><code>singing_bowl.m4a</code> — Tibetan Singing Bowl</li>
+      <li><code>wind_chimes.m4a</code> — Wind Chimes</li>
+      <li><code>underwater_bubbles.m4a</code> — Underwater Bubbles</li>
+      <li><code>japanese_garden.m4a</code> — Japanese Garden</li>
+      <li><code>northern_lights.m4a</code> — Northern Lights</li>
+      <li><code>cabin_rain.m4a</code> — Cabin in the Rain</li>
+      <li><code>midnight_forest.m4a</code> — Midnight Forest</li>
+      <li><code>desert_wind.m4a</code> — Desert Wind</li>
+      <li><code>snow_falling.m4a</code> — Snow Falling</li>
+      <li><code>coffee_shop.m4a</code> — Coffee Shop</li>
+      <li><code>library.m4a</code> — Library Ambience</li>
+      <li><code>vinyl_crackle.m4a</code> — Vinyl Crackle</li>
+    </ul>
+
+    <div class="callout callout-insight">
+      <div class="callout-title">Next Session: Pick Up Here</div>
+      <p><strong>Step 1:</strong> Search Pixabay for the Fire sounds (campfire crackling, fireplace, candle flicker).<br>
+      <strong>Step 2:</strong> Download the MP3s into <code>Raw assets/</code>.<br>
+      <strong>Step 3:</strong> Ask Claude to process them — same workflow as before.<br>
+      <strong>Step 4:</strong> Copy processed files to <code>White Noise - Sleep Sounds/Sounds/</code>.<br>
+      Then repeat for Water (4) and Premium (12). After all sounds are done, move to background images.</p>
+    </div>
+
+    <h3>Phase 2: Background Images (35 images)</h3>
+    <ul class="checklist">
+      <li><code>bg_white_noise</code> — Abstract gray waves</li>
+      <li><code>bg_pink_noise</code> — Pink/magenta abstract</li>
+      <li><code>bg_brown_noise</code> — Brown wood texture</li>
+      <li><code>bg_blue_noise</code> — Blue digital pattern</li>
+      <li><code>bg_light_rain</code> — Foggy forest drizzle</li>
+      <li><code>bg_heavy_rain</code> — Rain streaks on window</li>
+      <li><code>bg_rain_on_roof</code> — Inside tent/cabin</li>
+      <li><code>bg_thunderstorm</code> — Lightning sky</li>
+      <li><code>bg_forest</code> — Deep green forest</li>
+      <li><code>bg_birds</code> — Sunrise through trees</li>
+      <li><code>bg_crickets</code> — Night meadow moonlight</li>
+      <li><code>bg_wind</code> — Open plains dramatic sky</li>
+      <li><code>bg_leaves</code> — Autumn leaves on ground</li>
+      <li><code>bg_city_traffic</code> — Urban neon night</li>
+      <li><code>bg_cafe</code> — Coffee shop bokeh</li>
+      <li><code>bg_train</code> — Night train window</li>
+      <li><code>bg_fan</code> — Modern bedroom</li>
+      <li><code>bg_ac</code> — Minimalist room blue</li>
+      <li><code>bg_dryer</code> — Cozy laundry room</li>
+      <li><code>bg_washing_machine</code> — Clean laundry room</li>
+      <li><code>bg_campfire</code> — Campfire embers</li>
+      <li><code>bg_fireplace</code> — Stone fireplace interior</li>
+      <li><code>bg_candle</code> — Single candle glow</li>
+      <li><code>bg_ocean_waves</code> — Beach at dusk</li>
+      <li><code>bg_river</code> — Forest stream mossy rocks</li>
+      <li><code>bg_waterfall</code> — Tropical waterfall mist</li>
+      <li><code>bg_underwater</code> — Deep blue underwater</li>
+      <li><code>bg_singing_bowl</code> — Tibetan temple candles</li>
+      <li><code>bg_wind_chimes</code> — Porch sunset bamboo</li>
+      <li><code>bg_underwater_bubbles</code> — Underwater bubbles</li>
+      <li><code>bg_japanese_garden</code> — Zen garden twilight</li>
+      <li><code>bg_northern_lights</code> — Aurora snowy mountains</li>
+      <li><code>bg_cabin_rain</code> — Cabin window rain</li>
+      <li><code>bg_midnight_forest</code> — Dark forest moonlight</li>
+      <li><code>bg_desert_wind</code> — Desert dunes dusk</li>
+      <li><code>bg_snow_falling</code> — Snow in quiet forest</li>
+      <li><code>bg_coffee_shop</code> — Bustling coffee shop</li>
+      <li><code>bg_library</code> — Grand old library</li>
+      <li><code>bg_vinyl_crackle</code> — Vintage record player</li>
+    </ul>
+
+    <h3>Phase 3: Thumbnails (35 from backgrounds)</h3>
+    <ul class="checklist">
+      <li>Run the batch crop Terminal command on all backgrounds</li>
+      <li>Verify all 35 thumbnails are 120×120px PNG</li>
+      <li>Add to Asset Catalog under Thumbnails folder</li>
+    </ul>
+
+    <h3>Phase 4: Scene Cards (8)</h3>
+    <ul class="checklist">
+      <li><code>scene_noise.jpg</code> — Noise category</li>
+      <li><code>scene_rain.jpg</code> — Rain category</li>
+      <li><code>scene_nature.jpg</code> — Nature category</li>
+      <li><code>scene_urban.jpg</code> — Urban category</li>
+      <li><code>scene_machine.jpg</code> — Machine category</li>
+      <li><code>scene_fire.jpg</code> — Fire category</li>
+      <li><code>scene_water.jpg</code> — Water category</li>
+      <li><code>scene_premium.jpg</code> — Premium category</li>
+    </ul>
+
+    <h3>Phase 5: App Icons (4)</h3>
+    <ul class="checklist">
+      <li><code>AppIcon-Default.png</code> — Moon + waveform (1024×1024)</li>
+      <li><code>AppIcon-Minimal.png</code> — White waveform on black (1024×1024)</li>
+      <li><code>AppIcon-Nature.png</code> — Leaf + waves green (1024×1024)</li>
+      <li><code>AppIcon-Ocean.png</code> — Wave on blue (1024×1024)</li>
+    </ul>
+
+    <h3>Phase 6: App Store Screenshots (6+)</h3>
+    <ul class="checklist">
+      <li>Screenshot 1 — Now Playing immersive</li>
+      <li>Screenshot 2 — Sounds list</li>
+      <li>Screenshot 3 — Mix editor</li>
+      <li>Screenshot 4 — Sleep timer + clock</li>
+      <li>Screenshot 5 — Widget on home screen</li>
+      <li>Screenshot 6 — Premium / Settings</li>
+      <li>Add marketing text frames in Figma</li>
+      <li>Export at 1290×2796 (iPhone 15 Pro Max)</li>
+    </ul>
+
+    <h3>Phase 7: Misc</h3>
+    <ul class="checklist">
+      <li>Privacy Policy page (GitHub Pages)</li>
+      <li>Terms of Use page (GitHub Pages)</li>
+      <li>Widget background image (640×300)</li>
+      <li>Onboarding illustrations (3 screens)</li>
+    </ul>
+  </div>
+
+</div>
+
+<!-- Scroll to Top -->
+<button class="scroll-top" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+  // Tab switching
+  function showTab(id) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.target.classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+    try { history.replaceState(null, null, '#' + id); } catch(e) {}
+  }
+
+  // Hash-based tab restore
+  window.addEventListener('load', () => {
+    const hash = location.hash.replace('#', '');
+    if (hash) {
+      const tab = document.getElementById('tab-' + hash);
+      if (tab) {
+        document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        document.querySelectorAll('.tab').forEach(t => {
+          if (t.getAttribute('onclick').includes(hash)) t.classList.add('active');
+        });
+      }
+    }
+  });
+
+  // Scroll to top button
+  window.addEventListener('scroll', () => {
+    const btn = document.querySelector('.scroll-top');
+    btn.style.display = window.scrollY > 400 ? 'flex' : 'none';
+  });
+</script>
+
+</body>
+</html>

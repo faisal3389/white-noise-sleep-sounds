@@ -14,7 +14,7 @@ class TimerManager {
     var alarmTime = Date()
 
     private var timer: Timer?
-    private var targetDate: Date?
+    private(set) var targetDate: Date?
     var onTimerComplete: (() -> Void)?
     var onFadeOut: ((Float) -> Void)?
 
@@ -62,6 +62,7 @@ class TimerManager {
         let remaining = Int(targetDate.timeIntervalSinceNow)
 
         if remaining <= 0 {
+            AnalyticsManager.shared.track(.timerCompleted, properties: ["total_seconds": totalSeconds])
             onTimerComplete?()
             stopTimer()
             return

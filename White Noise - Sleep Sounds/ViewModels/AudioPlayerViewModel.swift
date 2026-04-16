@@ -1,8 +1,11 @@
 import Foundation
+import MediaPlayer
 import WidgetKit
 
 @Observable
 class AudioPlayerViewModel {
+    private let analytics = AnalyticsManager.shared
+
     var currentSound: Sound?
     var isPlaying: Bool = false
     var volume: Float = 0.7
@@ -20,6 +23,8 @@ class AudioPlayerViewModel {
     var activeComponents: [MixComponent] = []
 
     private let audioEngine = AudioEngine()
+    private let nowPlayingManager = NowPlayingManager()
+    let liveActivityManager = LiveActivityManager()
     private(set) var soundList: [Sound] = SoundLibrary.allSounds
 
     init() {
@@ -33,6 +38,22 @@ class AudioPlayerViewModel {
         }
         audioEngine.onRouteChange = { [weak self] in
             self?.pause()
+        }
+
+        nowPlayingManager.onPlay = { [weak self] in
+            self?.resume()
+        }
+        nowPlayingManager.onPause = { [weak self] in
+            self?.pause()
+        }
+        nowPlayingManager.onTogglePlayPause = { [weak self] in
+            self?.togglePlayPause()
+        }
+        nowPlayingManager.onNextTrack = { [weak self] in
+            self?.next()
+        }
+        nowPlayingManager.onPreviousTrack = { [weak self] in
+            self?.previous()
         }
     }
 
@@ -58,6 +79,15 @@ class AudioPlayerViewModel {
         audioEngine.setVolume(volume)
         isPlaying = true
         SharedPlaybackState.update(soundId: sound.id, soundName: sound.name, backgroundImage: sound.backgroundImage, isPlaying: true)
+        nowPlayingManager.updateNowPlayingInfo(sound: sound, isPlaying: true)
+        liveActivityManager.startActivity(sound: sound, isPlaying: true, timerEndDate: nil)
+        analytics.track(.soundPlayed, properties: [
+            "sound_id": sound.id,
+            "sound_name": sound.name,
+            "category": sound.category.rawValue,
+            "is_premium": sound.isPremium,
+            "is_generated": sound.isGenerated
+        ])
     }
 
     func pause() {
@@ -66,7 +96,13 @@ class AudioPlayerViewModel {
         if isMixPlaying {
             isMixPlaying = false
         }
+        analytics.track(.soundPaused, properties: [
+            "sound_name": displayTitle,
+            "is_mix": currentMix != nil
+        ])
         SharedPlaybackState.update(soundId: currentSound?.id ?? currentMix?.id.uuidString, soundName: displayTitle, backgroundImage: displayBackgroundImage, isPlaying: false)
+        nowPlayingManager.updatePlaybackRate(isPlaying: false)
+        liveActivityManager.updateActivity(isPlaying: false, timerEndDate: nil)
     }
 
     func resume() {
@@ -76,9 +112,19 @@ class AudioPlayerViewModel {
             isMixPlaying = true
         }
         SharedPlaybackState.update(soundId: currentSound?.id ?? currentMix?.id.uuidString, soundName: displayTitle, backgroundImage: displayBackgroundImage, isPlaying: true)
+        nowPlayingManager.updatePlaybackRate(isPlaying: true)
+        liveActivityManager.updateActivity(isPlaying: true, timerEndDate: nil)
+        analytics.track(.soundResumed, properties: [
+            "sound_name": displayTitle,
+            "is_mix": currentMix != nil
+        ])
     }
 
     func stop() {
+        analytics.track(.soundStopped, properties: [
+            "sound_name": displayTitle,
+            "is_mix": currentMix != nil
+        ])
         audioEngine.stopAll()
         isPlaying = false
         currentSound = nil
@@ -86,6 +132,8 @@ class AudioPlayerViewModel {
         isMixPlaying = false
         activeComponents = []
         SharedPlaybackState.clear()
+        nowPlayingManager.clearNowPlayingInfo()
+        liveActivityManager.endActivity()
     }
 
     func togglePlayPause() {
@@ -98,6 +146,7 @@ class AudioPlayerViewModel {
 
     func next() {
         guard !soundList.isEmpty else { return }
+        analytics.track(.soundNext, properties: ["shuffle": isShuffleOn, "loop_mode": "\(loopMode)"])
         if loopMode == .one, let sound = currentSound {
             play(sound: sound)
             return
@@ -112,6 +161,7 @@ class AudioPlayerViewModel {
 
     func previous() {
         guard !soundList.isEmpty else { return }
+        analytics.track(.soundPrevious, properties: ["shuffle": isShuffleOn, "loop_mode": "\(loopMode)"])
         if loopMode == .one, let sound = currentSound {
             play(sound: sound)
             return
@@ -126,6 +176,7 @@ class AudioPlayerViewModel {
 
     func toggleShuffle() {
         isShuffleOn.toggle()
+        analytics.track(.shuffleToggled, properties: ["enabled": isShuffleOn])
     }
 
     func cycleLoopMode() {
@@ -134,11 +185,13 @@ class AudioPlayerViewModel {
         case .all: loopMode = .one
         case .one: loopMode = .off
         }
+        analytics.track(.loopModeChanged, properties: ["mode": "\(loopMode)"])
     }
 
     func setVolume(_ newVolume: Float) {
         volume = newVolume
         audioEngine.setVolume(newVolume)
+        analytics.track(.volumeChanged, properties: ["volume": newVolume])
     }
 
     // MARK: - Mix Playback
@@ -155,9 +208,16 @@ class AudioPlayerViewModel {
         audioEngine.playMix(components: mix.components)
         audioEngine.setVolume(volume)
         SharedPlaybackState.update(soundId: mix.id.uuidString, soundName: mix.name, backgroundImage: mix.backgroundImage, isPlaying: true)
+        nowPlayingManager.updateNowPlayingInfo(mix: mix, isPlaying: true)
+        liveActivityManager.startActivity(mix: mix, isPlaying: true, timerEndDate: nil)
+        analytics.track(.mixPlayed, properties: [
+            "mix_name": mix.name,
+            "component_count": mix.components.count
+        ])
     }
 
     func adjustComponentVolume(soundId: String, volume: Float) {
+        analytics.track(.mixComponentVolumeChanged, properties: ["sound_id": soundId, "volume": volume])
         if let index = activeComponents.firstIndex(where: { $0.soundId == soundId }) {
             activeComponents[index].volume = volume
         }
@@ -169,6 +229,7 @@ class AudioPlayerViewModel {
         guard let current = currentMix,
               let index = mixes.firstIndex(where: { $0.id == current.id }) else { return }
         let nextIndex = (index + 1) % mixes.count
+        analytics.track(.mixNextPlayed, properties: ["mix_name": mixes[nextIndex].name])
         playMix(mix: mixes[nextIndex])
     }
 
@@ -176,7 +237,12 @@ class AudioPlayerViewModel {
         guard let current = currentMix,
               let index = mixes.firstIndex(where: { $0.id == current.id }) else { return }
         let prevIndex = (index - 1 + mixes.count) % mixes.count
+        analytics.track(.mixPreviousPlayed, properties: ["mix_name": mixes[prevIndex].name])
         playMix(mix: mixes[prevIndex])
+    }
+
+    func updateLiveActivityTimer(endDate: Date?) {
+        liveActivityManager.updateActivity(isPlaying: isPlaying, timerEndDate: endDate)
     }
 
     // Convenience for display

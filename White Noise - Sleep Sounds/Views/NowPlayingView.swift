@@ -4,11 +4,14 @@ struct NowPlayingView: View {
     @Bindable var player: AudioPlayerViewModel
     @Bindable var favorites: FavoritesManager
     @Bindable var timerManager: TimerManager
+    var storeManager: StoreManager
     var mixesManager: MixesManager?
 
     @State private var showMixerSheet = false
     @State private var showTimerSheet = false
     @State private var showSleepClock = false
+    @State private var showPremiumSheet = false
+    private let analytics = AnalyticsManager.shared
 
     var body: some View {
         ZStack {
@@ -38,6 +41,15 @@ struct NowPlayingView: View {
         .fullScreenCover(isPresented: $showSleepClock) {
             SleepClockView(player: player, timerManager: timerManager)
         }
+        .sheet(isPresented: $showPremiumSheet) {
+            PremiumUpgradeView(storeManager: storeManager)
+        }
+        .onAppear {
+            analytics.track(.nowPlayingViewed, properties: [
+                "has_content": player.currentSound != nil || player.currentMix != nil,
+                "is_mix": player.currentMix != nil
+            ])
+        }
     }
 
     private var backgroundLayer: some View {
@@ -66,16 +78,13 @@ struct NowPlayingView: View {
         VStack(spacing: 0) {
             // Top bar
             HStack {
-                #if os(iOS)
-                AirPlayButton()
-                    .frame(width: 36, height: 36)
-                #endif
-
                 Spacer()
 
                 if let sound = player.currentSound {
                     Button {
+                        let wasFavorite = favorites.isFavorite(sound)
                         favorites.toggle(sound)
+                        analytics.track(wasFavorite ? .soundUnfavorited : .soundFavorited, properties: ["sound_id": sound.id, "sound_name": sound.name, "source": "now_playing"])
                         UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     } label: {
                         Image(systemName: favorites.isFavorite(sound) ? "heart.fill" : "heart")
@@ -243,24 +252,35 @@ struct NowPlayingView: View {
     // MARK: - Floating Action Bar
 
     private var floatingActionBar: some View {
-        HStack(spacing: 0) {
-            // Audio / AirPlay
-            actionBarButton(icon: "airplayaudio", label: "Audio") {
-                // AirPlay is handled by the top bar button
-            }
-
-            // Timer
+        HStack(spacing: 28) {
+            // Timer (premium)
             actionBarButton(
                 icon: "moon.zzz.fill",
                 label: "Timer",
                 isActive: timerManager.isTimerActive
             ) {
-                showTimerSheet = true
+                if storeManager.isPremium {
+                    analytics.track(.screenViewed, properties: ["screen": "sleep_timer"])
+                    showTimerSheet = true
+                } else {
+                    showPremiumSheet = true
+                }
             }
 
-            // Sleep Clock
-            actionBarButton(icon: "clock.fill", label: "Clock") {
-                showSleepClock = true
+            // Audio / AirPlay (free for all)
+            airPlayActionBarButton
+
+            // Sleep Clock (premium)
+            actionBarButton(
+                icon: "clock.fill",
+                label: "Clock"
+            ) {
+                if storeManager.isPremium {
+                    analytics.track(.sleepClockOpened)
+                    showSleepClock = true
+                } else {
+                    showPremiumSheet = true
+                }
             }
 
             // Mixer (show when mix is playing)
@@ -270,12 +290,13 @@ struct NowPlayingView: View {
                     label: "Mixer",
                     isActive: player.isMixPlaying
                 ) {
+                    analytics.track(.mixerSheetOpened, properties: ["mix_name": player.currentMix?.name ?? ""])
                     showMixerSheet = true
                 }
             }
         }
-        .padding(.horizontal, 32)
-        .padding(.vertical, 14)
+        .padding(.horizontal, 24)
+        .padding(.vertical, 12)
         .background {
             Capsule()
                 .fill(.ultraThinMaterial)
@@ -286,7 +307,25 @@ struct NowPlayingView: View {
                 .strokeBorder(Color.white.opacity(0.05), lineWidth: 0.5)
         }
         .shadow(color: .black.opacity(0.3), radius: 16, y: -4)
-        .padding(.horizontal, 40)
+        .padding(.horizontal, 16)
+    }
+
+    private var airPlayActionBarButton: some View {
+        VStack(spacing: 4) {
+            #if os(iOS)
+            AirPlayButton()
+                .frame(width: 24, height: 24)
+            #else
+            Image(systemName: "airplayaudio")
+                .font(.system(size: 18))
+                .foregroundStyle(.white.opacity(0.7))
+            #endif
+
+            Text("Audio")
+                .font(.system(size: 10, weight: .medium))
+                .foregroundStyle(.white.opacity(0.5))
+        }
+        .frame(width: 52)
     }
 
     private func actionBarButton(icon: String, label: String, isActive: Bool = false, action: @escaping () -> Void) -> some View {
@@ -300,7 +339,7 @@ struct NowPlayingView: View {
                     .font(.system(size: 10, weight: .medium))
                     .foregroundStyle(isActive ? Color.appAccent : .white.opacity(0.5))
             }
-            .frame(maxWidth: .infinity)
+            .frame(width: 52)
         }
         .buttonStyle(.plain)
     }

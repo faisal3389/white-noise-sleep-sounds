@@ -71,6 +71,7 @@ struct DiscoverView: View {
                             isLocked: sound.isPremium && !storeManager.isPremium,
                             onTap: {
                                 if sound.isPremium && !storeManager.isPremium {
+                                    AnalyticsManager.shared.track(.premiumLockedContentTapped, properties: ["sound_id": sound.id, "source": "discover"])
                                     showPremiumSheet = true
                                 } else {
                                     player.play(sound: sound)
@@ -78,7 +79,11 @@ struct DiscoverView: View {
                                     selectedTab = 2
                                 }
                             },
-                            onFavorite: { favorites.toggle(sound) }
+                            onFavorite: {
+                                let wasFavorite = favorites.isFavorite(sound)
+                                favorites.toggle(sound)
+                                AnalyticsManager.shared.track(wasFavorite ? .soundUnfavorited : .soundFavorited, properties: ["sound_id": sound.id, "sound_name": sound.name, "source": "discover"])
+                            }
                         )
                         .frame(height: 180)
                         .staggeredAppear(index: index, appearedCards: $appearedCards, id: "disc_\(sound.id)")
@@ -94,9 +99,17 @@ struct DiscoverView: View {
         .sheet(isPresented: $showPremiumSheet) {
             PremiumUpgradeView(storeManager: storeManager)
         }
-        .onChange(of: selectedCategory) { _, _ in
+        .onChange(of: selectedCategory) { _, newCat in
             // Reset appeared cards when category changes for fresh animations
             appearedCards.removeAll()
+            if let cat = newCat {
+                AnalyticsManager.shared.track(.categorySelected, properties: ["category": cat.rawValue, "source": "discover"])
+            }
+        }
+        .onChange(of: searchText) { _, newText in
+            if !newText.isEmpty && newText.count >= 3 {
+                AnalyticsManager.shared.track(.searchPerformed, properties: ["query": newText, "results_count": filteredSounds.count])
+            }
         }
         .onChange(of: discoverCategory) { _, newCategory in
             selectedCategory = newCategory

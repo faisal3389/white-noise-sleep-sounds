@@ -3,10 +3,12 @@ import SwiftUI
 struct OnboardingView: View {
     @Binding var hasSeenOnboarding: Bool
     @State private var currentPage = 0
+    private let analytics = AnalyticsManager.shared
 
     var body: some View {
         ZStack {
             Color.appBackground.ignoresSafeArea()
+                .onAppear { analytics.track(.onboardingStarted) }
 
             VStack(spacing: 0) {
                 TabView(selection: $currentPage) {
@@ -31,7 +33,9 @@ struct OnboardingView: View {
                     Button {
                         if currentPage < 2 {
                             currentPage += 1
+                            analytics.track(.onboardingPageViewed, properties: ["page": currentPage])
                         } else {
+                            analytics.track(.onboardingCompleted)
                             hasSeenOnboarding = true
                         }
                     } label: {
@@ -47,6 +51,7 @@ struct OnboardingView: View {
 
                     if currentPage < 2 {
                         Button("Skip") {
+                            analytics.track(.onboardingSkipped, properties: ["skipped_at_page": currentPage])
                             hasSeenOnboarding = true
                         }
                         .font(.subheadline)

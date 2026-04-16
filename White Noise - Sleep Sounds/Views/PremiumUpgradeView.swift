@@ -3,6 +3,7 @@ import SwiftUI
 struct PremiumUpgradeView: View {
     var storeManager: StoreManager
     @Environment(\.dismiss) private var dismiss
+    private let analytics = AnalyticsManager.shared
 
     var body: some View {
         ZStack {
@@ -33,6 +34,7 @@ struct PremiumUpgradeView: View {
 
                 // CTA Button
                 Button {
+                    analytics.track(.premiumPurchaseTapped)
                     Task { await storeManager.purchase() }
                 } label: {
                     if storeManager.isLoading {
@@ -60,6 +62,7 @@ struct PremiumUpgradeView: View {
 
                 // Restore
                 Button {
+                    analytics.track(.restorePurchasesTapped)
                     Task { await storeManager.restorePurchases() }
                 } label: {
                     Text("Restore Purchases")
@@ -73,8 +76,14 @@ struct PremiumUpgradeView: View {
                     .padding(.bottom, 32)
             }
         }
+        .onAppear {
+            analytics.track(.premiumSheetViewed, properties: ["source": "premium_view"])
+        }
         .onChange(of: storeManager.isPremium) { _, newValue in
-            if newValue { dismiss() }
+            if newValue {
+                analytics.track(.premiumPurchaseCompleted)
+                dismiss()
+            }
         }
     }
 

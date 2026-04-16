@@ -58,6 +58,7 @@ struct AppIconPicker: View {
     private func setIcon(_ option: AppIconOption) {
         guard selectedIcon != option.id else { return }
         selectedIcon = option.id
+        AnalyticsManager.shared.track(.appIconChanged, properties: ["icon": option.name, "icon_id": option.id])
 
         UIApplication.shared.setAlternateIconName(option.iconName) { error in
             if let error {

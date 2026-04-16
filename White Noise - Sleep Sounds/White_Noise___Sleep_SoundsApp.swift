@@ -13,6 +13,12 @@ struct White_Noise___Sleep_SoundsApp: App {
                 storeManager: storeManager,
                 settings: settings
             )
+            .onAppear {
+                AnalyticsManager.shared.track(.appLaunched, properties: [
+                    "is_premium": storeManager.isPremium,
+                    "has_seen_onboarding": hasSeenOnboarding
+                ])
+            }
         }
     }
 }

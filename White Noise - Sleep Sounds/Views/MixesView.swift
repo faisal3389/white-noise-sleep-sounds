@@ -59,8 +59,10 @@ struct MixesView: View {
     private var createHeroCard: some View {
         Button {
             if storeManager.isPremium {
+                AnalyticsManager.shared.track(.screenViewed, properties: ["screen": "create_mix"])
                 showCreateMix = true
             } else {
+                AnalyticsManager.shared.track(.premiumLockedContentTapped, properties: ["feature": "create_mix", "source": "mixes"])
                 showPremiumSheet = true
             }
         } label: {
@@ -138,7 +140,9 @@ struct MixesView: View {
                         )
                         .contextMenu {
                             Button {
+                                let wasFav = mix.isFavorite
                                 mixesManager.toggleFavorite(mix)
+                                AnalyticsManager.shared.track(wasFav ? .mixUnfavorited : .mixFavorited, properties: ["mix_name": mix.name])
                             } label: {
                                 Label(
                                     mix.isFavorite ? "Unfavorite" : "Favorite",
@@ -147,6 +151,7 @@ struct MixesView: View {
                             }
 
                             Button(role: .destructive) {
+                                AnalyticsManager.shared.track(.mixDeleted, properties: ["mix_name": mix.name])
                                 mixesManager.deleteMix(mix)
                             } label: {
                                 Label("Delete", systemImage: "trash")
@@ -183,6 +188,7 @@ struct MixesView: View {
 
     private func curatedLargeCard(_ mix: SoundMix) -> some View {
         Button {
+            AnalyticsManager.shared.track(.curatedMixPlayed, properties: ["mix_name": mix.name])
             player.playMix(mix: mix)
         } label: {
             ZStack(alignment: .bottomLeading) {
@@ -221,6 +227,7 @@ struct MixesView: View {
 
     private func curatedSmallCard(_ mix: SoundMix) -> some View {
         Button {
+            AnalyticsManager.shared.track(.curatedMixPlayed, properties: ["mix_name": mix.name])
             player.playMix(mix: mix)
         } label: {
             ZStack(alignment: .bottomLeading) {

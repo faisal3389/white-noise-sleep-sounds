@@ -38,7 +38,11 @@ struct SoundsListView: View {
                                     SoundRowView(
                                         sound: sound,
                                         isFavorite: favorites.isFavorite(sound),
-                                        onFavoriteToggle: { favorites.toggle(sound) }
+                                        onFavoriteToggle: {
+                                            let wasFav = favorites.isFavorite(sound)
+                                            favorites.toggle(sound)
+                                            AnalyticsManager.shared.track(wasFav ? .soundUnfavorited : .soundFavorited, properties: ["sound_id": sound.id, "sound_name": sound.name, "source": "sounds_list"])
+                                        }
                                     )
                                 }
                                 .buttonStyle(.plain)

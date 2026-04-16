@@ -50,6 +50,11 @@ class SleepLogManager {
         sessionSoundName = soundName
         sessionSoundId = soundId
         sessionMixName = mixName
+        AnalyticsManager.shared.track(.sleepSessionStarted, properties: [
+            "sound_name": soundName,
+            "sound_id": soundId ?? "",
+            "is_mix": mixName != nil
+        ])
     }
 
     func endSession() {
@@ -71,6 +76,11 @@ class SleepLogManager {
         )
         entries.insert(entry, at: 0)
         save()
+        AnalyticsManager.shared.track(.sleepSessionEnded, properties: [
+            "sound_name": soundName,
+            "duration_minutes": duration,
+            "is_mix": sessionMixName != nil
+        ])
         clearSession()
     }
 

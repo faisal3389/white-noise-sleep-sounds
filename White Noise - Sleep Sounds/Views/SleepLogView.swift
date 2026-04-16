@@ -115,6 +115,7 @@ struct SleepLogView: View {
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .contextMenu {
             Button(role: .destructive) {
+                AnalyticsManager.shared.track(.sleepLogEntryDeleted, properties: ["sound_name": entry.soundName])
                 sleepLog.deleteEntry(entry)
             } label: {
                 Label("Delete", systemImage: "trash")

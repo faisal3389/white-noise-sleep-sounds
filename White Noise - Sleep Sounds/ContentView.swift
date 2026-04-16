@@ -41,6 +41,11 @@ struct ContentView: View {
                 player.stop()
             }
         }
+        .onChange(of: selectedTab) { _, newTab in
+            let tabNames = ["Home", "Discover", "Now Playing", "Mixes", "More"]
+            let name = newTab < tabNames.count ? tabNames[newTab] : "Unknown"
+            AnalyticsManager.shared.track(.tabSelected, properties: ["tab": name, "tab_index": newTab])
+        }
         .onChange(of: player.isPlaying) { _, isPlaying in
             if isPlaying {
                 let soundName = player.displayTitle
@@ -49,6 +54,23 @@ struct ContentView: View {
                 sleepLog.startSession(soundName: soundName, soundId: soundId, mixName: mixName)
             } else if !isPlaying && player.currentSound == nil && player.currentMix == nil {
                 sleepLog.endSession()
+            }
+        }
+        .onChange(of: settings.liveActivitiesEnabled) { _, enabled in
+            player.liveActivityManager.onSettingsChanged(enabled: enabled)
+        }
+        .onChange(of: timerManager.isTimerActive) { _, isActive in
+            if isActive, let target = timerManager.targetDate {
+                player.updateLiveActivityTimer(endDate: target)
+            } else {
+                player.updateLiveActivityTimer(endDate: nil)
+            }
+        }
+        .onChange(of: timerManager.isTimerActive) { _, isActive in
+            if isActive {
+                player.updateLiveActivityTimer(endDate: timerManager.targetDate)
+            } else {
+                player.updateLiveActivityTimer(endDate: nil)
             }
         }
         .onChange(of: deepLinkAction) { _, action in
@@ -112,6 +134,7 @@ struct ContentView: View {
             player: player,
             favorites: favorites,
             timerManager: timerManager,
+            storeManager: storeManager,
             mixesManager: mixesManager
         )
         .tabItem { Label("Now Playing", systemImage: "play.circle.fill") }
@@ -186,16 +209,20 @@ struct ContentView: View {
     private func handleShortcutAction(_ action: AppShortcutAction.Action) {
         switch action {
         case .playSound(let soundId):
+            AnalyticsManager.shared.track(.shortcutUsed, properties: ["action": "play_sound", "sound_id": soundId])
             if let sound = SoundLibrary.allSounds.first(where: { $0.id == soundId }) {
                 player.play(sound: sound)
                 selectedTab = 2
             }
         case .startTimer(let minutes):
+            AnalyticsManager.shared.track(.shortcutUsed, properties: ["action": "start_timer", "minutes": minutes])
             timerManager.startTimer(minutes: minutes)
             selectedTab = 2
         case .openSleepClock:
+            AnalyticsManager.shared.track(.shortcutUsed, properties: ["action": "open_sleep_clock"])
             showSleepClock = true
         case .toggle:
+            AnalyticsManager.shared.track(.shortcutUsed, properties: ["action": "toggle"])
             player.togglePlayPause()
             selectedTab = 2
         }
@@ -204,11 +231,14 @@ struct ContentView: View {
     private func handleDeepLinkAction(_ action: RootView.DeepLinkAction) {
         switch action {
         case .nowPlaying:
+            AnalyticsManager.shared.track(.deepLinkOpened, properties: ["action": "now_playing"])
             selectedTab = 2
         case .toggle:
+            AnalyticsManager.shared.track(.deepLinkOpened, properties: ["action": "toggle"])
             player.togglePlayPause()
             selectedTab = 2
         case .playSound(let soundId):
+            AnalyticsManager.shared.track(.deepLinkOpened, properties: ["action": "play_sound", "sound_id": soundId])
             if let sound = SoundLibrary.allSounds.first(where: { $0.id == soundId }) {
                 player.play(sound: sound)
                 selectedTab = 2

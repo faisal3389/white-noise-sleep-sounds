@@ -261,11 +261,13 @@ struct CreateMixView: View {
 
     private func togglePreview() {
         if isPreviewing {
+            AnalyticsManager.shared.track(.mixPreviewStopped, properties: ["component_count": selectedSoundIds.count])
             player.stop()
             isPreviewing = false
         } else {
             let components = buildComponents()
             guard components.count >= 2 else { return }
+            AnalyticsManager.shared.track(.mixPreviewed, properties: ["component_count": components.count])
             let previewMix = SoundMix(name: "Preview", components: components)
             player.playMix(mix: previewMix)
             isPreviewing = true
@@ -281,6 +283,7 @@ struct CreateMixView: View {
             isPreviewing = false
         }
 
+        let isEditing = editingMix != nil
         let mix = SoundMix(
             id: editingMix?.id ?? UUID(),
             name: mixName.trimmingCharacters(in: .whitespaces),
@@ -291,6 +294,11 @@ struct CreateMixView: View {
         )
 
         mixesManager.saveMix(mix)
+        AnalyticsManager.shared.track(isEditing ? .mixEdited : .mixCreated, properties: [
+            "mix_name": mix.name,
+            "component_count": components.count,
+            "sounds": components.compactMap { $0.sound?.name }.joined(separator: ", ")
+        ])
         dismiss()
     }
 

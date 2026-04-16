@@ -58,6 +58,7 @@ struct PlaySoundIntent: AppIntent {
     }
 
     func perform() async throws -> some IntentResult {
+        await AnalyticsManager.shared.track(.shortcutUsed, properties: ["shortcut": "play_sound", "sound": sound.rawValue])
         await AppShortcutAction.shared.setPendingAction(.playSound(sound.rawValue))
         return .result()
     }
@@ -71,6 +72,7 @@ struct StartSleepTimerIntent: AppIntent {
     static var openAppWhenRun: Bool = true
 
     func perform() async throws -> some IntentResult {
+        await AnalyticsManager.shared.track(.shortcutUsed, properties: ["shortcut": "start_sleep_timer", "duration_minutes": 30])
         await AppShortcutAction.shared.setPendingAction(.startTimer(30))
         return .result()
     }
@@ -84,6 +86,7 @@ struct OpenSleepClockIntent: AppIntent {
     static var openAppWhenRun: Bool = true
 
     func perform() async throws -> some IntentResult {
+        await AnalyticsManager.shared.track(.shortcutUsed, properties: ["shortcut": "open_sleep_clock"])
         await AppShortcutAction.shared.setPendingAction(.openSleepClock)
         return .result()
     }
@@ -97,6 +100,7 @@ struct TogglePlaybackIntent: AppIntent {
     static var openAppWhenRun: Bool = true
 
     func perform() async throws -> some IntentResult {
+        await AnalyticsManager.shared.track(.shortcutUsed, properties: ["shortcut": "toggle_playback"])
         await AppShortcutAction.shared.setPendingAction(.toggle)
         return .result()
     }

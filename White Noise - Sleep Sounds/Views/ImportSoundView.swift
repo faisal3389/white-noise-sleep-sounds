@@ -68,6 +68,7 @@ struct ImportSoundView: View {
 
     private var importButton: some View {
         Button {
+            AnalyticsManager.shared.track(.importSoundTapped)
             showFilePicker = true
         } label: {
             VStack(spacing: 12) {
@@ -128,6 +129,7 @@ struct ImportSoundView: View {
 
             Button {
                 if let sound = customSoundsManager.asSound(customSound) {
+                    AnalyticsManager.shared.track(.customSoundPlayed, properties: ["sound_name": customSound.name, "category": customSound.category])
                     player.play(sound: sound)
                     selectedTab = 2
                 }
@@ -142,6 +144,7 @@ struct ImportSoundView: View {
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .contextMenu {
             Button(role: .destructive) {
+                AnalyticsManager.shared.track(.customSoundDeleted, properties: ["sound_name": customSound.name])
                 customSoundsManager.deleteSound(customSound)
             } label: {
                 Label("Delete", systemImage: "trash")
@@ -205,7 +208,9 @@ struct ImportSoundView: View {
 
         do {
             try customSoundsManager.importSound(from: url, name: trimmedName, category: selectedCategory)
+            AnalyticsManager.shared.track(.soundImported, properties: ["sound_name": trimmedName, "category": selectedCategory, "file_type": url.pathExtension])
         } catch {
+            AnalyticsManager.shared.track(.soundImportFailed, properties: ["error": error.localizedDescription])
             importError = error.localizedDescription
             showError = true
         }

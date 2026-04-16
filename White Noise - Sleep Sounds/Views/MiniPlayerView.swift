@@ -8,7 +8,10 @@ struct MiniPlayerView: View {
 
     var body: some View {
         if player.currentSound != nil || player.currentMix != nil {
-            Button(action: onTap) {
+            Button(action: {
+                AnalyticsManager.shared.track(.miniPlayerTapped, properties: ["sound_name": player.displayTitle])
+                onTap()
+            }) {
                 HStack(spacing: 10) {
                     // Thumbnail
                     thumbnailView
@@ -35,6 +38,7 @@ struct MiniPlayerView: View {
 
                     // Play/Pause
                     Button {
+                        AnalyticsManager.shared.track(.miniPlayerPlayPause, properties: ["is_playing": player.isPlaying, "sound_name": player.displayTitle])
                         player.togglePlayPause()
                         UIImpactFeedbackGenerator(style: .light).impactOccurred()
                     } label: {

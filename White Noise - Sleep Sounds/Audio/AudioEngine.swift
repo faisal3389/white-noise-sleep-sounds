@@ -1,5 +1,6 @@
 import AVFoundation
 import Foundation
+import MediaPlayer
 
 class AudioEngine {
     private let engine = AVAudioEngine()
@@ -39,7 +40,7 @@ class AudioEngine {
     private func configureAudioSession() {
         let session = AVAudioSession.sharedInstance()
         do {
-            try session.setCategory(.playback, options: .mixWithOthers)
+            try session.setCategory(.playback)
             try session.setActive(true)
         } catch {
             print("AudioSession setup failed: \(error)")

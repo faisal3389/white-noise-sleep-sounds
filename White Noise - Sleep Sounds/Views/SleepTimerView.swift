@@ -65,6 +65,7 @@ struct SleepTimerView: View {
             }
 
             Button {
+                AnalyticsManager.shared.track(.timerCancelled, properties: ["remaining_seconds": timerManager.remainingSeconds])
                 onCancel()
                 dismiss()
             } label: {
@@ -98,6 +99,7 @@ struct SleepTimerView: View {
                         timerManager.selectedMinutes = minutes
                         timerManager.fadeOutEnabled = timerManager.fadeOutEnabled
                         onStart()
+                        AnalyticsManager.shared.track(.timerStartedPreset, properties: ["minutes": minutes, "fade_out": timerManager.fadeOutEnabled])
                         UIImpactFeedbackGenerator(style: .medium).impactOccurred()
                         dismiss()
                     } label: {
@@ -150,6 +152,7 @@ struct SleepTimerView: View {
                 guard total > 0 else { return }
                 timerManager.selectedMinutes = total
                 onStart()
+                AnalyticsManager.shared.track(.timerStartedCustom, properties: ["minutes": total, "fade_out": timerManager.fadeOutEnabled])
                 dismiss()
             } label: {
                 Text("Start Timer")
@@ -166,7 +169,13 @@ struct SleepTimerView: View {
     // MARK: - Fade Out
 
     private var fadeOutToggle: some View {
-        Toggle(isOn: $timerManager.fadeOutEnabled) {
+        Toggle(isOn: Binding(
+            get: { timerManager.fadeOutEnabled },
+            set: { newValue in
+                timerManager.fadeOutEnabled = newValue
+                AnalyticsManager.shared.track(.fadeOutToggled, properties: ["enabled": newValue])
+            }
+        )) {
             HStack(spacing: 10) {
                 Image(systemName: "speaker.wave.2.fill")
                     .foregroundStyle(Color.appAccent)
@@ -190,7 +199,13 @@ struct SleepTimerView: View {
 
     private var alarmSection: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Toggle(isOn: $timerManager.alarmEnabled) {
+            Toggle(isOn: Binding(
+                get: { timerManager.alarmEnabled },
+                set: { newValue in
+                    timerManager.alarmEnabled = newValue
+                    AnalyticsManager.shared.track(.alarmToggled, properties: ["enabled": newValue])
+                }
+            )) {
                 HStack(spacing: 10) {
                     Image(systemName: "alarm.fill")
                         .foregroundStyle(Color.appAccent)
