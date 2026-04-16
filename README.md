@@ -218,26 +218,27 @@ Place in a `Sounds/` folder added to the target bundle. Ideal: 30-60 second seam
 - [ ] `waterfall.m4a` (premium)
 - [ ] `underwater.m4a` (premium)
 
-### Background Images (27 images in Assets.xcassets)
+### Background Images (12/35 in Assets.xcassets)
 Used on the Now Playing screen and mix cards. Ideal: landscape 1920x1080 or similar, dark/moody aesthetic.
+Thumbnails (120x120 center-cropped PNGs) are auto-generated from backgrounds and used in MiniPlayer, Playlist, and mixer rows.
 
 **Noise**
-- [x] `bg_white_noise`
-- [x] `bg_pink_noise`
-- [x] `bg_brown_noise`
-- [x] `bg_blue_noise`
+- [x] `bg_white_noise` + `thumb_white_noise`
+- [x] `bg_pink_noise` + `thumb_pink_noise`
+- [x] `bg_brown_noise` + `thumb_brown_noise`
+- [x] `bg_blue_noise` + `thumb_blue_noise`
 
 **Rain**
-- [ ] `bg_light_rain`
-- [ ] `bg_heavy_rain`
-- [ ] `bg_rain_on_roof`
-- [ ] `bg_thunderstorm`
+- [x] `bg_light_rain` + `thumb_light_rain`
+- [x] `bg_heavy_rain` + `thumb_heavy_rain`
+- [x] `bg_rain_on_roof` + `thumb_rain_on_roof`
+- [x] `bg_thunderstorm` + `thumb_thunderstorm`
 
 **Nature**
-- [ ] `bg_forest`
-- [ ] `bg_birds`
-- [ ] `bg_crickets`
-- [ ] `bg_wind`
+- [x] `bg_forest` + `thumb_forest`
+- [x] `bg_birds` + `thumb_birds`
+- [x] `bg_crickets` + `thumb_crickets`
+- [x] `bg_wind` + `thumb_wind`
 - [ ] `bg_leaves`
 
 **Urban**

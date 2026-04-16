@@ -422,7 +422,7 @@ struct NowPlayingView: View {
                     .fill(Color.appSurface)
                     .frame(width: 40, height: 40)
 
-                Image(sound.backgroundImage)
+                Image(sound.thumbnailImage)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 40, height: 40)

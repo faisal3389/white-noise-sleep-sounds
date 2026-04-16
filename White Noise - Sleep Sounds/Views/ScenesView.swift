@@ -10,14 +10,14 @@ struct SoundScene: Identifiable {
     let isPremium: Bool
 
     static let allScenes: [SoundScene] = [
-        SoundScene(id: "rainfall", name: "Rainfall", subtitle: "Gentle to heavy rain", category: .rain, icon: "cloud.rain.fill", backgroundImage: "bg_heavy_rain", isPremium: false),
-        SoundScene(id: "forest", name: "Forest", subtitle: "Birds, leaves, and wildlife", category: .nature, icon: "leaf.fill", backgroundImage: "bg_forest", isPremium: false),
-        SoundScene(id: "ocean_water", name: "Ocean & Water", subtitle: "Waves, rivers, and waterfalls", category: .water, icon: "water.waves", backgroundImage: "bg_ocean_waves", isPremium: false),
-        SoundScene(id: "urban_night", name: "Urban Night", subtitle: "City streets, cafes, and trains", category: .urban, icon: "building.2.fill", backgroundImage: "bg_city_traffic", isPremium: false),
-        SoundScene(id: "machines", name: "Machines & Fans", subtitle: "Mechanical white noise", category: .machine, icon: "fan.fill", backgroundImage: "bg_fan", isPremium: false),
-        SoundScene(id: "fireside", name: "Fireside", subtitle: "Campfires and candlelight", category: .fire, icon: "flame.fill", backgroundImage: "bg_campfire", isPremium: false),
-        SoundScene(id: "cosmic", name: "Cosmic", subtitle: "Generated noise textures", category: .noise, icon: "sparkles", backgroundImage: "bg_white_noise", isPremium: false),
-        SoundScene(id: "premium", name: "Premium Collection", subtitle: "12 exclusive sounds", category: .premium, icon: "star.fill", backgroundImage: "bg_northern_lights", isPremium: true),
+        SoundScene(id: "rainfall", name: "Rainfall", subtitle: "Gentle to heavy rain", category: .rain, icon: "cloud.rain.fill", backgroundImage: "scene_rain", isPremium: false),
+        SoundScene(id: "forest", name: "Forest", subtitle: "Birds, leaves, and wildlife", category: .nature, icon: "leaf.fill", backgroundImage: "scene_nature", isPremium: false),
+        SoundScene(id: "ocean_water", name: "Ocean & Water", subtitle: "Waves, rivers, and waterfalls", category: .water, icon: "water.waves", backgroundImage: "scene_water", isPremium: false),
+        SoundScene(id: "urban_night", name: "Urban Night", subtitle: "City streets, cafes, and trains", category: .urban, icon: "building.2.fill", backgroundImage: "scene_urban", isPremium: false),
+        SoundScene(id: "machines", name: "Machines & Fans", subtitle: "Mechanical white noise", category: .machine, icon: "fan.fill", backgroundImage: "scene_machine", isPremium: false),
+        SoundScene(id: "fireside", name: "Fireside", subtitle: "Campfires and candlelight", category: .fire, icon: "flame.fill", backgroundImage: "scene_fire", isPremium: false),
+        SoundScene(id: "cosmic", name: "Cosmic", subtitle: "Generated noise textures", category: .noise, icon: "sparkles", backgroundImage: "scene_noise", isPremium: false),
+        SoundScene(id: "premium", name: "Premium Collection", subtitle: "12 exclusive sounds", category: .premium, icon: "star.fill", backgroundImage: "scene_premium", isPremium: true),
     ]
 }
 

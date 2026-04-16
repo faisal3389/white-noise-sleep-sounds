@@ -35,6 +35,10 @@ struct Sound: Identifiable, Hashable {
     let isPremium: Bool
     let isGenerated: Bool
 
+    var thumbnailImage: String {
+        "thumb_" + id
+    }
+
     func hash(into hasher: inout Hasher) {
         hasher.combine(id)
     }

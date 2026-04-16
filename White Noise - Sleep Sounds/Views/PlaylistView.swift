@@ -188,7 +188,7 @@ struct PlaylistView: View {
                         .fill(Color.appSurface)
                         .frame(width: 44, height: 44)
 
-                    Image(sound.backgroundImage)
+                    Image(sound.thumbnailImage)
                         .resizable()
                         .aspectRatio(contentMode: .fill)
                         .frame(width: 44, height: 44)
@@ -268,7 +268,7 @@ struct AddToPlaylistSheet: View {
                                                 .fill(Color.appSurface)
                                                 .frame(width: 40, height: 40)
 
-                                            Image(sound.backgroundImage)
+                                            Image(sound.thumbnailImage)
                                                 .resizable()
                                                 .aspectRatio(contentMode: .fill)
                                                 .frame(width: 40, height: 40)

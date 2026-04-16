@@ -101,8 +101,8 @@ struct MiniPlayerView: View {
                 .fill(Color.appSurface)
                 .frame(width: 36, height: 36)
 
-            if !player.displayBackgroundImage.isEmpty {
-                Image(player.displayBackgroundImage)
+            if !player.displayThumbnailImage.isEmpty {
+                Image(player.displayThumbnailImage)
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: 36, height: 36)

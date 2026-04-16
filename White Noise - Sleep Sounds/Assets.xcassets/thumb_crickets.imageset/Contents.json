@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "thumb_crickets.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

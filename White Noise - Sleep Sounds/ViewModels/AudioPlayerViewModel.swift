@@ -266,4 +266,11 @@ class AudioPlayerViewModel {
         }
         return currentSound?.backgroundImage ?? ""
     }
+
+    var displayThumbnailImage: String {
+        if let mix = currentMix {
+            return mix.components.first?.sound?.thumbnailImage ?? "thumb_white_noise"
+        }
+        return currentSound?.thumbnailImage ?? ""
+    }
 }

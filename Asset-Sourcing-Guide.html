@@ -279,6 +279,14 @@
     font-size: 16px;
     color: var(--text-muted);
   }
+  .checklist li.done {
+    opacity: 0.6;
+    text-decoration: line-through;
+  }
+  .checklist li.done::before {
+    content: '☑';
+    color: var(--success);
+  }
 
   /* Scroll to top */
   .scroll-top {
@@ -327,13 +335,13 @@
     <p class="subtitle">White Noise — Sleep Sounds &middot; Every asset you need, exactly how to get it, where to put it</p>
     <div class="meta">
       <span class="meta-item"><strong>16/35</strong> Sound Files</span>
-      <span class="meta-item"><strong>0/35</strong> Background Images</span>
-      <span class="meta-item"><strong>0/35</strong> Thumbnails</span>
-      <span class="meta-item"><strong>0/8</strong> Scene Cards</span>
+      <span class="meta-item"><strong>12/35</strong> Background Images</span>
+      <span class="meta-item"><strong>12/35</strong> Thumbnails</span>
+      <span class="meta-item"><strong>8/8</strong> Scene Cards</span>
       <span class="meta-item"><strong>0/4</strong> App Icons</span>
       <span class="meta-item"><strong>0/6</strong> Screenshots</span>
     </div>
-    <p style="color:var(--accent);margin-top:12px;font-size:0.9em;">Last updated: April 15, 2026 — 16 sounds processed &amp; added to Xcode</p>
+    <p style="color:var(--accent);margin-top:12px;font-size:0.9em;">Last updated: April 16, 2026 — 12 bg images + 12 thumbnails processed &amp; added to Xcode</p>
   </div>
 
   <!-- Tab Bar -->
@@ -442,7 +450,7 @@
       <li><strong style="color:var(--success);">Sound files ✅ COMPLETE</strong> — 35/35 done (Rain 4/4, Nature 5/5, Urban 3/3, Machine 4/4, Fire 3/3, Water 4/4, Premium 12/12). All sounds processed and in Xcode <code>Sounds/</code> folder.</li>
       <li><strong>Background images</strong> — one AI session, batch-generate all 35 in a consistent style.</li>
       <li><strong>Thumbnails</strong> — automated crop from backgrounds (scripted).</li>
-      <li><strong>Scene cards</strong> — 8 more AI generations in the same session.</li>
+      <li><strong style="color:var(--success);">Scene cards ✅ COMPLETE</strong> — 8/8 done. All scene cards processed and in Asset Catalog.</li>
       <li><strong>App icons</strong> — AI generate + Figma polish.</li>
       <li><strong>Screenshots</strong> — last, once the app looks good with real assets.</li>
     </ol>
@@ -1390,20 +1398,20 @@ cp "Raw assets/processed/"*.m4a "White Noise - Sleep Sounds/Sounds/"</code></pre
       <p>All 35 file-based sounds (+ 4 procedurally generated noise sounds) are processed and in the Xcode project. Total audio bundle: ~22 MB. Next step: background images.</p>
     </div>
 
-    <h3>Phase 2: Background Images (35 images)</h3>
+    <h3>Phase 2: Background Images (12/35 done)</h3>
     <ul class="checklist">
-      <li><code>bg_white_noise</code> — Abstract gray waves</li>
-      <li><code>bg_pink_noise</code> — Pink/magenta abstract</li>
-      <li><code>bg_brown_noise</code> — Brown wood texture</li>
-      <li><code>bg_blue_noise</code> — Blue digital pattern</li>
-      <li><code>bg_light_rain</code> — Foggy forest drizzle</li>
-      <li><code>bg_heavy_rain</code> — Rain streaks on window</li>
-      <li><code>bg_rain_on_roof</code> — Inside tent/cabin</li>
-      <li><code>bg_thunderstorm</code> — Lightning sky</li>
-      <li><code>bg_forest</code> — Deep green forest</li>
-      <li><code>bg_birds</code> — Sunrise through trees</li>
-      <li><code>bg_crickets</code> — Night meadow moonlight</li>
-      <li><code>bg_wind</code> — Open plains dramatic sky</li>
+      <li class="done"><code>bg_white_noise</code> — Abstract gray waves</li>
+      <li class="done"><code>bg_pink_noise</code> — Pink/magenta abstract</li>
+      <li class="done"><code>bg_brown_noise</code> — Brown wood texture</li>
+      <li class="done"><code>bg_blue_noise</code> — Blue digital pattern</li>
+      <li class="done"><code>bg_light_rain</code> — Foggy forest drizzle</li>
+      <li class="done"><code>bg_heavy_rain</code> — Rain streaks on window</li>
+      <li class="done"><code>bg_rain_on_roof</code> — Inside tent/cabin</li>
+      <li class="done"><code>bg_thunderstorm</code> — Lightning sky</li>
+      <li class="done"><code>bg_forest</code> — Deep green forest</li>
+      <li class="done"><code>bg_birds</code> — Sunrise through trees</li>
+      <li class="done"><code>bg_crickets</code> — Night meadow moonlight</li>
+      <li class="done"><code>bg_wind</code> — Open plains dramatic sky</li>
       <li><code>bg_leaves</code> — Autumn leaves on ground</li>
       <li><code>bg_city_traffic</code> — Urban neon night</li>
       <li><code>bg_cafe</code> — Coffee shop bokeh</li>
@@ -1433,23 +1441,26 @@ cp "Raw assets/processed/"*.m4a "White Noise - Sleep Sounds/Sounds/"</code></pre
       <li><code>bg_vinyl_crackle</code> — Vintage record player</li>
     </ul>
 
-    <h3>Phase 3: Thumbnails (35 from backgrounds)</h3>
+    <h3>Phase 3: Thumbnails (12/35 done)</h3>
     <ul class="checklist">
-      <li>Run the batch crop Terminal command on all backgrounds</li>
-      <li>Verify all 35 thumbnails are 120×120px PNG</li>
-      <li>Add to Asset Catalog under Thumbnails folder</li>
+      <li class="done">Run the batch crop Terminal command on available backgrounds (12 done)</li>
+      <li class="done">Verify 12 thumbnails are 120×120px PNG</li>
+      <li class="done">Add 12 thumbnails to Asset Catalog as thumb_*.imageset</li>
+      <li class="done">Wire <code>thumbnailImage</code> computed property on Sound model</li>
+      <li class="done">Update MiniPlayerView, PlaylistView, NowPlayingView mixer to use thumbnails</li>
+      <li>Generate remaining 23 thumbnails when backgrounds are available</li>
     </ul>
 
-    <h3>Phase 4: Scene Cards (8)</h3>
+    <h3>Phase 4: Scene Cards (8) ✅ COMPLETE</h3>
     <ul class="checklist">
-      <li><code>scene_noise.jpg</code> — Noise category</li>
-      <li><code>scene_rain.jpg</code> — Rain category</li>
-      <li><code>scene_nature.jpg</code> — Nature category</li>
-      <li><code>scene_urban.jpg</code> — Urban category</li>
-      <li><code>scene_machine.jpg</code> — Machine category</li>
-      <li><code>scene_fire.jpg</code> — Fire category</li>
-      <li><code>scene_water.jpg</code> — Water category</li>
-      <li><code>scene_premium.jpg</code> — Premium category</li>
+      <li class="done"><code>scene_noise.jpg</code> — Noise category</li>
+      <li class="done"><code>scene_rain.jpg</code> — Rain category</li>
+      <li class="done"><code>scene_nature.jpg</code> — Nature category</li>
+      <li class="done"><code>scene_urban.jpg</code> — Urban category</li>
+      <li class="done"><code>scene_machine.jpg</code> — Machine category</li>
+      <li class="done"><code>scene_fire.jpg</code> — Fire category</li>
+      <li class="done"><code>scene_water.jpg</code> — Water category</li>
+      <li class="done"><code>scene_premium.jpg</code> — Premium category</li>
     </ul>
 
     <h3>Phase 5: App Icons (4)</h3>
