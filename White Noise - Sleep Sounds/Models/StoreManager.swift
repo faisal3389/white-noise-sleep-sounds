@@ -56,7 +56,12 @@ class StoreManager {
     @MainActor
     func purchase() async {
         #if canImport(RevenueCat)
-        guard let package = premiumPackage else { return }
+        guard let package = premiumPackage else {
+            purchaseError = currentOffering == nil
+                ? "Unable to load products. Please check your connection and try again."
+                : "No purchase option available."
+            return
+        }
         isLoading = true
         purchaseError = nil
 
@@ -76,6 +81,8 @@ class StoreManager {
         }
 
         isLoading = false
+        #else
+        purchaseError = "In-app purchases are not configured."
         #endif
     }
 

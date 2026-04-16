@@ -12,7 +12,7 @@
 **App Store Metadata:**
 - **Name (30 chars):** `White Noise — Sleep Sounds`
 - **Subtitle (30 chars):** `Rain, Fan & Nature Sound Mixer`
-- **Keywords (100 chars):** `calm,focus,baby,study,deep,brown,pink,ocean,background,machine,meditation,relax,noises,ambience,aid`
+- **Keywords (100 chars):** `calm,focus,baby,deep,brown,pink,green,ocean,machine,relax,nap,box,ambient,waves,study,bedtime,aid`
 
 ---
 

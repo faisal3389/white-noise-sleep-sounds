@@ -32,11 +32,29 @@ struct SharedPlaybackState {
         set { defaults.set(newValue, forKey: "widget_favoriteSoundIds") }
     }
 
+    // Persists across stop/clear so widget always has a background
+    static var lastPlayedSoundId: String? {
+        get { defaults.string(forKey: "widget_lastPlayedSoundId") }
+        set { defaults.set(newValue, forKey: "widget_lastPlayedSoundId") }
+    }
+
+    static var lastPlayedBackgroundImage: String? {
+        get { defaults.string(forKey: "widget_lastPlayedBackgroundImage") }
+        set { defaults.set(newValue, forKey: "widget_lastPlayedBackgroundImage") }
+    }
+
     static func update(soundId: String?, soundName: String?, backgroundImage: String? = nil, isPlaying: Bool) {
         self.currentSoundId = soundId
         self.currentSoundName = soundName
         self.currentBackgroundImage = backgroundImage
         self.isPlaying = isPlaying
+        // Persist last played info for widget background when playback stops
+        if let soundId = soundId {
+            self.lastPlayedSoundId = soundId
+        }
+        if let backgroundImage = backgroundImage {
+            self.lastPlayedBackgroundImage = backgroundImage
+        }
         WidgetCenter.shared.reloadAllTimelines()
     }
 

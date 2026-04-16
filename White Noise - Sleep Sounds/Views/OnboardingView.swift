@@ -118,6 +118,7 @@ struct OnboardingView: View {
                     description: "Fade out gently and wake refreshed"
                 )
             }
+            .frame(maxWidth: 400)
             .padding(.horizontal, 32)
 
             Spacer()

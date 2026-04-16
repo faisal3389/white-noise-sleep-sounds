@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "bg_rain_on_roof.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

@@ -1,5 +1,6 @@
 import WidgetKit
 import SwiftUI
+import UIKit
 
 // MARK: - Shared Data
 
@@ -50,6 +51,7 @@ struct WhiteNoiseEntry: TimelineEntry {
     let backgroundImage: String?
     let isPlaying: Bool
     let favoriteSoundIds: [String]
+    let lastPlayedSoundId: String?
 
     static var placeholder: WhiteNoiseEntry {
         WhiteNoiseEntry(
@@ -58,7 +60,8 @@ struct WhiteNoiseEntry: TimelineEntry {
             soundId: "white_noise",
             backgroundImage: "bg_white_noise",
             isPlaying: true,
-            favoriteSoundIds: WidgetSoundCatalog.defaultQuickPlay
+            favoriteSoundIds: WidgetSoundCatalog.defaultQuickPlay,
+            lastPlayedSoundId: "white_noise"
         )
     }
 
@@ -69,7 +72,8 @@ struct WhiteNoiseEntry: TimelineEntry {
             soundId: nil,
             backgroundImage: nil,
             isPlaying: false,
-            favoriteSoundIds: WidgetSoundCatalog.defaultQuickPlay
+            favoriteSoundIds: WidgetSoundCatalog.defaultQuickPlay,
+            lastPlayedSoundId: nil
         )
     }
 }
@@ -89,8 +93,7 @@ struct WhiteNoiseProvider: TimelineProvider {
 
     func getTimeline(in context: Context, completion: @escaping (Timeline<WhiteNoiseEntry>) -> Void) {
         let entry = currentEntry()
-        let nextUpdate = Calendar.current.date(byAdding: .minute, value: 15, to: .now)!
-        completion(Timeline(entries: [entry], policy: .after(nextUpdate)))
+        completion(Timeline(entries: [entry], policy: .atEnd))
     }
 
     private func currentEntry() -> WhiteNoiseEntry {
@@ -99,14 +102,20 @@ struct WhiteNoiseProvider: TimelineProvider {
         let bgImage = defaults?.string(forKey: "widget_currentBackgroundImage")
         let isPlaying = defaults?.bool(forKey: "widget_isPlaying") ?? false
         let favorites = defaults?.stringArray(forKey: "widget_favoriteSoundIds") ?? WidgetSoundCatalog.defaultQuickPlay
+        let lastPlayedSoundId = defaults?.string(forKey: "widget_lastPlayedSoundId")
+        let lastPlayedBgImage = defaults?.string(forKey: "widget_lastPlayedBackgroundImage")
+
+        // Use last played background as fallback, then default to white noise
+        let effectiveBgImage = bgImage ?? lastPlayedBgImage ?? "bg_white_noise"
 
         return WhiteNoiseEntry(
             date: .now,
             soundName: soundName,
             soundId: soundId,
-            backgroundImage: bgImage,
+            backgroundImage: effectiveBgImage,
             isPlaying: isPlaying,
-            favoriteSoundIds: favorites.isEmpty ? WidgetSoundCatalog.defaultQuickPlay : favorites
+            favoriteSoundIds: favorites.isEmpty ? WidgetSoundCatalog.defaultQuickPlay : favorites,
+            lastPlayedSoundId: lastPlayedSoundId
         )
     }
 }
@@ -128,7 +137,7 @@ struct WidgetBackgroundView: View {
     let overlayOpacity: Double
 
     var body: some View {
-        if let bgImage = backgroundImage {
+        if let bgImage = backgroundImage, UIImage(named: bgImage) != nil {
             Image(bgImage)
                 .resizable()
                 .aspectRatio(contentMode: .fill)
@@ -247,6 +256,7 @@ struct MediumWidgetView: View {
             HStack(spacing: 8) {
                 ForEach(entry.favoriteSoundIds.prefix(3), id: \.self) { soundId in
                     let info = WidgetSoundCatalog.info(for: soundId)
+                    let isActive = soundId == (entry.soundId ?? entry.lastPlayedSoundId)
                     Link(destination: URL(string: "whitenoise://play/\(soundId)")!) {
                         HStack(spacing: 4) {
                             Image(systemName: info.iconName)
@@ -255,10 +265,10 @@ struct MediumWidgetView: View {
                                 .font(.system(size: 10, weight: .semibold, design: .rounded))
                                 .lineLimit(1)
                         }
-                        .foregroundStyle(WidgetColors.textPrimary)
+                        .foregroundStyle(isActive ? .white : WidgetColors.textPrimary.opacity(0.8))
                         .padding(.horizontal, 10)
                         .padding(.vertical, 6)
-                        .background(Color.white.opacity(0.15))
+                        .background(isActive ? WidgetColors.accent : Color.white.opacity(0.15))
                         .clipShape(Capsule())
                     }
                 }

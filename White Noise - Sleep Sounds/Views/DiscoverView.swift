@@ -111,9 +111,17 @@ struct DiscoverView: View {
                 AnalyticsManager.shared.track(.searchPerformed, properties: ["query": newText, "results_count": filteredSounds.count])
             }
         }
+        .onAppear {
+            if let category = discoverCategory {
+                selectedCategory = category
+                discoverCategory = nil
+            }
+        }
         .onChange(of: discoverCategory) { _, newCategory in
-            selectedCategory = newCategory
-            discoverCategory = nil
+            if let category = newCategory {
+                selectedCategory = category
+                discoverCategory = nil
+            }
         }
     }
 
