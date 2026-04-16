@@ -6,6 +6,7 @@ struct NowPlayingView: View {
     @Bindable var timerManager: TimerManager
     var storeManager: StoreManager
     var mixesManager: MixesManager?
+    @Binding var selectedTab: Int
 
     @State private var showMixerSheet = false
     @State private var showTimerSheet = false
@@ -350,19 +351,24 @@ struct NowPlayingView: View {
     }
 
     private var emptyState: some View {
-        VStack(spacing: 20) {
-            Image(systemName: "waveform.circle.fill")
-                .font(.system(size: 80))
-                .foregroundStyle(Color.appAccent.opacity(0.6))
+        Button {
+            selectedTab = 0
+        } label: {
+            VStack(spacing: 20) {
+                Image(systemName: "waveform.circle.fill")
+                    .font(.system(size: 80))
+                    .foregroundStyle(Color.appAccent.opacity(0.6))
 
-            Text("Pick a sound to begin")
-                .font(.title2.weight(.medium))
-                .foregroundStyle(.white.opacity(0.7))
+                Text("Pick a sound to begin")
+                    .font(.title2.weight(.medium))
+                    .foregroundStyle(.white.opacity(0.7))
 
-            Text("Go to the Sounds tab to choose a sound")
-                .font(.subheadline)
-                .foregroundStyle(.white.opacity(0.4))
+                Text("Go to the Home tab to choose a sound")
+                    .font(.subheadline)
+                    .foregroundStyle(.white.opacity(0.4))
+            }
         }
+        .buttonStyle(.plain)
     }
 
     private var loopIconName: String {

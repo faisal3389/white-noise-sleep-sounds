@@ -15,6 +15,7 @@ struct ContentView: View {
     var settings: SettingsManager
     @Binding var deepLinkSoundId: String?
     @Binding var deepLinkAction: RootView.DeepLinkAction?
+    @Binding var deepLinkSource: RootView.DeepLinkSource
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -135,7 +136,8 @@ struct ContentView: View {
             favorites: favorites,
             timerManager: timerManager,
             storeManager: storeManager,
-            mixesManager: mixesManager
+            mixesManager: mixesManager,
+            selectedTab: $selectedTab
         )
         .tabItem { Label("Now Playing", systemImage: "play.circle.fill") }
         .tag(2)
@@ -229,20 +231,46 @@ struct ContentView: View {
     }
 
     private func handleDeepLinkAction(_ action: RootView.DeepLinkAction) {
+        let isFromWidget: Bool
+        let widgetType: String
+        if case .widget(let type) = deepLinkSource {
+            isFromWidget = true
+            widgetType = type
+        } else {
+            isFromWidget = false
+            widgetType = ""
+        }
+
         switch action {
         case .nowPlaying:
             AnalyticsManager.shared.track(.deepLinkOpened, properties: ["action": "now_playing"])
+            if isFromWidget {
+                AnalyticsManager.shared.track(.widgetNowPlayingTapped, properties: ["widget_type": widgetType])
+            }
             selectedTab = 2
         case .toggle:
             AnalyticsManager.shared.track(.deepLinkOpened, properties: ["action": "toggle"])
+            if isFromWidget {
+                AnalyticsManager.shared.track(.widgetToggleTapped, properties: ["widget_type": widgetType])
+            }
             player.togglePlayPause()
             selectedTab = 2
         case .playSound(let soundId):
             AnalyticsManager.shared.track(.deepLinkOpened, properties: ["action": "play_sound", "sound_id": soundId])
+            if isFromWidget {
+                AnalyticsManager.shared.track(.widgetQuickPlayTapped, properties: ["widget_type": widgetType, "sound_id": soundId])
+            }
             if let sound = SoundLibrary.allSounds.first(where: { $0.id == soundId }) {
                 player.play(sound: sound)
                 selectedTab = 2
             }
         }
+
+        // Always fire the general widget_tapped event
+        if isFromWidget {
+            AnalyticsManager.shared.track(.widgetTapped, properties: ["widget_type": widgetType, "action": action.analyticsName])
+        }
+
+        deepLinkSource = .app
     }
 }

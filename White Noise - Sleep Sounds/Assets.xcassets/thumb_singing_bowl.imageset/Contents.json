@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "thumb_singing_bowl.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

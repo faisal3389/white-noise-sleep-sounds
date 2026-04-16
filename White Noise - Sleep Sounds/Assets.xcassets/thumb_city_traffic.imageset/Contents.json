@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "thumb_city_traffic.png",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

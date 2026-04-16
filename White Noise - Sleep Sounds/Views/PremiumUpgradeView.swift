@@ -47,7 +47,7 @@ struct PremiumUpgradeView: View {
                             .frame(maxWidth: .infinity)
                             .frame(height: 54)
                     } else {
-                        Text("Just $3.99 — One Time")
+                        Text(storeManager.priceString.isEmpty ? "Premium — One Time" : "Just \(storeManager.priceString) — One Time")
                             .font(.headline)
                             .foregroundStyle(.white)
                             .frame(maxWidth: .infinity)

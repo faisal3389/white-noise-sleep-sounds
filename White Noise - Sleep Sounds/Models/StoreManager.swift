@@ -1,6 +1,15 @@
 import Foundation
 #if canImport(RevenueCat)
 import RevenueCat
+
+private extension Error {
+    /// Returns `true` when the user intentionally cancelled the purchase sheet.
+    var isCancelledPurchase: Bool {
+        let nsError = self as NSError
+        return nsError.domain == RevenueCat.ErrorCode.errorDomain
+            && nsError.code == RevenueCat.ErrorCode.purchaseCancelledError.rawValue
+    }
+}
 #endif
 
 @Observable
@@ -27,6 +36,14 @@ class StoreManager {
     var premiumPackage: Package? {
         currentOffering?.availablePackages.first
     }
+
+    /// Localized price string from the App Store (e.g. "$4.99", "CA$6.99").
+    /// Falls back to an empty string while the price is loading.
+    var priceString: String {
+        premiumPackage?.localizedPriceString ?? ""
+    }
+    #else
+    var priceString: String { "" }
     #endif
 
     init() {
@@ -56,6 +73,11 @@ class StoreManager {
     @MainActor
     func purchase() async {
         #if canImport(RevenueCat)
+        // If offerings haven't loaded yet, try loading them first
+        if currentOffering == nil {
+            await loadOfferings()
+        }
+
         guard let package = premiumPackage else {
             purchaseError = currentOffering == nil
                 ? "Unable to load products. Please check your connection and try again."
@@ -67,17 +89,15 @@ class StoreManager {
 
         do {
             let result = try await Purchases.shared.purchase(package: package)
-            isPremium = result.customerInfo.entitlements["premium"]?.isActive == true
+            isPremium = result.customerInfo.entitlements["White Noise Premium"]?.isActive == true
             if isPremium {
                 AnalyticsManager.shared.track(.premiumPurchaseCompleted)
             }
+        } catch let error where error.isCancelledPurchase {
+            AnalyticsManager.shared.track(.premiumPurchaseCancelled)
         } catch {
-            if let rcError = error as? RevenueCat.ErrorCode, rcError == .purchaseCancelledError {
-                AnalyticsManager.shared.track(.premiumPurchaseCancelled)
-            } else {
-                AnalyticsManager.shared.track(.premiumPurchaseFailed, properties: ["error": error.localizedDescription])
-                purchaseError = error.localizedDescription
-            }
+            AnalyticsManager.shared.track(.premiumPurchaseFailed, properties: ["error": error.localizedDescription])
+            purchaseError = error.localizedDescription
         }
 
         isLoading = false
@@ -94,7 +114,7 @@ class StoreManager {
         isLoading = true
         do {
             let customerInfo = try await Purchases.shared.restorePurchases()
-            isPremium = customerInfo.entitlements["premium"]?.isActive == true
+            isPremium = customerInfo.entitlements["White Noise Premium"]?.isActive == true
             AnalyticsManager.shared.track(.restorePurchasesCompleted, properties: ["is_premium": isPremium])
         } catch {
             purchaseError = error.localizedDescription
@@ -110,7 +130,7 @@ class StoreManager {
     private func checkEntitlements() async {
         do {
             let customerInfo = try await Purchases.shared.customerInfo()
-            isPremium = customerInfo.entitlements["premium"]?.isActive == true
+            isPremium = customerInfo.entitlements["White Noise Premium"]?.isActive == true
         } catch {
             print("Failed to check entitlements: \(error)")
         }

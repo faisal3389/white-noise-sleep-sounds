@@ -159,8 +159,8 @@ struct SmallWidgetView: View {
 
     var body: some View {
         let deepLink = entry.isPlaying
-            ? URL(string: "whitenoise://toggle")!
-            : URL(string: "whitenoise://nowplaying")!
+            ? URL(string: "whitenoise://toggle?from=widget&type=small")!
+            : URL(string: "whitenoise://nowplaying?from=widget&type=small")!
 
         VStack(spacing: 8) {
             Image(systemName: entry.isPlaying ? "pause.circle.fill" : "play.circle.fill")
@@ -235,7 +235,7 @@ struct MediumWidgetView: View {
             Spacer()
 
             if let name = entry.soundName {
-                Link(destination: URL(string: "whitenoise://nowplaying")!) {
+                Link(destination: URL(string: "whitenoise://nowplaying?from=widget&type=medium")!) {
                     VStack(alignment: .leading, spacing: 2) {
                         Text(entry.isPlaying ? "Now Playing" : "Paused")
                             .font(.system(size: 10, weight: .medium))
@@ -257,7 +257,7 @@ struct MediumWidgetView: View {
                 ForEach(entry.favoriteSoundIds.prefix(3), id: \.self) { soundId in
                     let info = WidgetSoundCatalog.info(for: soundId)
                     let isActive = soundId == (entry.soundId ?? entry.lastPlayedSoundId)
-                    Link(destination: URL(string: "whitenoise://play/\(soundId)")!) {
+                    Link(destination: URL(string: "whitenoise://play/\(soundId)?from=widget&type=medium")!) {
                         HStack(spacing: 4) {
                             Image(systemName: info.iconName)
                                 .font(.system(size: 10, weight: .bold))
@@ -313,7 +313,7 @@ struct LockScreenCircularView: View {
                 .font(.system(size: 20, weight: .bold))
                 .foregroundStyle(entry.isPlaying ? .white : .white.opacity(0.6))
         }
-        .widgetURL(URL(string: "whitenoise://nowplaying")!)
+        .widgetURL(URL(string: "whitenoise://nowplaying?from=widget&type=lockscreen_circular")!)
     }
 }
 
@@ -367,7 +367,7 @@ struct LockScreenRectangularView: View {
 
             Spacer()
         }
-        .widgetURL(URL(string: "whitenoise://nowplaying")!)
+        .widgetURL(URL(string: "whitenoise://nowplaying?from=widget&type=lockscreen_rectangular")!)
     }
 }
 

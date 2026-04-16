@@ -160,28 +160,50 @@ struct DiscoverView: View {
     // MARK: - Category Pills
 
     private var categoryPills: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                // "All" pill
-                categoryPill(title: "All", icon: "square.grid.2x2", isSelected: selectedCategory == nil) {
-                    withAnimation(.spring(response: 0.3)) {
-                        selectedCategory = nil
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
+                    // "All" pill
+                    categoryPill(title: "All", icon: "square.grid.2x2", isSelected: selectedCategory == nil) {
+                        withAnimation(.spring(response: 0.3)) {
+                            selectedCategory = nil
+                        }
+                    }
+                    .id("category_all")
+
+                    ForEach(SoundCategory.allCases) { category in
+                        categoryPill(
+                            title: category.rawValue,
+                            icon: category.iconName,
+                            isSelected: selectedCategory == category
+                        ) {
+                            withAnimation(.spring(response: 0.3)) {
+                                selectedCategory = selectedCategory == category ? nil : category
+                            }
+                        }
+                        .id("category_\(category.rawValue)")
                     }
                 }
-
-                ForEach(SoundCategory.allCases) { category in
-                    categoryPill(
-                        title: category.rawValue,
-                        icon: category.iconName,
-                        isSelected: selectedCategory == category
-                    ) {
-                        withAnimation(.spring(response: 0.3)) {
-                            selectedCategory = selectedCategory == category ? nil : category
+                .padding(.horizontal, DS.Spacing.lg)
+            }
+            .onChange(of: selectedCategory) { _, newCategory in
+                withAnimation {
+                    if let category = newCategory {
+                        proxy.scrollTo("category_\(category.rawValue)", anchor: .center)
+                    } else {
+                        proxy.scrollTo("category_all", anchor: .center)
+                    }
+                }
+            }
+            .onAppear {
+                if let category = selectedCategory {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        withAnimation {
+                            proxy.scrollTo("category_\(category.rawValue)", anchor: .center)
                         }
                     }
                 }
             }
-            .padding(.horizontal, DS.Spacing.lg)
         }
     }
 

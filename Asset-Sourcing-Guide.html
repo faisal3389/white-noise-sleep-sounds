@@ -288,6 +288,28 @@
     color: var(--success);
   }
 
+  /* Copy button */
+  .copy-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .copy-btn:hover {
+    background: var(--accent-light);
+    color: var(--accent);
+    border-color: var(--accent);
+  }
+  .copy-btn.copied {
+    color: var(--success);
+    border-color: var(--success);
+  }
+
   /* Scroll to top */
   .scroll-top {
     position: fixed;
@@ -335,13 +357,13 @@
     <p class="subtitle">White Noise — Sleep Sounds &middot; Every asset you need, exactly how to get it, where to put it</p>
     <div class="meta">
       <span class="meta-item"><strong>16/35</strong> Sound Files</span>
-      <span class="meta-item"><strong>12/35</strong> Background Images</span>
-      <span class="meta-item"><strong>12/35</strong> Thumbnails</span>
+      <span class="meta-item"><strong>30/35</strong> Background Images</span>
+      <span class="meta-item"><strong>30/35</strong> Thumbnails</span>
       <span class="meta-item"><strong>8/8</strong> Scene Cards</span>
       <span class="meta-item"><strong>0/4</strong> App Icons</span>
-      <span class="meta-item"><strong>0/6</strong> Screenshots</span>
+      <span class="meta-item"><strong>6/6</strong> Screenshots</span>
     </div>
-    <p style="color:var(--accent);margin-top:12px;font-size:0.9em;">Last updated: April 16, 2026 — 12 bg images + 12 thumbnails processed &amp; added to Xcode</p>
+    <p style="color:var(--accent);margin-top:12px;font-size:0.9em;">Last updated: April 16, 2026 — 30 bg images + 30 thumbnails processed &amp; added to Xcode</p>
   </div>
 
   <!-- Tab Bar -->
@@ -912,63 +934,64 @@ The image should feel peaceful, immersive, and premium — like a scene from a h
           <th>Asset Catalog Name</th>
           <th>AI Prompt Subject</th>
           <th>Theme Color</th>
+          <th>Action</th>
         </tr>
       </thead>
       <tbody>
-        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Noise</td></tr>
-        <tr><td>1</td><td><code>bg_white_noise</code></td><td>Abstract flowing gradient with soft gray and silver waves, ethereal mist</td><td>Cool gray #2C2C3A</td></tr>
-        <tr><td>2</td><td><code>bg_pink_noise</code></td><td>Abstract flowing gradient with soft pink and magenta waves, silk-like</td><td>Pink #3A2040</td></tr>
-        <tr><td>3</td><td><code>bg_brown_noise</code></td><td>Warm brown abstract texture with wood grain feel, organic patterns</td><td>Warm brown #2E1F14</td></tr>
-        <tr><td>4</td><td><code>bg_blue_noise</code></td><td>Cool blue digital static pattern, abstract crystalline structure</td><td>Deep blue #142040</td></tr>
+        <tr><td colspan="5" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Noise &#x2705; 4/4</td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 1</td><td><code>bg_white_noise</code></td><td>Abstract flowing gradient with soft gray and silver waves, ethereal mist</td><td>Cool gray #2C2C3A</td><td><button class="copy-btn" onclick="copyPrompt(this,'Abstract flowing gradient with soft gray and silver waves, ethereal mist','Cool gray #2C2C3A')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 2</td><td><code>bg_pink_noise</code></td><td>Abstract flowing gradient with soft pink and magenta waves, silk-like</td><td>Pink #3A2040</td><td><button class="copy-btn" onclick="copyPrompt(this,'Abstract flowing gradient with soft pink and magenta waves, silk-like','Pink #3A2040')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 3</td><td><code>bg_brown_noise</code></td><td>Warm brown abstract texture with wood grain feel, organic patterns</td><td>Warm brown #2E1F14</td><td><button class="copy-btn" onclick="copyPrompt(this,'Warm brown abstract texture with wood grain feel, organic patterns','Warm brown #2E1F14')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 4</td><td><code>bg_blue_noise</code></td><td>Cool blue digital static pattern, abstract crystalline structure</td><td>Deep blue #142040</td><td><button class="copy-btn" onclick="copyPrompt(this,'Cool blue digital static pattern, abstract crystalline structure','Deep blue #142040')">📋 Copy Prompt</button></td></tr>
 
-        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Rain</td></tr>
-        <tr><td>5</td><td><code>bg_light_rain</code></td><td>Foggy forest with gentle drizzle, soft diffused light through trees</td><td>Forest green #1E2A1E</td></tr>
-        <tr><td>6</td><td><code>bg_heavy_rain</code></td><td>Dark window with heavy rain streaks, blurred city lights in background</td><td>Dark blue #1A2030</td></tr>
-        <tr><td>7</td><td><code>bg_rain_on_roof</code></td><td>View from inside a tent or cabin looking out at rain, warm lantern light</td><td>Warm amber #2A2015</td></tr>
-        <tr><td>8</td><td><code>bg_thunderstorm</code></td><td>Dramatic dark sky with distant lightning, rolling storm clouds</td><td>Storm blue #15182A</td></tr>
+        <tr><td colspan="5" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Rain &#x2705; 4/4</td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 5</td><td><code>bg_light_rain</code></td><td>Foggy forest with gentle drizzle, soft diffused light through trees</td><td>Forest green #1E2A1E</td><td><button class="copy-btn" onclick="copyPrompt(this,'Foggy forest with gentle drizzle, soft diffused light through trees','Forest green #1E2A1E')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 6</td><td><code>bg_heavy_rain</code></td><td>Dark window with heavy rain streaks, blurred city lights in background</td><td>Dark blue #1A2030</td><td><button class="copy-btn" onclick="copyPrompt(this,'Dark window with heavy rain streaks, blurred city lights in background','Dark blue #1A2030')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 7</td><td><code>bg_rain_on_roof</code></td><td>View from inside a tent or cabin looking out at rain, warm lantern light</td><td>Warm amber #2A2015</td><td><button class="copy-btn" onclick="copyPrompt(this,'View from inside a tent or cabin looking out at rain, warm lantern light','Warm amber #2A2015')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 8</td><td><code>bg_thunderstorm</code></td><td>Dramatic dark sky with distant lightning, rolling storm clouds</td><td>Storm blue #15182A</td><td><button class="copy-btn" onclick="copyPrompt(this,'Dramatic dark sky with distant lightning, rolling storm clouds','Storm blue #15182A')">📋 Copy Prompt</button></td></tr>
 
-        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Nature</td></tr>
-        <tr><td>9</td><td><code>bg_forest</code></td><td>Deep green forest with tall trees, filtered sunlight through canopy</td><td>Deep green #0A1A0A</td></tr>
-        <tr><td>10</td><td><code>bg_birds</code></td><td>Sunrise through trees, warm golden light, morning mist</td><td>Golden #2A2510</td></tr>
-        <tr><td>11</td><td><code>bg_crickets</code></td><td>Night meadow under moonlight with fireflies, tall grass</td><td>Night green #101A15</td></tr>
-        <tr><td>12</td><td><code>bg_wind</code></td><td>Open plains hilltop with dramatic sky, tall grass blowing in wind</td><td>Cool green #1A2020</td></tr>
-        <tr><td>13</td><td><code>bg_leaves</code></td><td>Close-up of autumn leaves on forest floor, warm dappled light</td><td>Autumn #2A1E10</td></tr>
+        <tr><td colspan="5" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Nature &#x2705; 5/5</td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 9</td><td><code>bg_forest</code></td><td>Deep green forest with tall trees, filtered sunlight through canopy</td><td>Deep green #0A1A0A</td><td><button class="copy-btn" onclick="copyPrompt(this,'Deep green forest with tall trees, filtered sunlight through canopy','Deep green #0A1A0A')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 10</td><td><code>bg_birds</code></td><td>Sunrise through trees, warm golden light, morning mist</td><td>Golden #2A2510</td><td><button class="copy-btn" onclick="copyPrompt(this,'Sunrise through trees, warm golden light, morning mist','Golden #2A2510')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 11</td><td><code>bg_crickets</code></td><td>Night meadow under moonlight with fireflies, tall grass</td><td>Night green #101A15</td><td><button class="copy-btn" onclick="copyPrompt(this,'Night meadow under moonlight with fireflies, tall grass','Night green #101A15')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 12</td><td><code>bg_wind</code></td><td>Open plains hilltop with dramatic sky, tall grass blowing in wind</td><td>Cool green #1A2020</td><td><button class="copy-btn" onclick="copyPrompt(this,'Open plains hilltop with dramatic sky, tall grass blowing in wind','Cool green #1A2020')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 13</td><td><code>bg_leaves</code></td><td>Close-up of autumn leaves on forest floor, warm dappled light</td><td>Autumn #2A1E10</td><td><button class="copy-btn" onclick="copyPrompt(this,'Close-up of autumn leaves on forest floor, warm dappled light','Autumn #2A1E10')">📋 Copy Prompt</button></td></tr>
 
-        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Urban</td></tr>
-        <tr><td>14</td><td><code>bg_city_traffic</code></td><td>Urban night street, neon reflections on wet pavement, car tail lights</td><td>Neon purple #1A1025</td></tr>
-        <tr><td>15</td><td><code>bg_cafe</code></td><td>Warm coffee shop interior, bokeh lights, cozy atmosphere, wooden tables</td><td>Warm brown #251A10</td></tr>
-        <tr><td>16</td><td><code>bg_train</code></td><td>Night train window view, passing city lights, rain on glass</td><td>Night blue #15152A</td></tr>
+        <tr><td colspan="5" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Urban &#x2705; 3/3</td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 14</td><td><code>bg_city_traffic</code></td><td>Urban night street, neon reflections on wet pavement, car tail lights</td><td>Neon purple #1A1025</td><td><button class="copy-btn" onclick="copyPrompt(this,'Urban night street, neon reflections on wet pavement, car tail lights','Neon purple #1A1025')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 15</td><td><code>bg_cafe</code></td><td>Warm coffee shop interior, bokeh lights, cozy atmosphere, wooden tables</td><td>Warm brown #251A10</td><td><button class="copy-btn" onclick="copyPrompt(this,'Warm coffee shop interior, bokeh lights, cozy atmosphere, wooden tables','Warm brown #251A10')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 16</td><td><code>bg_train</code></td><td>Night train window view, passing city lights, rain on glass</td><td>Night blue #15152A</td><td><button class="copy-btn" onclick="copyPrompt(this,'Night train window view, passing city lights, rain on glass','Night blue #15152A')">📋 Copy Prompt</button></td></tr>
 
-        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Machine</td></tr>
-        <tr><td>17</td><td><code>bg_fan</code></td><td>Clean modern bedroom at night, soft blue-white moonlight, minimal</td><td>Cool white #1A1E2A</td></tr>
-        <tr><td>18</td><td><code>bg_ac</code></td><td>Modern minimalist room, cool blue tones, soft ambient light</td><td>Cool blue #1A1E2A</td></tr>
-        <tr><td>19</td><td><code>bg_dryer</code></td><td>Cozy laundry room, warm overhead light, soft towels visible</td><td>Warm #25201A</td></tr>
-        <tr><td>20</td><td><code>bg_washing_machine</code></td><td>Clean laundry room with soft warm lighting, water droplets</td><td>Clean #202025</td></tr>
+        <tr><td colspan="5" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Machine &#x2705; 4/4</td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 17</td><td><code>bg_fan</code></td><td>Clean modern bedroom at night, soft blue-white moonlight, minimal</td><td>Cool white #1A1E2A</td><td><button class="copy-btn" onclick="copyPrompt(this,'Clean modern bedroom at night, soft blue-white moonlight, minimal','Cool white #1A1E2A')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 18</td><td><code>bg_ac</code></td><td>Modern minimalist room, cool blue tones, soft ambient light</td><td>Cool blue #1A1E2A</td><td><button class="copy-btn" onclick="copyPrompt(this,'Modern minimalist room, cool blue tones, soft ambient light','Cool blue #1A1E2A')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 19</td><td><code>bg_dryer</code></td><td>Cozy laundry room, warm overhead light, soft towels visible</td><td>Warm #25201A</td><td><button class="copy-btn" onclick="copyPrompt(this,'Cozy laundry room, warm overhead light, soft towels visible','Warm #25201A')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 20</td><td><code>bg_washing_machine</code></td><td>Clean laundry room with soft warm lighting, water droplets</td><td>Clean #202025</td><td><button class="copy-btn" onclick="copyPrompt(this,'Clean laundry room with soft warm lighting, water droplets','Clean #202025')">📋 Copy Prompt</button></td></tr>
 
-        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Fire</td></tr>
-        <tr><td>21</td><td><code>bg_campfire</code></td><td>Close-up campfire with glowing embers and sparks, dark forest behind</td><td>Orange #2E1A0A</td></tr>
-        <tr><td>22</td><td><code>bg_fireplace</code></td><td>Stone fireplace in cozy interior, warm amber light, wood mantle</td><td>Warm amber #2A1A0E</td></tr>
-        <tr><td>23</td><td><code>bg_candle</code></td><td>Single candle flame in dark room, soft warm glow, bokeh</td><td>Warm gold #2A1E0A</td></tr>
+        <tr><td colspan="5" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Fire &#x2705; 3/3</td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 21</td><td><code>bg_campfire</code></td><td>Close-up campfire with glowing embers and sparks, dark forest behind</td><td>Orange #2E1A0A</td><td><button class="copy-btn" onclick="copyPrompt(this,'Close-up campfire with glowing embers and sparks, dark forest behind','Orange #2E1A0A')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 22</td><td><code>bg_fireplace</code></td><td>Stone fireplace in cozy interior, warm amber light, wood mantle</td><td>Warm amber #2A1A0E</td><td><button class="copy-btn" onclick="copyPrompt(this,'Stone fireplace in cozy interior, warm amber light, wood mantle','Warm amber #2A1A0E')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 23</td><td><code>bg_candle</code></td><td>Single candle flame in dark room, soft warm glow, bokeh</td><td>Warm gold #2A1E0A</td><td><button class="copy-btn" onclick="copyPrompt(this,'Single candle flame in dark room, soft warm glow, bokeh','Warm gold #2A1E0A')">📋 Copy Prompt</button></td></tr>
 
-        <tr><td colspan="4" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Water</td></tr>
-        <tr><td>24</td><td><code>bg_ocean_waves</code></td><td>Beach at dusk, deep blue tones, white foam on dark sand</td><td>Ocean blue #0D1A2E</td></tr>
-        <tr><td>25</td><td><code>bg_river</code></td><td>Forest stream over mossy rocks, dappled sunlight through trees</td><td>Forest #152515</td></tr>
-        <tr><td>26</td><td><code>bg_waterfall</code></td><td>Tall waterfall in tropical setting, mist, lush green surroundings</td><td>Teal #1A2A2A</td></tr>
-        <tr><td>27</td><td><code>bg_underwater</code></td><td>Deep blue underwater scene, light rays filtering from surface above</td><td>Deep blue #0A1530</td></tr>
+        <tr><td colspan="5" style="background:var(--surface-2);color:var(--accent);font-weight:700;">Water &#x2705; 4/4</td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 24</td><td><code>bg_ocean_waves</code></td><td>Beach at dusk, deep blue tones, white foam on dark sand</td><td>Ocean blue #0D1A2E</td><td><button class="copy-btn" onclick="copyPrompt(this,'Beach at dusk, deep blue tones, white foam on dark sand','Ocean blue #0D1A2E')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 25</td><td><code>bg_river</code></td><td>Forest stream over mossy rocks, dappled sunlight through trees</td><td>Forest #152515</td><td><button class="copy-btn" onclick="copyPrompt(this,'Forest stream over mossy rocks, dappled sunlight through trees','Forest #152515')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 26</td><td><code>bg_waterfall</code></td><td>Tall waterfall in tropical setting, mist, lush green surroundings</td><td>Teal #1A2A2A</td><td><button class="copy-btn" onclick="copyPrompt(this,'Tall waterfall in tropical setting, mist, lush green surroundings','Teal #1A2A2A')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 27</td><td><code>bg_underwater</code></td><td>Deep blue underwater scene, light rays filtering from surface above</td><td>Deep blue #0A1530</td><td><button class="copy-btn" onclick="copyPrompt(this,'Deep blue underwater scene, light rays filtering from surface above','Deep blue #0A1530')">📋 Copy Prompt</button></td></tr>
 
-        <tr><td colspan="4" style="background:var(--premium-light);color:var(--premium);font-weight:700;">Premium</td></tr>
-        <tr><td>28</td><td><code>bg_singing_bowl</code></td><td>Tibetan temple interior with candlelight, singing bowls on altar</td><td>Amber #1A1520</td></tr>
-        <tr><td>29</td><td><code>bg_wind_chimes</code></td><td>Bamboo wind chimes on a porch with sunset garden in background</td><td>Sunset #2A2510</td></tr>
-        <tr><td>30</td><td><code>bg_underwater_bubbles</code></td><td>Underwater scene with rising bubbles, deep ocean blue, light from above</td><td>Ocean #0A1535</td></tr>
-        <tr><td>31</td><td><code>bg_japanese_garden</code></td><td>Japanese zen garden at twilight, stone lantern, bamboo, still water</td><td>Green #152015</td></tr>
-        <tr><td>32</td><td><code>bg_northern_lights</code></td><td>Aurora borealis over snowy mountains, green and purple sky, starry</td><td>Aurora green #0A2020</td></tr>
-        <tr><td>33</td><td><code>bg_cabin_rain</code></td><td>Cozy cabin interior looking out window at heavy rain, warm firelight</td><td>Warm #251A10</td></tr>
-        <tr><td>34</td><td><code>bg_midnight_forest</code></td><td>Dense dark forest at midnight, blue moonlight filtering through</td><td>Night blue #0A0A1A</td></tr>
-        <tr><td>35</td><td><code>bg_desert_wind</code></td><td>Desert dunes at dusk, warm orange tones, wind ripples in sand</td><td>Desert #2A1A0A</td></tr>
-        <tr><td>36</td><td><code>bg_snow_falling</code></td><td>Snow falling gently in a quiet forest, soft white and blue tones</td><td>Winter #1A1E2A</td></tr>
-        <tr><td>37</td><td><code>bg_coffee_shop</code></td><td>Warm bustling coffee shop, bokeh lights, steaming cups, wooden decor</td><td>Coffee #251A10</td></tr>
-        <tr><td>38</td><td><code>bg_library</code></td><td>Grand old library interior, warm lamp light, tall bookshelves, leather</td><td>Warm brown #201510</td></tr>
-        <tr><td>39</td><td><code>bg_vinyl_crackle</code></td><td>Vintage record player in dim room, vinyl spinning, warm golden light</td><td>Vintage #251810</td></tr>
+        <tr><td colspan="5" style="background:var(--premium-light);color:var(--premium);font-weight:700;">Premium — 3/12 done</td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 28</td><td><code>bg_singing_bowl</code></td><td>Tibetan temple interior with candlelight, singing bowls on altar</td><td>Amber #1A1520</td><td><button class="copy-btn" onclick="copyPrompt(this,'Tibetan temple interior with candlelight, singing bowls on altar','Amber #1A1520')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 29</td><td><code>bg_wind_chimes</code></td><td>Bamboo wind chimes on a porch with sunset garden in background</td><td>Sunset #2A2510</td><td><button class="copy-btn" onclick="copyPrompt(this,'Bamboo wind chimes on a porch with sunset garden in background','Sunset #2A2510')">📋 Copy Prompt</button></td></tr>
+        <tr><td>30</td><td><code>bg_underwater_bubbles</code></td><td>Underwater scene with rising bubbles, deep ocean blue, light from above</td><td>Ocean #0A1535</td><td><button class="copy-btn" onclick="copyPrompt(this,'Underwater scene with rising bubbles, deep ocean blue, light from above','Ocean #0A1535')">📋 Copy Prompt</button></td></tr>
+        <tr style="opacity:0.6;"><td>&#x2705; 31</td><td><code>bg_japanese_garden</code></td><td>Japanese zen garden at twilight, stone lantern, bamboo, still water</td><td>Green #152015</td><td><button class="copy-btn" onclick="copyPrompt(this,'Japanese zen garden at twilight, stone lantern, bamboo, still water','Green #152015')">📋 Copy Prompt</button></td></tr>
+        <tr><td>32</td><td><code>bg_northern_lights</code></td><td>Aurora borealis over snowy mountains, green and purple sky, starry</td><td>Aurora green #0A2020</td><td><button class="copy-btn" onclick="copyPrompt(this,'Aurora borealis over snowy mountains, green and purple sky, starry','Aurora green #0A2020')">📋 Copy Prompt</button></td></tr>
+        <tr><td>33</td><td><code>bg_cabin_rain</code></td><td>Cozy cabin interior looking out window at heavy rain, warm firelight</td><td>Warm #251A10</td><td><button class="copy-btn" onclick="copyPrompt(this,'Cozy cabin interior looking out window at heavy rain, warm firelight','Warm #251A10')">📋 Copy Prompt</button></td></tr>
+        <tr><td>34</td><td><code>bg_midnight_forest</code></td><td>Dense dark forest at midnight, blue moonlight filtering through</td><td>Night blue #0A0A1A</td><td><button class="copy-btn" onclick="copyPrompt(this,'Dense dark forest at midnight, blue moonlight filtering through','Night blue #0A0A1A')">📋 Copy Prompt</button></td></tr>
+        <tr><td>35</td><td><code>bg_desert_wind</code></td><td>Desert dunes at dusk, warm orange tones, wind ripples in sand</td><td>Desert #2A1A0A</td><td><button class="copy-btn" onclick="copyPrompt(this,'Desert dunes at dusk, warm orange tones, wind ripples in sand','Desert #2A1A0A')">📋 Copy Prompt</button></td></tr>
+        <tr><td>36</td><td><code>bg_snow_falling</code></td><td>Snow falling gently in a quiet forest, soft white and blue tones</td><td>Winter #1A1E2A</td><td><button class="copy-btn" onclick="copyPrompt(this,'Snow falling gently in a quiet forest, soft white and blue tones','Winter #1A1E2A')">📋 Copy Prompt</button></td></tr>
+        <tr><td>37</td><td><code>bg_coffee_shop</code></td><td>Warm bustling coffee shop, bokeh lights, steaming cups, wooden decor</td><td>Coffee #251A10</td><td><button class="copy-btn" onclick="copyPrompt(this,'Warm bustling coffee shop, bokeh lights, steaming cups, wooden decor','Coffee #251A10')">📋 Copy Prompt</button></td></tr>
+        <tr><td>38</td><td><code>bg_library</code></td><td>Grand old library interior, warm lamp light, tall bookshelves, leather</td><td>Warm brown #201510</td><td><button class="copy-btn" onclick="copyPrompt(this,'Grand old library interior, warm lamp light, tall bookshelves, leather','Warm brown #201510')">📋 Copy Prompt</button></td></tr>
+        <tr><td>39</td><td><code>bg_vinyl_crackle</code></td><td>Vintage record player in dim room, vinyl spinning, warm golden light</td><td>Vintage #251810</td><td><button class="copy-btn" onclick="copyPrompt(this,'Vintage record player in dim room, vinyl spinning, warm golden light','Vintage #251810')">📋 Copy Prompt</button></td></tr>
       </tbody>
     </table>
 
@@ -1398,7 +1421,7 @@ cp "Raw assets/processed/"*.m4a "White Noise - Sleep Sounds/Sounds/"</code></pre
       <p>All 35 file-based sounds (+ 4 procedurally generated noise sounds) are processed and in the Xcode project. Total audio bundle: ~22 MB. Next step: background images.</p>
     </div>
 
-    <h3>Phase 2: Background Images (12/35 done)</h3>
+    <h3>Phase 2: Background Images (30/35 done)</h3>
     <ul class="checklist">
       <li class="done"><code>bg_white_noise</code> — Abstract gray waves</li>
       <li class="done"><code>bg_pink_noise</code> — Pink/magenta abstract</li>
@@ -1412,25 +1435,25 @@ cp "Raw assets/processed/"*.m4a "White Noise - Sleep Sounds/Sounds/"</code></pre
       <li class="done"><code>bg_birds</code> — Sunrise through trees</li>
       <li class="done"><code>bg_crickets</code> — Night meadow moonlight</li>
       <li class="done"><code>bg_wind</code> — Open plains dramatic sky</li>
-      <li><code>bg_leaves</code> — Autumn leaves on ground</li>
-      <li><code>bg_city_traffic</code> — Urban neon night</li>
-      <li><code>bg_cafe</code> — Coffee shop bokeh</li>
-      <li><code>bg_train</code> — Night train window</li>
-      <li><code>bg_fan</code> — Modern bedroom</li>
-      <li><code>bg_ac</code> — Minimalist room blue</li>
-      <li><code>bg_dryer</code> — Cozy laundry room</li>
-      <li><code>bg_washing_machine</code> — Clean laundry room</li>
-      <li><code>bg_campfire</code> — Campfire embers</li>
-      <li><code>bg_fireplace</code> — Stone fireplace interior</li>
-      <li><code>bg_candle</code> — Single candle glow</li>
-      <li><code>bg_ocean_waves</code> — Beach at dusk</li>
-      <li><code>bg_river</code> — Forest stream mossy rocks</li>
-      <li><code>bg_waterfall</code> — Tropical waterfall mist</li>
-      <li><code>bg_underwater</code> — Deep blue underwater</li>
-      <li><code>bg_singing_bowl</code> — Tibetan temple candles</li>
-      <li><code>bg_wind_chimes</code> — Porch sunset bamboo</li>
+      <li class="done"><code>bg_leaves</code> — Autumn leaves on ground</li>
+      <li class="done"><code>bg_city_traffic</code> — Urban neon night</li>
+      <li class="done"><code>bg_cafe</code> — Coffee shop bokeh</li>
+      <li class="done"><code>bg_train</code> — Night train window</li>
+      <li class="done"><code>bg_fan</code> — Modern bedroom</li>
+      <li class="done"><code>bg_ac</code> — Minimalist room blue</li>
+      <li class="done"><code>bg_dryer</code> — Cozy laundry room</li>
+      <li class="done"><code>bg_washing_machine</code> — Clean laundry room</li>
+      <li class="done"><code>bg_campfire</code> — Campfire embers</li>
+      <li class="done"><code>bg_fireplace</code> — Stone fireplace interior</li>
+      <li class="done"><code>bg_candle</code> — Single candle glow</li>
+      <li class="done"><code>bg_ocean_waves</code> — Beach at dusk</li>
+      <li class="done"><code>bg_river</code> — Forest stream mossy rocks</li>
+      <li class="done"><code>bg_waterfall</code> — Tropical waterfall mist</li>
+      <li class="done"><code>bg_underwater</code> — Deep blue underwater</li>
+      <li class="done"><code>bg_singing_bowl</code> — Tibetan temple candles</li>
+      <li class="done"><code>bg_wind_chimes</code> — Porch sunset bamboo</li>
       <li><code>bg_underwater_bubbles</code> — Underwater bubbles</li>
-      <li><code>bg_japanese_garden</code> — Zen garden twilight</li>
+      <li class="done"><code>bg_japanese_garden</code> — Zen garden twilight</li>
       <li><code>bg_northern_lights</code> — Aurora snowy mountains</li>
       <li><code>bg_cabin_rain</code> — Cabin window rain</li>
       <li><code>bg_midnight_forest</code> — Dark forest moonlight</li>
@@ -1441,11 +1464,11 @@ cp "Raw assets/processed/"*.m4a "White Noise - Sleep Sounds/Sounds/"</code></pre
       <li><code>bg_vinyl_crackle</code> — Vintage record player</li>
     </ul>
 
-    <h3>Phase 3: Thumbnails (12/35 done)</h3>
+    <h3>Phase 3: Thumbnails (30/35 done)</h3>
     <ul class="checklist">
-      <li class="done">Run the batch crop Terminal command on available backgrounds (12 done)</li>
-      <li class="done">Verify 12 thumbnails are 120×120px PNG</li>
-      <li class="done">Add 12 thumbnails to Asset Catalog as thumb_*.imageset</li>
+      <li class="done">Run the batch crop Terminal command on available backgrounds (30 done)</li>
+      <li class="done">Verify 30 thumbnails are 120×120px PNG</li>
+      <li class="done">Add 30 thumbnails to Asset Catalog as thumb_*.imageset</li>
       <li class="done">Wire <code>thumbnailImage</code> computed property on Sound model</li>
       <li class="done">Update MiniPlayerView, PlaylistView, NowPlayingView mixer to use thumbnails</li>
       <li>Generate remaining 23 thumbnails when backgrounds are available</li>
@@ -1471,16 +1494,16 @@ cp "Raw assets/processed/"*.m4a "White Noise - Sleep Sounds/Sounds/"</code></pre
       <li><code>AppIcon-Ocean.png</code> — Wave on blue (1024×1024)</li>
     </ul>
 
-    <h3>Phase 6: App Store Screenshots (6+)</h3>
+    <h3>Phase 6: App Store Screenshots (6+) &#x2705; COMPLETE</h3>
     <ul class="checklist">
-      <li>Screenshot 1 — Now Playing immersive</li>
-      <li>Screenshot 2 — Sounds list</li>
-      <li>Screenshot 3 — Mix editor</li>
-      <li>Screenshot 4 — Sleep timer + clock</li>
-      <li>Screenshot 5 — Widget on home screen</li>
-      <li>Screenshot 6 — Premium / Settings</li>
-      <li>Add marketing text frames in Figma</li>
-      <li>Export at 1290×2796 (iPhone 15 Pro Max)</li>
+      <li class="done">Screenshot 1 — Now Playing immersive</li>
+      <li class="done">Screenshot 2 — Sounds list</li>
+      <li class="done">Screenshot 3 — Mix editor</li>
+      <li class="done">Screenshot 4 — Sleep timer + clock</li>
+      <li class="done">Screenshot 5 — Widget on home screen</li>
+      <li class="done">Screenshot 6 — Premium / Settings</li>
+      <li class="done">Add marketing text frames in Figma</li>
+      <li class="done">Export at 1290×2796 (iPhone 15 Pro Max)</li>
     </ul>
 
     <h3>Phase 7: Misc</h3>
@@ -1523,6 +1546,24 @@ cp "Raw assets/processed/"*.m4a "White Noise - Sleep Sounds/Sounds/"</code></pre
       }
     }
   });
+
+  // Copy to clipboard
+  function copyText(btn, text) {
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = '✓ Copied';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = '⧉'; btn.classList.remove('copied'); }, 1200);
+    });
+  }
+
+  function copyPrompt(btn, subject, color) {
+    const prompt = `Generate a landscape image (16:9 aspect ratio) for a sleep/relaxation app background.\n\nSubject: ${subject}\n\nStyle requirements:\n- Cinematic, moody, dark atmosphere\n- Slightly desaturated colors\n- Subtle film grain texture\n- Dark enough that white text would be readable over it\n- Rich shadows, low-key lighting\n- No people, no text, no UI elements\n- Photorealistic quality\n- Color palette leaning toward ${color}\n\nThe image should feel peaceful, immersive, and premium — like a scene from a high-end meditation app.`;
+    navigator.clipboard.writeText(prompt).then(() => {
+      btn.textContent = '✓ Copied';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.innerHTML = '📋 Copy Prompt'; btn.classList.remove('copied'); }, 1500);
+    });
+  }
 
   // Scroll to top button
   window.addEventListener('scroll', () => {

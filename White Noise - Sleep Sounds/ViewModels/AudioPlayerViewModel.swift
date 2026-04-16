@@ -11,7 +11,7 @@ class AudioPlayerViewModel {
     var volume: Float = 0.7
     var currentIndex: Int = 0
     var isShuffleOn: Bool = false
-    var loopMode: LoopMode = .off
+    var loopMode: LoopMode = .one
 
     enum LoopMode {
         case off, one, all

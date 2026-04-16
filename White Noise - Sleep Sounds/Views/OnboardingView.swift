@@ -2,6 +2,7 @@ import SwiftUI
 
 struct OnboardingView: View {
     @Binding var hasSeenOnboarding: Bool
+    var storeManager: StoreManager
     @State private var currentPage = 0
     private let analytics = AnalyticsManager.shared
 
@@ -138,7 +139,7 @@ struct OnboardingView: View {
                 .font(DS.Typography.displayHero)
                 .foregroundStyle(.white)
 
-            Text("Enjoy free with ads, or go premium for just $3.99 to unlock all sounds and remove ads.")
+            Text("Enjoy free with ads, or go premium\(storeManager.priceString.isEmpty ? "" : " for just \(storeManager.priceString)") to unlock all sounds and remove ads.")
                 .font(.body)
                 .foregroundStyle(.white.opacity(0.6))
                 .multilineTextAlignment(.center)

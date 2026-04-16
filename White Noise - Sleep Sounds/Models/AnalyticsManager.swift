@@ -136,6 +136,12 @@ final class AnalyticsManager {
         // Live Activity
         case liveActivityStarted = "live_activity_started"
         case liveActivityEnded = "live_activity_ended"
+
+        // Widget
+        case widgetTapped = "widget_tapped"
+        case widgetQuickPlayTapped = "widget_quick_play_tapped"
+        case widgetNowPlayingTapped = "widget_now_playing_tapped"
+        case widgetToggleTapped = "widget_toggle_tapped"
     }
 
     // MARK: - Track

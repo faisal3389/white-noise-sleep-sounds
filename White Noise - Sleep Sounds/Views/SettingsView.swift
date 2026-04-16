@@ -30,7 +30,7 @@ struct SettingsView: View {
                                 Text("Active")
                                     .foregroundStyle(.green)
                             } else {
-                                Text("$3.99")
+                                Text(storeManager.priceString.isEmpty ? "Premium" : storeManager.priceString)
                                     .foregroundStyle(.white.opacity(0.5))
                             }
                         }
@@ -63,19 +63,19 @@ struct SettingsView: View {
                 }
 
                 Section("About") {
-                    Link(destination: URL(string: "https://apps.apple.com/app/id0000000000")!) {
+                    Link(destination: URL(string: "https://apps.apple.com/app/id6762322017")!) {
                         Label("Rate on App Store", systemImage: "star.bubble")
                             .foregroundStyle(.white)
                     }
                     .listRowBackground(Color.appSurface)
 
-                    ShareLink(item: URL(string: "https://apps.apple.com/app/id0000000000")!) {
+                    ShareLink(item: URL(string: "https://apps.apple.com/app/id6762322017")!) {
                         Label("Share with Friends", systemImage: "square.and.arrow.up")
                             .foregroundStyle(.white)
                     }
                     .listRowBackground(Color.appSurface)
 
-                    Link(destination: URL(string: "https://example.com/privacy")!) {
+                    Link(destination: URL(string: "https://zalgo.dev/privacy")!) {
                         Label("Privacy Policy", systemImage: "hand.raised")
                             .foregroundStyle(.white)
                     }

@@ -50,11 +50,25 @@ struct RootView: View {
     var settings: SettingsManager
     @State private var deepLinkSoundId: String?
     @State private var deepLinkAction: DeepLinkAction?
+    @State private var deepLinkSource: DeepLinkSource = .app
 
     enum DeepLinkAction: Equatable {
         case nowPlaying
         case toggle
         case playSound(String)
+
+        var analyticsName: String {
+            switch self {
+            case .nowPlaying: return "now_playing"
+            case .toggle: return "toggle"
+            case .playSound: return "quick_play"
+            }
+        }
+    }
+
+    enum DeepLinkSource: Equatable {
+        case app
+        case widget(type: String)
     }
 
     var body: some View {
@@ -63,18 +77,31 @@ struct RootView: View {
                 storeManager: storeManager,
                 settings: settings,
                 deepLinkSoundId: $deepLinkSoundId,
-                deepLinkAction: $deepLinkAction
+                deepLinkAction: $deepLinkAction,
+                deepLinkSource: $deepLinkSource
             )
             .onOpenURL { url in
                 handleDeepLink(url)
             }
         } else {
-            OnboardingView(hasSeenOnboarding: $hasSeenOnboarding)
+            OnboardingView(hasSeenOnboarding: $hasSeenOnboarding, storeManager: storeManager)
         }
     }
 
     private func handleDeepLink(_ url: URL) {
         guard url.scheme == "whitenoise" else { return }
+
+        // Parse source from query parameters
+        let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        let queryItems = components?.queryItems ?? []
+        let from = queryItems.first(where: { $0.name == "from" })?.value
+        let widgetType = queryItems.first(where: { $0.name == "type" })?.value ?? "unknown"
+
+        if from == "widget" {
+            deepLinkSource = .widget(type: widgetType)
+        } else {
+            deepLinkSource = .app
+        }
 
         switch url.host {
         case "nowplaying":
