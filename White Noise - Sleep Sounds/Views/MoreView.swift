@@ -306,7 +306,6 @@ struct MoreView: View {
                         Label("Rate on App Store", systemImage: "star.bubble")
                             .foregroundStyle(.white)
                     }
-                    .simultaneousGesture(TapGesture().onEnded { analytics.track(.rateAppTapped) })
                     .listRowBackground(Color.appSurface)
 
                     ShareLink(
@@ -323,7 +322,6 @@ struct MoreView: View {
                         Label("Privacy Policy", systemImage: "hand.raised")
                             .foregroundStyle(.white)
                     }
-                    .simultaneousGesture(TapGesture().onEnded { analytics.track(.privacyPolicyTapped) })
                     .listRowBackground(Color.appSurface)
 
                     HStack {
