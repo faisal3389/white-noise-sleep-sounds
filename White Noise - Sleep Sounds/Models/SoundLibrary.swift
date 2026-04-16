@@ -4,7 +4,7 @@ struct SoundLibrary {
     static let allSounds: [Sound] = [
         // MARK: - Noise (4 generated)
         Sound(id: "white_noise", name: "White Noise", category: .noise, fileName: "", backgroundImage: "bg_white_noise", isPremium: false, isGenerated: true),
-        Sound(id: "pink_noise", name: "Pink Noise", category: .noise, fileName: "", backgroundImage: "bg_pink_noise", isPremium: false, isGenerated: true),
+        Sound(id: "pink_noise", name: "Pink Noise", category: .noise, fileName: "", backgroundImage: "bg_pink_noise", isPremium: true, isGenerated: true),
         Sound(id: "brown_noise", name: "Brown Noise", category: .noise, fileName: "", backgroundImage: "bg_brown_noise", isPremium: true, isGenerated: true),
         Sound(id: "blue_noise", name: "Blue Noise", category: .noise, fileName: "", backgroundImage: "bg_blue_noise", isPremium: true, isGenerated: true),
 
@@ -15,7 +15,7 @@ struct SoundLibrary {
         Sound(id: "thunderstorm", name: "Thunderstorm", category: .rain, fileName: "thunderstorm.m4a", backgroundImage: "bg_thunderstorm", isPremium: true, isGenerated: false),
 
         // MARK: - Nature (5 file-based)
-        Sound(id: "forest", name: "Forest", category: .nature, fileName: "forest.m4a", backgroundImage: "bg_forest", isPremium: false, isGenerated: false),
+        Sound(id: "forest", name: "Forest", category: .nature, fileName: "forest.m4a", backgroundImage: "bg_forest", isPremium: true, isGenerated: false),
         Sound(id: "birds", name: "Birds Singing", category: .nature, fileName: "birds.m4a", backgroundImage: "bg_birds", isPremium: true, isGenerated: false),
         Sound(id: "crickets", name: "Crickets", category: .nature, fileName: "crickets.m4a", backgroundImage: "bg_crickets", isPremium: true, isGenerated: false),
         Sound(id: "wind", name: "Wind", category: .nature, fileName: "wind.m4a", backgroundImage: "bg_wind", isPremium: true, isGenerated: false),
@@ -27,7 +27,7 @@ struct SoundLibrary {
         Sound(id: "train", name: "Train Ride", category: .urban, fileName: "train.m4a", backgroundImage: "bg_train", isPremium: true, isGenerated: false),
 
         // MARK: - Machine (4 file-based)
-        Sound(id: "fan", name: "Fan", category: .machine, fileName: "fan.m4a", backgroundImage: "bg_fan", isPremium: false, isGenerated: false),
+        Sound(id: "fan", name: "Fan", category: .machine, fileName: "fan.m4a", backgroundImage: "bg_fan", isPremium: true, isGenerated: false),
         Sound(id: "ac", name: "Air Conditioner", category: .machine, fileName: "ac.m4a", backgroundImage: "bg_ac", isPremium: true, isGenerated: false),
         Sound(id: "dryer", name: "Clothes Dryer", category: .machine, fileName: "dryer.m4a", backgroundImage: "bg_dryer", isPremium: true, isGenerated: false),
         Sound(id: "washing_machine", name: "Washing Machine", category: .machine, fileName: "washing_machine.m4a", backgroundImage: "bg_washing_machine", isPremium: true, isGenerated: false),
@@ -38,7 +38,7 @@ struct SoundLibrary {
         Sound(id: "candle", name: "Candle Flicker", category: .fire, fileName: "candle.m4a", backgroundImage: "bg_candle", isPremium: true, isGenerated: false),
 
         // MARK: - Water (4 file-based)
-        Sound(id: "ocean_waves", name: "Ocean Waves", category: .water, fileName: "ocean_waves.m4a", backgroundImage: "bg_ocean_waves", isPremium: false, isGenerated: false),
+        Sound(id: "ocean_waves", name: "Ocean Waves", category: .water, fileName: "ocean_waves.m4a", backgroundImage: "bg_ocean_waves", isPremium: true, isGenerated: false),
         Sound(id: "river", name: "River Stream", category: .water, fileName: "river.m4a", backgroundImage: "bg_river", isPremium: true, isGenerated: false),
         Sound(id: "waterfall", name: "Waterfall", category: .water, fileName: "waterfall.m4a", backgroundImage: "bg_waterfall", isPremium: true, isGenerated: false),
         Sound(id: "underwater", name: "Underwater", category: .water, fileName: "underwater.m4a", backgroundImage: "bg_underwater", isPremium: true, isGenerated: false),

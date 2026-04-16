@@ -1,6 +1,7 @@
 import SwiftUI
 
 struct ContentView: View {
+    @Environment(\.scenePhase) private var scenePhase
     @State private var player = AudioPlayerViewModel()
     @State private var favorites = FavoritesManager()
     @State private var mixesManager = MixesManager()
@@ -11,6 +12,9 @@ struct ContentView: View {
     @State private var selectedTab = 0
     @State private var discoverCategory: SoundCategory? = nil
     @State private var showSleepClock = false
+    @State private var showPremiumSheet = false
+    @State private var showRatePrompt = false
+    private let reviewPrompt = ReviewPromptManager.shared
     var storeManager: StoreManager
     var settings: SettingsManager
     @Binding var deepLinkSoundId: String?
@@ -58,18 +62,15 @@ struct ContentView: View {
             }
         }
         .onChange(of: settings.liveActivitiesEnabled) { _, enabled in
-            player.liveActivityManager.onSettingsChanged(enabled: enabled)
+            player.liveActivityManager.onSettingsChanged(
+                enabled: enabled,
+                isPlaying: player.isPlaying,
+                timerEndDate: timerManager.isTimerActive ? timerManager.targetDate : nil
+            )
         }
         .onChange(of: timerManager.isTimerActive) { _, isActive in
             if isActive, let target = timerManager.targetDate {
                 player.updateLiveActivityTimer(endDate: target)
-            } else {
-                player.updateLiveActivityTimer(endDate: nil)
-            }
-        }
-        .onChange(of: timerManager.isTimerActive) { _, isActive in
-            if isActive {
-                player.updateLiveActivityTimer(endDate: timerManager.targetDate)
             } else {
                 player.updateLiveActivityTimer(endDate: nil)
             }
@@ -89,6 +90,28 @@ struct ContentView: View {
         }
         .fullScreenCover(isPresented: $showSleepClock) {
             SleepClockView(player: player, timerManager: timerManager)
+        }
+        .sheet(isPresented: $showPremiumSheet) {
+            PremiumUpgradeView(storeManager: storeManager)
+        }
+        .sheet(isPresented: $showRatePrompt, onDismiss: {
+            reviewPrompt.shouldShowPrompt = false
+        }) {
+            RateAppSheet(
+                onRate: { reviewPrompt.openAppStoreReview() },
+                onDismiss: { reviewPrompt.dismissPrompt() }
+            )
+            .onAppear { reviewPrompt.markPromptShown() }
+        }
+        .onChange(of: reviewPrompt.shouldShowPrompt) { _, shouldShow in
+            guard shouldShow else { return }
+            if showPremiumSheet || showSleepClock { return }
+            showRatePrompt = true
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase == .active {
+                reviewPrompt.evaluateOnAppActive()
+            }
         }
     }
 
@@ -261,8 +284,13 @@ struct ContentView: View {
                 AnalyticsManager.shared.track(.widgetQuickPlayTapped, properties: ["widget_type": widgetType, "sound_id": soundId])
             }
             if let sound = SoundLibrary.allSounds.first(where: { $0.id == soundId }) {
-                player.play(sound: sound)
-                selectedTab = 2
+                if sound.isPremium && !storeManager.isPremium {
+                    AnalyticsManager.shared.track(.premiumLockedContentTapped, properties: ["sound_id": sound.id, "source": isFromWidget ? "widget" : "deep_link"])
+                    showPremiumSheet = true
+                } else {
+                    player.play(sound: sound)
+                    selectedTab = 2
+                }
             }
         }
 

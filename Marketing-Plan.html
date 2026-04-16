@@ -1,0 +1,1617 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>White Noise — Marketing Playbook</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --bg: #0c0e12;
+    --bg-2: #10131a;
+    --surface: #161a24;
+    --surface-2: #1c2130;
+    --text: #e8ecf3;
+    --text-muted: #8b93a7;
+    --text-dim: #5a6277;
+    --accent: #7fe6db;
+    --accent-2: #96a5ff;
+    --accent-warm: #ffb48a;
+    --new-badge: #ffcf70;
+    --border: rgba(255,255,255,0.06);
+    --border-strong: rgba(255,255,255,0.12);
+    --code-bg: #0a0c11;
+    --success: #7fe6db;
+    --danger: #ff8fa3;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(circle at 10% -10%, rgba(127,230,219,0.08), transparent 40%),
+      radial-gradient(circle at 95% 10%, rgba(150,165,255,0.07), transparent 40%),
+      radial-gradient(circle at 50% 110%, rgba(255,180,138,0.05), transparent 50%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 48px 28px 96px;
+    position: relative;
+    z-index: 1;
+  }
+
+  header.hero {
+    margin-bottom: 40px;
+  }
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--accent);
+    background: rgba(127,230,219,0.08);
+    border: 1px solid rgba(127,230,219,0.2);
+    padding: 6px 12px;
+    border-radius: 100px;
+    margin-bottom: 20px;
+  }
+  .eyebrow::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--accent);
+  }
+  h1 {
+    font-family: 'Manrope', sans-serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, #fff 0%, #c9d1df 60%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .subtitle {
+    font-size: 18px;
+    color: var(--text-muted);
+    max-width: 680px;
+    margin-bottom: 24px;
+  }
+  .meta-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    padding: 18px 22px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+  }
+  .meta-item { display: flex; flex-direction: column; gap: 2px; }
+  .meta-label {
+    font-size: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+  .meta-value { font-size: 15px; font-weight: 600; color: var(--text); }
+
+  /* Tabs */
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    scrollbar-width: none;
+    margin-bottom: 28px;
+    padding: 6px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    position: sticky;
+    top: 16px;
+    z-index: 10;
+    backdrop-filter: blur(20px);
+    background: rgba(22,26,36,0.85);
+  }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab {
+    flex-shrink: 0;
+    padding: 10px 16px;
+    background: transparent;
+    color: var(--text-muted);
+    border: none;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .tab:hover { color: var(--text); background: rgba(255,255,255,0.03); }
+  .tab.active {
+    background: linear-gradient(135deg, rgba(127,230,219,0.16), rgba(150,165,255,0.12));
+    color: var(--text);
+    border: 1px solid rgba(127,230,219,0.25);
+  }
+  .tab .dot {
+    width: 6px; height: 6px;
+    background: var(--new-badge);
+    border-radius: 50%;
+    box-shadow: 0 0 6px var(--new-badge);
+  }
+
+  /* Panels */
+  .panel {
+    display: none;
+    animation: fadeIn 0.3s ease;
+  }
+  .panel.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  h2 {
+    font-family: 'Manrope', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 8px 0;
+    color: var(--text);
+  }
+  h3 {
+    font-family: 'Manrope', sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin: 36px 0 12px 0;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h4 {
+    font-family: 'Manrope', sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    margin: 24px 0 8px 0;
+    color: var(--text);
+  }
+  p { margin: 10px 0; color: var(--text-muted); }
+  p strong, li strong { color: var(--text); font-weight: 600; }
+  ul, ol { margin: 12px 0 12px 22px; color: var(--text-muted); }
+  li { margin: 6px 0; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px dashed rgba(127,230,219,0.3); }
+  a:hover { color: var(--accent-2); border-color: var(--accent-2); }
+
+  .lead {
+    font-size: 17px;
+    color: var(--text);
+    padding: 20px 22px;
+    background: linear-gradient(135deg, rgba(127,230,219,0.06), rgba(150,165,255,0.04));
+    border-left: 3px solid var(--accent);
+    border-radius: 12px;
+    margin: 20px 0 32px;
+  }
+
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-weight: 600;
+  }
+  .badge.new { background: rgba(255,207,112,0.15); color: var(--new-badge); border: 1px solid rgba(255,207,112,0.3); }
+  .badge.high { background: rgba(127,230,219,0.15); color: var(--accent); border: 1px solid rgba(127,230,219,0.3); }
+  .badge.med { background: rgba(150,165,255,0.15); color: var(--accent-2); border: 1px solid rgba(150,165,255,0.3); }
+  .badge.low { background: rgba(255,180,138,0.15); color: var(--accent-warm); border: 1px solid rgba(255,180,138,0.3); }
+
+  /* Callouts */
+  .callout {
+    padding: 16px 20px;
+    margin: 18px 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: 12px;
+  }
+  .callout.warn { border-left-color: var(--accent-warm); }
+  .callout.key { border-left-color: var(--accent); }
+  .callout.note { border-left-color: var(--accent-2); }
+  .callout.danger { border-left-color: var(--danger); }
+  .callout-title {
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Grid layouts */
+  .grid {
+    display: grid;
+    gap: 16px;
+    margin: 20px 0;
+  }
+  .grid-2 { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .card:hover { border-color: var(--border-strong); }
+  .card h4 { margin-top: 0; }
+  .card .tag {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    margin-bottom: 8px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  /* Table */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 18px 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    font-size: 14px;
+  }
+  thead th {
+    background: var(--surface-2);
+    text-align: left;
+    padding: 12px 14px;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 600;
+    color: var(--text);
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+  }
+  tbody td {
+    padding: 12px 14px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-muted);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: rgba(255,255,255,0.015); }
+  tbody td strong { color: var(--text); }
+
+  /* Code & script boxes */
+  code {
+    background: var(--code-bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.88em;
+    color: var(--accent);
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    padding: 16px 18px;
+    border-radius: 12px;
+    overflow-x: auto;
+    margin: 14px 0;
+    font-size: 13px;
+    line-height: 1.55;
+  }
+  pre code {
+    background: transparent;
+    padding: 0;
+    color: var(--text);
+    font-size: 13px;
+  }
+
+  .script {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px 22px;
+    margin: 16px 0;
+    position: relative;
+  }
+  .script-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .script-title {
+    font-family: 'Manrope', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .script-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+  }
+  .script-body {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-muted);
+    font-size: 14.5px;
+    white-space: pre-wrap;
+  }
+  .script-body .hook { color: var(--accent); font-weight: 600; }
+  .script-body .action { color: var(--accent-warm); font-style: italic; }
+  .script-body .cta { color: var(--accent-2); font-weight: 600; }
+
+  /* Timeline / calendar */
+  .week-section {
+    margin: 28px 0;
+    padding: 22px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+  }
+  .week-title {
+    font-family: 'Manrope', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+    color: var(--text);
+  }
+  .week-subtitle {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-bottom: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+  .day-row {
+    display: grid;
+    grid-template-columns: 90px 1fr;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .day-row:last-child { border-bottom: none; }
+  .day-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .day-task { font-size: 14px; color: var(--text-muted); }
+  .day-task strong { color: var(--text); }
+
+  /* SVG figure */
+  figure.diagram {
+    margin: 22px 0;
+    padding: 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    text-align: center;
+  }
+  figure.diagram svg { max-width: 100%; height: auto; }
+  figure.diagram figcaption {
+    font-size: 13px;
+    color: var(--text-dim);
+    margin-top: 12px;
+    font-style: italic;
+  }
+
+  /* Copy button */
+  .copy-btn {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    background: rgba(127,230,219,0.1);
+    border: 1px solid rgba(127,230,219,0.3);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    padding: 6px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+  .copy-btn:hover { background: rgba(127,230,219,0.2); }
+  .copy-btn.copied { background: var(--accent); color: var(--bg); }
+
+  /* Footer */
+  footer {
+    margin-top: 72px;
+    padding-top: 28px;
+    border-top: 1px solid var(--border);
+    color: var(--text-dim);
+    font-size: 13px;
+    text-align: center;
+  }
+
+  @media (max-width: 640px) {
+    .page { padding: 32px 18px 80px; }
+    .tab-bar { top: 8px; }
+    .day-row { grid-template-columns: 1fr; gap: 4px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page">
+
+  <header class="hero">
+    <div class="eyebrow">White Noise · Sleep Sounds · iOS</div>
+    <h1>Marketing Playbook</h1>
+    <p class="subtitle">A 30-day, 15-minutes-a-day, fully-faceless plan to turn &lt;1,000 downloads into real traction. Reddit-first, TikTok + YouTube Shorts as the secondary flywheel, with proven competitor formats you can copy line-for-line.</p>
+    <div class="meta-bar">
+      <div class="meta-item"><span class="meta-label">Stage</span><span class="meta-value">Live · &lt;1K downloads</span></div>
+      <div class="meta-item"><span class="meta-label">Time Budget</span><span class="meta-value">15–30 min/day</span></div>
+      <div class="meta-item"><span class="meta-label">Style</span><span class="meta-value">Fully faceless</span></div>
+      <div class="meta-item"><span class="meta-label">North-Star Metric</span><span class="meta-value">Installs per channel</span></div>
+      <div class="meta-item"><span class="meta-label">Updated</span><span class="meta-value">Apr 16, 2026</span></div>
+    </div>
+  </header>
+
+  <nav class="tab-bar" id="tabs">
+    <button class="tab active" data-tab="overview">Overview <span class="dot"></span></button>
+    <button class="tab" data-tab="reddit">Reddit Playbook <span class="dot"></span></button>
+    <button class="tab" data-tab="video">TikTok + Shorts <span class="dot"></span></button>
+    <button class="tab" data-tab="copy">Copy These Apps <span class="dot"></span></button>
+    <button class="tab" data-tab="aso">ASO + Other Channels <span class="dot"></span></button>
+    <button class="tab" data-tab="calendar">30-Day Calendar <span class="dot"></span></button>
+    <button class="tab" data-tab="templates">Templates <span class="dot"></span></button>
+    <button class="tab" data-tab="log">Session Log</button>
+  </nav>
+
+  <!-- ===================== OVERVIEW ===================== -->
+  <section class="panel active" id="overview">
+    <h2>The Whole Strategy on One Page <span class="badge new">NEW</span></h2>
+    <p class="lead">You have 15–30 minutes a day and an app that's already live. That means <strong>distribution, not product</strong>, is the bottleneck. The plan below picks two channels that compound for free (Reddit + short video) and gives you a repeatable daily motion so progress isn't dependent on bursts of motivation.</p>
+
+    <h3>The Three-Pillar Model</h3>
+    <figure class="diagram">
+      <svg viewBox="0 0 820 360" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Three-pillar marketing model">
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#7fe6db" stop-opacity="0.25"/><stop offset="1" stop-color="#7fe6db" stop-opacity="0.06"/>
+          </linearGradient>
+          <linearGradient id="g2" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#96a5ff" stop-opacity="0.25"/><stop offset="1" stop-color="#96a5ff" stop-opacity="0.06"/>
+          </linearGradient>
+          <linearGradient id="g3" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stop-color="#ffb48a" stop-opacity="0.25"/><stop offset="1" stop-color="#ffb48a" stop-opacity="0.06"/>
+          </linearGradient>
+        </defs>
+        <!-- App node -->
+        <rect x="320" y="20" width="180" height="60" rx="14" fill="#1c2130" stroke="#7fe6db" stroke-width="1.5"/>
+        <text x="410" y="48" text-anchor="middle" font-family="Manrope" font-weight="700" font-size="16" fill="#e8ecf3">White Noise App</text>
+        <text x="410" y="66" text-anchor="middle" font-family="Inter" font-size="11" fill="#8b93a7">Live · &lt;1K installs</text>
+
+        <!-- Arrows down -->
+        <path d="M 410 80 L 130 160" stroke="#7fe6db" stroke-opacity="0.4" stroke-dasharray="4 4" fill="none"/>
+        <path d="M 410 80 L 410 160" stroke="#96a5ff" stroke-opacity="0.4" stroke-dasharray="4 4" fill="none"/>
+        <path d="M 410 80 L 690 160" stroke="#ffb48a" stroke-opacity="0.4" stroke-dasharray="4 4" fill="none"/>
+
+        <!-- Pillar 1: Reddit -->
+        <rect x="40" y="160" width="180" height="170" rx="16" fill="url(#g1)" stroke="#7fe6db" stroke-width="1.5"/>
+        <text x="130" y="192" text-anchor="middle" font-family="Manrope" font-weight="800" font-size="18" fill="#7fe6db">REDDIT</text>
+        <text x="130" y="210" text-anchor="middle" font-family="Inter" font-size="11" fill="#8b93a7">60% of your time</text>
+        <line x1="60" y1="222" x2="200" y2="222" stroke="#7fe6db" stroke-opacity="0.25"/>
+        <text x="130" y="246" text-anchor="middle" font-family="Inter" font-weight="600" font-size="12" fill="#e8ecf3">Answer threads in</text>
+        <text x="130" y="262" text-anchor="middle" font-family="Inter" font-weight="600" font-size="12" fill="#e8ecf3">r/insomnia, r/sleep,</text>
+        <text x="130" y="278" text-anchor="middle" font-family="Inter" font-weight="600" font-size="12" fill="#e8ecf3">r/apple, r/iosapps</text>
+        <text x="130" y="304" text-anchor="middle" font-family="Inter" font-size="11" fill="#8b93a7">High-quality, high-intent</text>
+        <text x="130" y="318" text-anchor="middle" font-family="Inter" font-size="11" fill="#8b93a7">Index on Google too</text>
+
+        <!-- Pillar 2: Short video -->
+        <rect x="320" y="160" width="180" height="170" rx="16" fill="url(#g2)" stroke="#96a5ff" stroke-width="1.5"/>
+        <text x="410" y="192" text-anchor="middle" font-family="Manrope" font-weight="800" font-size="18" fill="#96a5ff">SHORT VIDEO</text>
+        <text x="410" y="210" text-anchor="middle" font-family="Inter" font-size="11" fill="#8b93a7">30% of your time</text>
+        <line x1="340" y1="222" x2="480" y2="222" stroke="#96a5ff" stroke-opacity="0.25"/>
+        <text x="410" y="246" text-anchor="middle" font-family="Inter" font-weight="600" font-size="12" fill="#e8ecf3">Faceless screen-rec</text>
+        <text x="410" y="262" text-anchor="middle" font-family="Inter" font-weight="600" font-size="12" fill="#e8ecf3">+ B-roll sleep aesthetic</text>
+        <text x="410" y="278" text-anchor="middle" font-family="Inter" font-weight="600" font-size="12" fill="#e8ecf3">TikTok + YT Shorts + Reels</text>
+        <text x="410" y="304" text-anchor="middle" font-family="Inter" font-size="11" fill="#8b93a7">1 video, 3 platforms,</text>
+        <text x="410" y="318" text-anchor="middle" font-family="Inter" font-size="11" fill="#8b93a7">sleep watch-time is huge</text>
+
+        <!-- Pillar 3: ASO + Compound -->
+        <rect x="600" y="160" width="180" height="170" rx="16" fill="url(#g3)" stroke="#ffb48a" stroke-width="1.5"/>
+        <text x="690" y="192" text-anchor="middle" font-family="Manrope" font-weight="800" font-size="18" fill="#ffb48a">ASO + COMPOUND</text>
+        <text x="690" y="210" text-anchor="middle" font-family="Inter" font-size="11" fill="#8b93a7">10% of your time</text>
+        <line x1="620" y1="222" x2="760" y2="222" stroke="#ffb48a" stroke-opacity="0.25"/>
+        <text x="690" y="246" text-anchor="middle" font-family="Inter" font-weight="600" font-size="12" fill="#e8ecf3">Screenshots, keywords,</text>
+        <text x="690" y="262" text-anchor="middle" font-family="Inter" font-weight="600" font-size="12" fill="#e8ecf3">Product Hunt, blog</text>
+        <text x="690" y="278" text-anchor="middle" font-family="Inter" font-weight="600" font-size="12" fill="#e8ecf3">outreach, reviews reply</text>
+        <text x="690" y="304" text-anchor="middle" font-family="Inter" font-size="11" fill="#8b93a7">Turns traffic into installs</text>
+        <text x="690" y="318" text-anchor="middle" font-family="Inter" font-size="11" fill="#8b93a7">and backlinks</text>
+      </svg>
+      <figcaption>The 60/30/10 split keeps you on the two channels that compound without ad spend — ASO picks up the leftover traffic.</figcaption>
+    </figure>
+
+    <div class="callout key">
+      <div class="callout-title">💡 Key Insight — Why these three</div>
+      <p>Reddit posts <strong>rank on Google</strong>, so a single good answer keeps bringing you traffic for years. TikTok's algorithm <strong>doesn't care about follower count</strong>, so a brand-new account can pop off. ASO turns every visitor from either into an install. Everything else (Twitter, Instagram, paid) is nice-to-have but not load-bearing at your stage.</p>
+    </div>
+
+    <h3>What "Winning" Looks Like in 30 Days</h3>
+    <div class="grid grid-3">
+      <div class="card">
+        <div class="tag">Realistic floor</div>
+        <h4>+300–600 installs</h4>
+        <p>Achievable with 15 min/day if you stick to the daily cadence. One Reddit thread that ranks on Google = 20–50 installs/mo on autopilot.</p>
+      </div>
+      <div class="card">
+        <div class="tag">Stretch goal</div>
+        <h4>+2,000–5,000 installs</h4>
+        <p>Requires one TikTok above 100K views OR one Reddit post on r/apple that hits the front page. Both are lottery tickets, but you only need to be holding one when the number comes up.</p>
+      </div>
+      <div class="card">
+        <div class="tag">Lottery</div>
+        <h4>Featured by Apple</h4>
+        <p>Long-shot but real. Dark Noise did it. Submit via the App Store Connect featuring nomination form once you have polished screenshots + a story.</p>
+      </div>
+    </div>
+
+    <h3>How to Read the Rest of This Doc</h3>
+    <ol>
+      <li><strong>Reddit Playbook</strong> — where to go, the exact 90/10 rule, subreddits ranked by ROI, ten templates you can paste.</li>
+      <li><strong>TikTok + Shorts</strong> — faceless production setup, ten scripts, posting cadence, which sounds to use.</li>
+      <li><strong>Copy These Apps</strong> — Dark Noise, Portal, White Noise Lite, BetterSleep. Their actual marketing moves you can mimic.</li>
+      <li><strong>ASO + Other Channels</strong> — keyword strategy, Product Hunt, press, indie-friendly newsletters.</li>
+      <li><strong>30-Day Calendar</strong> — day-by-day task list for 15–30 min/day. Follow it, don't plan it.</li>
+      <li><strong>Templates</strong> — copy-paste Reddit comments, outreach emails, press kit skeleton.</li>
+    </ol>
+  </section>
+
+  <!-- ===================== REDDIT ===================== -->
+  <section class="panel" id="reddit">
+    <h2>Reddit Playbook <span class="badge new">NEW</span></h2>
+    <p class="lead">Reddit is the single highest-leverage channel for indie iOS apps right now — and the one most devs ruin by posting a naked promo link and getting shadowbanned on day one. The rules below exist so that doesn't happen.</p>
+
+    <h3>The Rules You Don't Break</h3>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="tag">Rule 1</div>
+        <h4>The 90/10 rule, enforced</h4>
+        <p>90% of your Reddit activity is answering other people's questions, contributing to discussions, and upvoting good content. 10% is anything about your app. Reddit's spam detector literally measures this ratio.</p>
+      </div>
+      <div class="card">
+        <div class="tag">Rule 2</div>
+        <h4>Age the account 2–3 weeks first</h4>
+        <p>If you post promo on a 1-day-old account, auto-mod kills it. Spend the first two weeks commenting helpfully in your target subs so your profile looks like a real human.</p>
+      </div>
+      <div class="card">
+        <div class="tag">Rule 3</div>
+        <h4>No direct App Store links in comments</h4>
+        <p>Big subs auto-filter <code>apps.apple.com</code>. Reference the app by name; let people search. Only drop the link if a <strong>mod or user asks</strong> — that's a different game.</p>
+      </div>
+      <div class="card">
+        <div class="tag">Rule 4</div>
+        <h4>Disclose when you're the dev</h4>
+        <p>Say "I built this" or "disclosure — I made it." Reddit hates stealth shilling. Being the dev is actually a status signal if you own it.</p>
+      </div>
+    </div>
+
+    <h3>Subreddit Tier List</h3>
+    <table>
+      <thead>
+        <tr><th>Subreddit</th><th>Size</th><th>Self-promo rule</th><th>What to do</th><th>Priority</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>r/insomnia</strong></td>
+          <td>230K</td>
+          <td>No direct promo. Answer questions.</td>
+          <td>Search "white noise" / "can't sleep" / "app" — reply with your stack, mention app name</td>
+          <td><span class="badge high">S tier</span></td>
+        </tr>
+        <tr>
+          <td><strong>r/sleep</strong></td>
+          <td>140K</td>
+          <td>Answer only</td>
+          <td>Same as above. Very high intent audience.</td>
+          <td><span class="badge high">S tier</span></td>
+        </tr>
+        <tr>
+          <td><strong>r/SideProject</strong></td>
+          <td>320K</td>
+          <td>Yes, promo allowed</td>
+          <td>Show HN-style "I built this" post with GIF + App Store link. Best launch post.</td>
+          <td><span class="badge high">S tier</span></td>
+        </tr>
+        <tr>
+          <td><strong>r/iOSProgramming</strong></td>
+          <td>85K</td>
+          <td>Friday showcase thread</td>
+          <td>Post in weekly Friday showcase. Dev-to-dev feedback is great for reviews.</td>
+          <td><span class="badge high">S tier</span></td>
+        </tr>
+        <tr>
+          <td><strong>r/apple</strong></td>
+          <td>8M</td>
+          <td>Strict. Must be genuinely newsworthy.</td>
+          <td>This is Dark Noise's secret — <strong>post Saturday morning US time</strong> when big accounts sleep. Frame as launch story, not promo.</td>
+          <td><span class="badge high">S tier</span></td>
+        </tr>
+        <tr>
+          <td><strong>r/iosapps</strong></td>
+          <td>180K</td>
+          <td>Allowed with transparency</td>
+          <td>Post screenshots + "built this, feedback welcome." Very forgiving sub.</td>
+          <td><span class="badge high">A tier</span></td>
+        </tr>
+        <tr>
+          <td><strong>r/iphone</strong></td>
+          <td>4M</td>
+          <td>Strict. Users flag promo fast.</td>
+          <td>Only post if you have a polished video + a genuine angle. Not a starter sub.</td>
+          <td><span class="badge med">A tier</span></td>
+        </tr>
+        <tr>
+          <td><strong>r/AppHookup</strong></td>
+          <td>68K</td>
+          <td>Promo welcome if it's a deal</td>
+          <td>Run a promo: free premium unlock code or "IAP free this weekend"</td>
+          <td><span class="badge med">A tier</span></td>
+        </tr>
+        <tr>
+          <td><strong>r/indiedev / r/IndieDev</strong></td>
+          <td>350K+</td>
+          <td>Promo friendly</td>
+          <td>"Built my first iOS app" with GIF. Dev community loves first-timer stories.</td>
+          <td><span class="badge med">A tier</span></td>
+        </tr>
+        <tr>
+          <td><strong>r/tinnitus</strong></td>
+          <td>95K</td>
+          <td>Help first</td>
+          <td>Tinnitus sufferers rely on white/pink/brown noise. Very warm audience.</td>
+          <td><span class="badge med">A tier</span></td>
+        </tr>
+        <tr>
+          <td><strong>r/adhd</strong></td>
+          <td>2M</td>
+          <td>Help first</td>
+          <td>Search "focus music" / "background noise" — white noise is a top tool for focus.</td>
+          <td><span class="badge med">A tier</span></td>
+        </tr>
+        <tr>
+          <td><strong>r/GetMotivated / r/productivity</strong></td>
+          <td>15M+</td>
+          <td>Help first</td>
+          <td>Reply in "what helps you focus" threads. Mention the app in a list of tools.</td>
+          <td><span class="badge low">B tier</span></td>
+        </tr>
+        <tr>
+          <td><strong>r/WorkFromHome</strong></td>
+          <td>350K</td>
+          <td>Help first</td>
+          <td>Ambient noise is the #1 WFH topic. Easy soft-mention territory.</td>
+          <td><span class="badge low">B tier</span></td>
+        </tr>
+        <tr>
+          <td><strong>r/SleepTrain / r/ScienceOfSleep / r/NewParents</strong></td>
+          <td>varies</td>
+          <td>Help first</td>
+          <td>Parents use white noise for babies — huge underrated niche.</td>
+          <td><span class="badge med">A tier</span></td>
+        </tr>
+        <tr>
+          <td><strong>r/SaaS / r/Entrepreneur / r/startups</strong></td>
+          <td>1M+</td>
+          <td>Friendly on Thursdays (self-promo day)</td>
+          <td>Share build-in-public milestones, revenue screenshots, lessons learned.</td>
+          <td><span class="badge low">B tier</span></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout warn">
+      <div class="callout-title">⚠️ Dark Noise's actual playbook — copy this</div>
+      <p>Charlie Chapman (Dark Noise) has said publicly that <strong>posting to r/apple on Saturday mornings drove more sales than anything else</strong>, alongside reaching out to every podcast and blog that would have him. One good Saturday r/apple post with a polished GIF can do more than 30 TikToks. Bank this for Week 3 once your screenshots and video are tight.</p>
+    </div>
+
+    <h3>Daily Reddit Motion (15 min)</h3>
+    <figure class="diagram">
+      <svg viewBox="0 0 820 220" xmlns="http://www.w3.org/2000/svg" role="img">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#7fe6db"/></marker>
+        </defs>
+        <rect x="20" y="60" width="170" height="90" rx="12" fill="#1c2130" stroke="#7fe6db" stroke-width="1.5"/>
+        <text x="105" y="88" text-anchor="middle" font-family="Manrope" font-weight="700" font-size="14" fill="#7fe6db">1. Search (3 min)</text>
+        <text x="105" y="108" text-anchor="middle" font-family="Inter" font-size="11" fill="#e8ecf3">Reddit search "white noise"</text>
+        <text x="105" y="122" text-anchor="middle" font-family="Inter" font-size="11" fill="#e8ecf3">sort by: newest</text>
+        <text x="105" y="138" text-anchor="middle" font-family="Inter" font-size="11" fill="#8b93a7">Find 3 fresh threads</text>
+
+        <line x1="190" y1="105" x2="228" y2="105" stroke="#7fe6db" marker-end="url(#arrow)" stroke-width="1.5"/>
+
+        <rect x="230" y="60" width="170" height="90" rx="12" fill="#1c2130" stroke="#96a5ff" stroke-width="1.5"/>
+        <text x="315" y="88" text-anchor="middle" font-family="Manrope" font-weight="700" font-size="14" fill="#96a5ff">2. Answer (10 min)</text>
+        <text x="315" y="108" text-anchor="middle" font-family="Inter" font-size="11" fill="#e8ecf3">Write 2 real, useful</text>
+        <text x="315" y="122" text-anchor="middle" font-family="Inter" font-size="11" fill="#e8ecf3">comments (80+ words)</text>
+        <text x="315" y="138" text-anchor="middle" font-family="Inter" font-size="11" fill="#8b93a7">Soft-mention once</text>
+
+        <line x1="400" y1="105" x2="438" y2="105" stroke="#7fe6db" marker-end="url(#arrow)" stroke-width="1.5"/>
+
+        <rect x="440" y="60" width="170" height="90" rx="12" fill="#1c2130" stroke="#ffb48a" stroke-width="1.5"/>
+        <text x="525" y="88" text-anchor="middle" font-family="Manrope" font-weight="700" font-size="14" fill="#ffb48a">3. Upvote (1 min)</text>
+        <text x="525" y="108" text-anchor="middle" font-family="Inter" font-size="11" fill="#e8ecf3">Browse your subs</text>
+        <text x="525" y="122" text-anchor="middle" font-family="Inter" font-size="11" fill="#e8ecf3">Upvote 10+ posts</text>
+        <text x="525" y="138" text-anchor="middle" font-family="Inter" font-size="11" fill="#8b93a7">Helps karma + trust</text>
+
+        <line x1="610" y1="105" x2="648" y2="105" stroke="#7fe6db" marker-end="url(#arrow)" stroke-width="1.5"/>
+
+        <rect x="650" y="60" width="150" height="90" rx="12" fill="#1c2130" stroke="#7fe6db" stroke-width="1.5"/>
+        <text x="725" y="88" text-anchor="middle" font-family="Manrope" font-weight="700" font-size="14" fill="#7fe6db">4. Log (1 min)</text>
+        <text x="725" y="108" text-anchor="middle" font-family="Inter" font-size="11" fill="#e8ecf3">Note links in</text>
+        <text x="725" y="122" text-anchor="middle" font-family="Inter" font-size="11" fill="#e8ecf3">a spreadsheet</text>
+        <text x="725" y="138" text-anchor="middle" font-family="Inter" font-size="11" fill="#8b93a7">Check upvotes weekly</text>
+      </svg>
+      <figcaption>The whole Reddit motion fits into 15 minutes. Do it with coffee, not as a heroic evening grind.</figcaption>
+    </figure>
+
+    <h3>Exact Reddit Search Queries to Run Daily</h3>
+    <p>Use Reddit's own search (reddit.com/search) with <strong>"Newest" sort</strong>. These are the seven saved searches I'd bookmark:</p>
+    <pre><code>site:reddit.com "white noise app" recommendation
+site:reddit.com "can't sleep" app iOS
+site:reddit.com "pink noise" OR "brown noise" iPhone
+site:reddit.com "sleep sounds" best app 2026
+site:reddit.com tinnitus masking app recommendation
+site:reddit.com "focus sounds" OR "background noise" ADHD app
+site:reddit.com baby white noise app iPhone</code></pre>
+    <p class="subtitle" style="font-size:14px;">Also bookmark these in-Reddit searches: <code>/r/insomnia/search?q=app&sort=new</code>, <code>/r/iphone/search?q=white+noise&sort=new</code>, <code>/r/apple/search?q=sleep+app&sort=new</code>.</p>
+
+    <h3>The Response Framework (TL;NRA)</h3>
+    <p>Every good Reddit comment follows this pattern: <strong>Truth, Lens, Name, Receipts, Ask.</strong></p>
+    <ol>
+      <li><strong>Truth</strong> — Acknowledge their problem as real (2 sentences).</li>
+      <li><strong>Lens</strong> — Share your framework: e.g. "I found what mattered was X not Y."</li>
+      <li><strong>Name</strong> — Name 2–3 tools, yours included, <em>not first</em>. Mention you built one.</li>
+      <li><strong>Receipts</strong> — A concrete detail only a builder/user would know.</li>
+      <li><strong>Ask</strong> — End with a question back to them. Doubles reply rate.</li>
+    </ol>
+
+    <div class="callout note">
+      <div class="callout-title">📝 Note — The "second comment" trick</div>
+      <p>If you write a legit helpful answer, let someone else upvote it for a few hours, <strong>then</strong> post a short second comment saying "full disclosure I made one of those apps, AMA if useful." Mods and users tolerate promo way more when it arrives <em>after</em> genuine value.</p>
+    </div>
+
+    <h3>Backlink Angle — Why Reddit Beats Everything for SEO</h3>
+    <p>Reddit is now the most-cited domain in Google search results for product-recommendation queries. A comment you write today on r/insomnia answering "best white noise app" can get indexed within weeks and send installs for <strong>years</strong>. Every comment is a dofollow-adjacent micro-backlink. This is why you prioritize Reddit over any other channel when you only have 15 min.</p>
+
+    <div class="callout key">
+      <div class="callout-title">💡 Key Insight — One thread to rule them all</div>
+      <p>Your goal for Month 1 isn't to post 100 times. It's to land <strong>one answer</strong> inside a high-traffic Reddit thread (like "best white noise app 2026") that Google indexes. That single answer will outperform all your TikToks combined for backlinks.</p>
+    </div>
+  </section>
+
+  <!-- ===================== VIDEO ===================== -->
+  <section class="panel" id="video">
+    <h2>TikTok + YouTube Shorts <span class="badge new">NEW</span></h2>
+    <p class="lead">Yes — you can absolutely run a faceless account. Sleep and ambient content is arguably the <em>easiest</em> niche to do faceless because the whole point is calm visuals and audio. You do not need your face, your voice, or fancy gear. A phone, your app, and 10 minutes is enough.</p>
+
+    <h3>The One-Shoot-Three-Posts Rule</h3>
+    <p>Every video you make gets posted to three places: <strong>TikTok → YouTube Shorts → Instagram Reels</strong>. Same MP4, same caption variant. This triples your shots on goal without tripling your work. Reorder the caption and hashtag set for each, but re-shoot nothing.</p>
+
+    <h3>Production Setup (15 minutes to set up, reusable forever)</h3>
+    <div class="grid grid-2">
+      <div class="card">
+        <div class="tag">What you need</div>
+        <h4>Tools</h4>
+        <ul>
+          <li>iPhone screen recording (built-in)</li>
+          <li>CapCut (free) or iMovie for edits</li>
+          <li>Free B-roll from Pexels + Mixkit</li>
+          <li>ElevenLabs free tier if you want AI voice</li>
+          <li>Canva for text-overlay templates</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="tag">Visual style</div>
+        <h4>Aesthetic</h4>
+        <ul>
+          <li>Deep blues, teals, warm amber — match your app</li>
+          <li>Soft letterbox bars + big readable captions</li>
+          <li>Slow pans on 4K stock footage (rain, forests, cafés)</li>
+          <li>Text overlays in Manrope or Inter</li>
+          <li>Never faster than one cut per 2.5 sec — sleep mood, not MrBeast</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>The 10 Scripts That Actually Work</h3>
+    <p>Each script is ~15–30 sec. Hook bolded at top, action cue in amber italic, caption at bottom.</p>
+
+    <div class="script">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="script-head"><span class="script-title">1. The "you've been using white noise wrong" hook</span><span class="script-meta">20s · screen-rec</span></div>
+      <div class="script-body"><span class="hook">HOOK (0–2s):</span> "You've been using white noise wrong your whole life."
+<span class="action">[screen-rec: scroll past generic white-noise app, unimpressed face emoji on screen]</span>
+
+"Everyone plays one sound. But your brain blocks it out after 20 min."
+<span class="action">[cut to your app — show three sounds layering with volume sliders]</span>
+
+"The trick is layering. Rain + a fan + brown noise on low — way deeper sleep."
+<span class="action">[show the mix playing in NowPlayingView]</span>
+
+<span class="cta">CTA:</span> "Link to the free app in bio. I built it."
+<span class="action">[end card: app icon + name, 2 sec hold]</span></div>
+    </div>
+
+    <div class="script">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="script-head"><span class="script-title">2. ASMR unboxing of the UI</span><span class="script-meta">25s · screen-rec</span></div>
+      <div class="script-body"><span class="hook">HOOK:</span> Pure visual — slow pan of your Home bento grid, soft rain playing under.
+<span class="action">[no voiceover for first 5 sec, text overlay: "POV: the cleanest white noise app on the App Store"]</span>
+
+<span class="action">[cut through each screen slowly: Home → Discover → Mixes → Favorites. 3 sec per screen.]</span>
+
+Text overlay at end: "White Noise. Free on iOS. ❤️"
+<span class="action">[hold on app icon]</span></div>
+    </div>
+
+    <div class="script">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="script-head"><span class="script-title">3. "Apps I use for X" listicle</span><span class="script-meta">30s · B-roll + screen</span></div>
+      <div class="script-body"><span class="hook">HOOK:</span> "3 iPhone apps I actually use every night."
+<span class="action">[1-sec flash of 3 app icons with numbers]</span>
+
+"One — <em>[unrelated app, e.g. Sleep Cycle]</em>. Tracks how badly I'm sleeping so I feel bad."
+<span class="action">[show Sleep Cycle]</span>
+
+"Two — <em>[another unrelated]</em>. For the podcast I pretend to listen to."
+
+"Three — White Noise. The one I actually fall asleep to."
+<span class="action">[linger on your app longer than the others — 6-7 sec]</span>
+
+<span class="cta">CTA:</span> "Link to all three in bio."</div>
+    </div>
+
+    <div class="script">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="script-head"><span class="script-title">4. The "sleep in 10 minutes" tutorial</span><span class="script-meta">25s · screen-rec</span></div>
+      <div class="script-body"><span class="hook">HOOK:</span> "If you can't fall asleep, do this."
+<span class="action">[text on black: "3 things, in order"]</span>
+
+"1. Brown noise at 60% volume."
+<span class="action">[open app, hit Brown Noise, pull slider to 60]</span>
+
+"2. Add rain at 30%."
+<span class="action">[add rain, show volume slider]</span>
+
+"3. Set a 45-minute timer so it fades out."
+<span class="action">[show timer UI]</span>
+
+"Try it tonight."
+<span class="action">[end with app icon + name]</span></div>
+    </div>
+
+    <div class="script">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="script-head"><span class="script-title">5. ADHD focus hook</span><span class="script-meta">20s · B-roll + screen</span></div>
+      <div class="script-body"><span class="hook">HOOK:</span> "ADHD brain? Try this instead of lo-fi."
+<span class="action">[B-roll: someone trying to work, failing]</span>
+
+"Lo-fi has beats. Beats are novel. Novel = distraction."
+<span class="action">[cross out lo-fi icon]</span>
+
+"Try pink noise. No melody, no rhythm — your brain tunes it out and starts working."
+<span class="action">[show your app, Pink Noise playing]</span>
+
+<span class="cta">CTA:</span> "Free app. Link in bio."</div>
+    </div>
+
+    <div class="script">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="script-head"><span class="script-title">6. Tinnitus masking</span><span class="script-meta">22s · screen-rec</span></div>
+      <div class="script-body"><span class="hook">HOOK:</span> "If your ears ring at night, watch this."
+<span class="action">[text on black, soft ringing SFX — tasteful]</span>
+
+"Tinnitus gets loud in silence. You need sound in the same frequency range to mask it."
+
+"Pink noise works for most people. Brown for deep ringing."
+<span class="action">[open app, toggle Pink then Brown]</span>
+
+"Play it low — just above the ringing."
+<span class="action">[pull volume to ~25%]</span>
+
+<span class="cta">CTA:</span> "Full range of sounds in the app. Free. Link in bio."</div>
+    </div>
+
+    <div class="script">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="script-head"><span class="script-title">7. New parent hack</span><span class="script-meta">25s · screen-rec</span></div>
+      <div class="script-body"><span class="hook">HOOK:</span> "New parents — this saved our marriage."
+<span class="action">[screen: baby crying SFX briefly, then cut to app icon]</span>
+
+"White noise apps crash at the worst time — when the baby's about to pass out."
+
+"This one runs in the background, doesn't drop when you text, and has a fade-out timer."
+<span class="action">[show background audio + sleep timer]</span>
+
+"Free. One $1 tip unlocks the premium sounds. That's it."
+<span class="action">[end with app icon]</span></div>
+    </div>
+
+    <div class="script">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="script-head"><span class="script-title">8. Build-in-public day-in-the-life</span><span class="script-meta">30s · screen + desk</span></div>
+      <div class="script-body"><span class="hook">HOOK:</span> "Day 127 of building my first iPhone app."
+<span class="action">[desk shot: Mac, coffee, Xcode on screen]</span>
+
+"Today: fixed the sleep timer, added a new rain sound, answered 4 Reddit threads about why my app exists."
+<span class="action">[rapid cuts of Xcode, then your app]</span>
+
+"We're at [X] downloads. Goal is 10K by end of summer."
+
+<span class="cta">CTA:</span> "App's free — follow the journey, link in bio."</div>
+    </div>
+
+    <div class="script">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="script-head"><span class="script-title">9. Study with me / ambient loop</span><span class="script-meta">60s loop · B-roll only</span></div>
+      <div class="script-body"><span class="hook">HOOK:</span> No VO. Visual only — 4K rain-on-window stock, soft clock ticking from your app.
+<span class="action">[Text overlay fades in: "Study with me · 1 hour rain + brown noise"]</span>
+
+<span class="action">[Halfway through, subtle watermark: White Noise app icon bottom-right, 2-sec pulse]</span>
+
+<span class="cta">CTA in caption:</span> "Full hour version free in the app. Link in bio. ☔️"
+
+<em>Note: post these as 60-sec "study with me" loops. They get absurd watch-time on both TikTok and YT Shorts.</em></div>
+    </div>
+
+    <div class="script">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="script-head"><span class="script-title">10. The "Apple should buy this" bait</span><span class="script-meta">15s · screen-rec</span></div>
+      <div class="script-body"><span class="hook">HOOK:</span> "This should be a default iOS app."
+<span class="action">[screen-rec of your Home, slow pan, gorgeous UI]</span>
+
+"Someone built a Portal-level white noise app and it's free."
+<span class="action">[quick montage: sound cards, mixing, NowPlayingView]</span>
+
+<span class="cta">CTA:</span> "Before they sell it to Apple — link in bio."
+
+<em>Note: works because of the mystery + FOMO angle. Don't do this in week 1; save for after you have polished screen-rec footage.</em></div>
+    </div>
+
+    <h3>Posting Cadence + Hashtag Sets</h3>
+    <table>
+      <thead>
+        <tr><th>Platform</th><th>How often</th><th>Best post time (ET)</th><th>Hashtag set to paste</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>TikTok</strong></td>
+          <td>1×/day (5×/week fine)</td>
+          <td>8–10pm weeknights</td>
+          <td>#sleep #whitenoise #insomnia #asmr #sleepaid #adhd #focus #productivity #iphoneapps #buildinpublic</td>
+        </tr>
+        <tr>
+          <td><strong>YouTube Shorts</strong></td>
+          <td>1×/day (cross-post)</td>
+          <td>anytime</td>
+          <td>#shorts #whitenoise #sleepsounds #insomniahelp #adhd #studywithme #ambient</td>
+        </tr>
+        <tr>
+          <td><strong>Instagram Reels</strong></td>
+          <td>3–5×/week</td>
+          <td>7–9pm</td>
+          <td>#iphoneapps #sleepapp #whitenoise #insomnia #indiedev #apple #minimal</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout note">
+      <div class="callout-title">📝 Note — TikTok sounds</div>
+      <p>Don't use trending dance songs on sleep content — the vibe breaks. Instead, <strong>use TikTok's native "original sound" uploaded from your app</strong> (brown noise, rain) or soft piano trending sounds from the "chill / aesthetic / sleep" category. Check <code>tiktok.com/discover/sleep-stream</code> for currently trending calm sounds.</p>
+    </div>
+
+    <h3>YouTube Long-Form — The Sleep-Loop Cheat Code</h3>
+    <p>Alongside Shorts, upload <strong>one 3–10 hour sleep loop video per week</strong> to YouTube long-form. Thumbnail in your app's teal/indigo palette. Title: "Brown Noise for Deep Sleep (10 Hours, Black Screen)." Description says "from the White Noise iOS app — free download [link]." These videos get 10-hour-long watch sessions and the algorithm loves them. A single one that hits 100K views will send thousands of installs over 12+ months. Use clean source audio from your own app.</p>
+
+    <div class="callout warn">
+      <div class="callout-title">⚠️ Important — Copyright</div>
+      <p>Only upload sounds you have rights to. Your bundled sounds should be royalty-free or generated (you mentioned 4 procedural noises generated in code — those are perfect). Do not upload third-party tracks or you'll get Content ID'd fast.</p>
+    </div>
+  </section>
+
+  <!-- ===================== COPY APPS ===================== -->
+  <section class="panel" id="copy">
+    <h2>Apps to Copy (Format, Not Content) <span class="badge new">NEW</span></h2>
+    <p class="lead">These four apps all marketed a simple sound app and won. Study what they did — their screenshot style, launch moves, and content cadence — and <strong>copy their format</strong> while keeping your brand.</p>
+
+    <h3>Dark Noise — The Gold Standard</h3>
+    <div class="grid grid-2">
+      <div class="card">
+        <h4>What they did</h4>
+        <ul>
+          <li>Built by a first-time iOS dev (Charlie Chapman). Story = relatable.</li>
+          <li>Posted to <strong>r/apple on Saturday mornings</strong> — repeatedly.</li>
+          <li>Responded to every App Store review, every tweet, every email.</li>
+          <li>Reached out to MacStories, The Sweet Setup, AppAdvice, every Apple blog that would take the pitch.</li>
+          <li>Appeared on indie dev podcasts (Under the Radar, Launched, etc.).</li>
+          <li>Started paid-up-front, later shifted to free + subscription.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>What you copy</h4>
+        <ul>
+          <li>Build a 1-paragraph launch story you can reuse: "I'm a first-time iOS dev who built X because Y."</li>
+          <li>Make a "press page" on your site: screenshots, app icon, one-liner, founder quote, download link.</li>
+          <li>Email 15 Apple-focused blogs (list below).</li>
+          <li>Reply to every review within 24 hours — this alone gets mentioned in reviews.</li>
+          <li>Save your best Reddit assets (GIF, screenshots) for a Saturday r/apple drop.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Portal — The Aesthetic Play</h3>
+    <div class="grid grid-2">
+      <div class="card">
+        <h4>What they did</h4>
+        <ul>
+          <li>Beautiful cinematic video footage of each location (forest, beach, café).</li>
+          <li>Premium feeling — dark UI, immersive spatial audio positioning.</li>
+          <li>Featured repeatedly by Apple on "Apps We Love."</li>
+          <li>Website doubles as a mood-board — the landing page alone sells the app.</li>
+          <li>TikTok presence: aesthetic B-roll + ambient, no talking head.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>What you copy</h4>
+        <ul>
+          <li>For each sound, create a <strong>15-second loop video</strong> of matching B-roll (you can source from Pexels for free). Post these as standalone TikToks.</li>
+          <li>Your landing page (if you don't have one) should feel like Portal's — big video hero, minimal copy.</li>
+          <li>When you submit to Apple for featuring, include 2–3 "hero shots" of the app over gorgeous scenery.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>White Noise Lite (TMSoft) — The Longevity Play</h3>
+    <div class="grid grid-2">
+      <div class="card">
+        <h4>What they did</h4>
+        <ul>
+          <li>SEO-optimized site with a <em>huge</em> sound library page — ranks for hundreds of noise queries.</li>
+          <li>Multi-platform (iOS, Android, Mac, Windows). Each platform sends traffic to others.</li>
+          <li>Very aggressive cross-linking on their own domain + sleep-help blogs.</li>
+          <li>Pitched to doctors and health blogs — gets medical-adjacent mentions that rank.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>What you copy</h4>
+        <ul>
+          <li>Build a simple one-page site (Framer, Carrd, or Webflow free tier — 2 hours total).</li>
+          <li>Write <strong>one 800-word blog post</strong> per month: "Pink vs Brown vs White Noise," "Best sounds for ADHD focus," "Why babies sleep to white noise." These rank fast on long-tail queries and can out-SEO bigger competitors.</li>
+          <li>Add a "try the sound" player on each blog post that deep-links into your app.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>BetterSleep (formerly Relax Melodies) — The Freemium Scale</h3>
+    <div class="grid grid-2">
+      <div class="card">
+        <h4>What they did</h4>
+        <ul>
+          <li>Massive sound library (300+). Positioned as "depth."</li>
+          <li>Heavy Facebook/Instagram ad spend with UGC-style creative.</li>
+          <li>Influencer partnerships with sleep coaches, moms, therapists.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h4>What you copy</h4>
+        <ul>
+          <li>Don't compete on library size — compete on <strong>curated quality + price</strong>. Your $0.99 one-time vs their subscription is your whole wedge.</li>
+          <li>Make that wedge loud in every post: "No subscription. One dollar, forever."</li>
+          <li>Reach out to 5 sleep/parenting micro-influencers (10–50K followers) offering free promo codes in exchange for an honest post. Conversion is surprisingly good at this size.</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3>Steal-able Screenshot Pattern</h3>
+    <figure class="diagram">
+      <svg viewBox="0 0 820 260" xmlns="http://www.w3.org/2000/svg" role="img">
+        <rect x="0" y="0" width="820" height="260" fill="transparent"/>
+        <!-- 5 screenshot frames -->
+        <g font-family="Inter" font-size="11" fill="#e8ecf3" text-anchor="middle">
+          <rect x="20" y="20" width="140" height="220" rx="18" fill="#1c2130" stroke="#7fe6db" stroke-width="1.5"/>
+          <text x="90" y="50" font-family="Manrope" font-weight="700" font-size="13" fill="#7fe6db">SCREEN 1</text>
+          <text x="90" y="72" fill="#8b93a7">Big claim</text>
+          <text x="90" y="110" font-family="Manrope" font-weight="700" font-size="14" fill="#e8ecf3">"Fall asleep</text>
+          <text x="90" y="128" font-family="Manrope" font-weight="700" font-size="14" fill="#e8ecf3">in minutes."</text>
+          <text x="90" y="170" fill="#8b93a7">(Hero shot)</text>
+
+          <rect x="180" y="20" width="140" height="220" rx="18" fill="#1c2130" stroke="#96a5ff" stroke-width="1.5"/>
+          <text x="250" y="50" font-family="Manrope" font-weight="700" font-size="13" fill="#96a5ff">SCREEN 2</text>
+          <text x="250" y="72" fill="#8b93a7">Feature</text>
+          <text x="250" y="110" font-family="Manrope" font-weight="700" font-size="14" fill="#e8ecf3">"27 premium</text>
+          <text x="250" y="128" font-family="Manrope" font-weight="700" font-size="14" fill="#e8ecf3">sounds."</text>
+          <text x="250" y="170" fill="#8b93a7">(Sound grid)</text>
+
+          <rect x="340" y="20" width="140" height="220" rx="18" fill="#1c2130" stroke="#ffb48a" stroke-width="1.5"/>
+          <text x="410" y="50" font-family="Manrope" font-weight="700" font-size="13" fill="#ffb48a">SCREEN 3</text>
+          <text x="410" y="72" fill="#8b93a7">Unique hook</text>
+          <text x="410" y="110" font-family="Manrope" font-weight="700" font-size="14" fill="#e8ecf3">"Mix your</text>
+          <text x="410" y="128" font-family="Manrope" font-weight="700" font-size="14" fill="#e8ecf3">own sound."</text>
+          <text x="410" y="170" fill="#8b93a7">(Mix view)</text>
+
+          <rect x="500" y="20" width="140" height="220" rx="18" fill="#1c2130" stroke="#7fe6db" stroke-width="1.5"/>
+          <text x="570" y="50" font-family="Manrope" font-weight="700" font-size="13" fill="#7fe6db">SCREEN 4</text>
+          <text x="570" y="72" fill="#8b93a7">Delight</text>
+          <text x="570" y="110" font-family="Manrope" font-weight="700" font-size="14" fill="#e8ecf3">"Sleep timer.</text>
+          <text x="570" y="128" font-family="Manrope" font-weight="700" font-size="14" fill="#e8ecf3">Widgets. ❤️"</text>
+          <text x="570" y="170" fill="#8b93a7">(Player)</text>
+
+          <rect x="660" y="20" width="140" height="220" rx="18" fill="#1c2130" stroke="#96a5ff" stroke-width="1.5"/>
+          <text x="730" y="50" font-family="Manrope" font-weight="700" font-size="13" fill="#96a5ff">SCREEN 5</text>
+          <text x="730" y="72" fill="#8b93a7">The Ask</text>
+          <text x="730" y="110" font-family="Manrope" font-weight="700" font-size="14" fill="#e8ecf3">"No subs.</text>
+          <text x="730" y="128" font-family="Manrope" font-weight="700" font-size="14" fill="#e8ecf3">Just $0.99."</text>
+          <text x="730" y="170" fill="#8b93a7">(Social proof)</text>
+        </g>
+      </svg>
+      <figcaption>This is the 5-screenshot arc that every top sleep app uses. Claim → Feature → Hook → Delight → Ask. Redo yours this weekend.</figcaption>
+    </figure>
+  </section>
+
+  <!-- ===================== ASO ===================== -->
+  <section class="panel" id="aso">
+    <h2>ASO + Secondary Channels <span class="badge new">NEW</span></h2>
+    <p class="lead">Every visitor you send to your App Store page either installs or bounces. ASO is the difference. Spend an afternoon here once and it pays for years.</p>
+
+    <h3>App Store Keywords — Priority List</h3>
+    <p>These are the searched terms to target first. Rank them in your App Store Connect keyword field (100 char max, comma-separated, no spaces, no duplicates already in your title/subtitle).</p>
+    <pre><code>Title:     White Noise — Sleep Sounds
+Subtitle:  Rain, Brown Noise, Mixes
+Keywords:  sleep,insomnia,relax,meditation,baby,focus,adhd,tinnitus,
+           pink,brown,rain,fan,ocean,nature,study,calm,mix,timer,
+           ambient,asmr,snore</code></pre>
+
+    <div class="callout note">
+      <div class="callout-title">📝 Note — The 100-char rule</div>
+      <p>Never repeat words already in your <em>title</em> or <em>subtitle</em> in the keywords field — Apple indexes them once and you're wasting characters. Use the keyword field for words you can't fit elsewhere.</p>
+    </div>
+
+    <h3>Other High-ROI Channels at 15 min/day</h3>
+    <table>
+      <thead>
+        <tr><th>Channel</th><th>Effort</th><th>Payoff</th><th>When to hit it</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Product Hunt</strong></td>
+          <td>Half-day prep</td>
+          <td>500–2000 installs in 48h if you hit top 5</td>
+          <td>Schedule for a Tuesday/Wednesday in Week 4. Get 10 hunters pre-committed via Twitter DM.</td>
+        </tr>
+        <tr>
+          <td><strong>Hacker News Show HN</strong></td>
+          <td>1 hour</td>
+          <td>Unpredictable but 1–10K installs if it hits front page</td>
+          <td>Tuesday 8am PT, clean title: "Show HN: I built a $0.99 white-noise iOS app, no subscription"</td>
+        </tr>
+        <tr>
+          <td><strong>Indie Hackers</strong></td>
+          <td>30 min/week</td>
+          <td>Founder network, occasional app trial</td>
+          <td>Post milestone updates (100 users, first $, 1000 users). Build the story.</td>
+        </tr>
+        <tr>
+          <td><strong>Apple Press Pitches</strong></td>
+          <td>1 hour outreach</td>
+          <td>1 coverage = 2–20K installs</td>
+          <td>Email template in Templates tab. Target: MacStories, 9to5Mac, AppAdvice, The Sweet Setup, iMore, iClarified, iDownloadBlog, Basic Apple Guy, Beautiful Pixels.</td>
+        </tr>
+        <tr>
+          <td><strong>Apple Featuring Nomination</strong></td>
+          <td>10 min form</td>
+          <td>Apple feature = life-changing</td>
+          <td>Submit via <code>developer.apple.com/contact/app-store/promote</code>. Do it now.</td>
+        </tr>
+        <tr>
+          <td><strong>Sleep blogs / newsletters</strong></td>
+          <td>30 min/week</td>
+          <td>Backlinks + steady installs</td>
+          <td>Pitch The Sleep Foundation blog, Sleep Doctor, Pzizz blog, Mattress Nerd, Ness Labs.</td>
+        </tr>
+        <tr>
+          <td><strong>Twitter / X build-in-public</strong></td>
+          <td>5 min/day</td>
+          <td>Dev community, slow growth</td>
+          <td>Share Xcode screenshots, tiny demos, App Store Connect numbers. Tag @AppStore, @AppleDeveloper.</td>
+        </tr>
+        <tr>
+          <td><strong>Bluesky</strong></td>
+          <td>5 min/day</td>
+          <td>Smaller but high-engagement</td>
+          <td>Same content as Twitter. Growing Apple-dev community there now.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="callout key">
+      <div class="callout-title">💡 Key Insight — The review-response flywheel</div>
+      <p>Apple's algorithm weights <strong>review response rate</strong>. Replying to every review (even 5-star ones with a "thank you") is correlated with better featuring chances and better ranking. Bonus: users mention the replies in new reviews, which creates a loop.</p>
+    </div>
+
+    <h3>The Press Pitch Cold Email (60% reply rate formula)</h3>
+    <p>Short, specific, personal. See the Templates tab for the full email — the structure:</p>
+    <ol>
+      <li><strong>Subject:</strong> "White Noise — indie iOS app, would love your take" (no marketing caps, no emojis)</li>
+      <li><strong>First line:</strong> Mention a recent post of theirs so they know you read their work</li>
+      <li><strong>Pitch:</strong> 3 sentences. What it is, why it's different, why <em>their readers</em> will like it.</li>
+      <li><strong>Kit:</strong> Link to press page with screenshots + promo code</li>
+      <li><strong>Close:</strong> "No pressure either way — happy to hop on a quick call if it's useful."</li>
+    </ol>
+  </section>
+
+  <!-- ===================== CALENDAR ===================== -->
+  <section class="panel" id="calendar">
+    <h2>30-Day Calendar <span class="badge new">NEW</span></h2>
+    <p class="lead">Print this. Tape it to your monitor. Do the daily task — no planning, no deliberation. Every day is ~15–20 min unless tagged "deep work" (weekends). Dates are relative so you can start whenever.</p>
+
+    <div class="week-section">
+      <div class="week-title">Week 1 — Foundation + Warm-Up</div>
+      <div class="week-subtitle">Goal: aged Reddit account + first videos shipped + press page live</div>
+
+      <div class="day-row"><div class="day-label">Day 1 · Mon</div><div class="day-task"><strong>Create/revive Reddit account.</strong> Write bio mentioning you're an iOS dev. Upvote 20 posts in r/insomnia, r/sleep, r/iosapps, r/apple.</div></div>
+      <div class="day-row"><div class="day-label">Day 2 · Tue</div><div class="day-task"><strong>Write 3 genuine, non-promotional comments</strong> in r/insomnia and r/sleep on sleep-hygiene threads. Zero mention of your app.</div></div>
+      <div class="day-row"><div class="day-label">Day 3 · Wed</div><div class="day-task"><strong>Shoot Video #1</strong> (faceless screen-rec of your Home + Mix views, 20 sec). Use Script #2 "ASMR unboxing." Post to TikTok + Shorts + Reels.</div></div>
+      <div class="day-row"><div class="day-label">Day 4 · Thu</div><div class="day-task"><strong>Set up press page.</strong> Carrd free, one page: app icon, 5 screenshots, one-liner, your story, download link, press kit zip.</div></div>
+      <div class="day-row"><div class="day-label">Day 5 · Fri</div><div class="day-task"><strong>Post in r/iOSProgramming Friday Showcase thread.</strong> GIF + 3 lines about the app. Answer every reply for 2 hours.</div></div>
+      <div class="day-row"><div class="day-label">Day 6 · Sat (deep work)</div><div class="day-task"><strong>Redo App Store screenshots</strong> using the 5-screen arc. Take the afternoon. Upload via App Store Connect.</div></div>
+      <div class="day-row"><div class="day-label">Day 7 · Sun</div><div class="day-task">Rest day. Scroll TikTok with the "faceless sleep" search query for research. Save 5 videos that hooked you. Screenshot the hooks.</div></div>
+    </div>
+
+    <div class="week-section">
+      <div class="week-title">Week 2 — Reddit Ramp + Video Rhythm</div>
+      <div class="week-subtitle">Goal: daily comments in target subs + 5 videos shipped + 3 cold emails out</div>
+
+      <div class="day-row"><div class="day-label">Day 8</div><div class="day-task">Run the daily Reddit motion (15 min). Answer 2 threads in r/insomnia or r/adhd. <strong>Now you can soft-mention your app</strong> in one of them.</div></div>
+      <div class="day-row"><div class="day-label">Day 9</div><div class="day-task">Shoot Video #2 (Script #1 "You've been using white noise wrong"). Post triple.</div></div>
+      <div class="day-row"><div class="day-label">Day 10</div><div class="day-task">Reddit daily. Post in r/iosapps: "Built my first iOS app — feedback welcome" with a 30-sec screen-rec GIF. Reply to every comment for the day.</div></div>
+      <div class="day-row"><div class="day-label">Day 11</div><div class="day-task">Shoot Video #3 (Script #5 "ADHD focus hook"). Post triple.</div></div>
+      <div class="day-row"><div class="day-label">Day 12</div><div class="day-task"><strong>Send 3 cold emails</strong> to Apple blogs (MacStories tips@, 9to5Mac, Basic Apple Guy). Use Templates tab email.</div></div>
+      <div class="day-row"><div class="day-label">Day 13 · Sat (deep work)</div><div class="day-task">Record one 3-hour sleep loop. Upload to YouTube long-form. Title: "Brown Noise for Deep Sleep (3 Hours, Black Screen)." Link your app in description.</div></div>
+      <div class="day-row"><div class="day-label">Day 14 · Sun</div><div class="day-task">Reddit daily. Write one full "list" post for r/SleepTrain or r/NewParents: "What actually worked for our 4-month-old" (yours is in the list, not #1).</div></div>
+    </div>
+
+    <div class="week-section">
+      <div class="week-title">Week 3 — The Big Pushes</div>
+      <div class="week-subtitle">Goal: Saturday r/apple drop + Product Hunt scheduled + 2 more press pitches</div>
+
+      <div class="day-row"><div class="day-label">Day 15</div><div class="day-task">Reddit daily. Shoot Video #4 (Script #7 "New parent hack"). Post triple.</div></div>
+      <div class="day-row"><div class="day-label">Day 16</div><div class="day-task"><strong>Submit Apple featuring nomination</strong> at <code>developer.apple.com/contact/app-store/promote</code>. 10 min of your life for a chance at a life-changing outcome.</div></div>
+      <div class="day-row"><div class="day-label">Day 17</div><div class="day-task">Shoot Video #5 (Script #4 "Sleep in 10 minutes tutorial"). Post triple.</div></div>
+      <div class="day-row"><div class="day-label">Day 18</div><div class="day-task">Draft your <strong>r/apple post</strong>. Include a polished 15-sec GIF, 2-paragraph story, "no subscription" angle, direct link. Save as draft.</div></div>
+      <div class="day-row"><div class="day-label">Day 19</div><div class="day-task">Send 3 more press pitches. Target: The Sweet Setup, AppAdvice, iDownloadBlog.</div></div>
+      <div class="day-row"><div class="day-label">Day 20 · Sat (deep work)</div><div class="day-task"><strong>POST TO r/apple AT 8AM ET.</strong> Stay at your desk for 4 hours to reply to every comment. This is your single highest-leverage day of the month.</div></div>
+      <div class="day-row"><div class="day-label">Day 21 · Sun</div><div class="day-task">Reddit daily. Reply to every new App Store review from the r/apple surge. Screenshot the best reviews for Twitter.</div></div>
+    </div>
+
+    <div class="week-section">
+      <div class="week-title">Week 4 — Product Hunt + Scale What Worked</div>
+      <div class="week-subtitle">Goal: Product Hunt launch + first blog post ranked + review your data</div>
+
+      <div class="day-row"><div class="day-label">Day 22</div><div class="day-task"><strong>Schedule Product Hunt launch</strong> for Tuesday Day 23. DM 10 Twitter mutuals asking for an upvote at launch time (12:01am PT).</div></div>
+      <div class="day-row"><div class="day-label">Day 23 · Tue</div><div class="day-task"><strong>PRODUCT HUNT LAUNCH DAY.</strong> Reply to every comment for 12 hours. Share across all your channels.</div></div>
+      <div class="day-row"><div class="day-label">Day 24</div><div class="day-task">Reddit daily. Write <strong>one 800-word blog post</strong>: "Pink vs Brown vs White Noise: What Actually Works for Sleep." Publish on your Carrd or Medium.</div></div>
+      <div class="day-row"><div class="day-label">Day 25</div><div class="day-task">Shoot Video #6 (Script #6 "Tinnitus masking"). Post triple.</div></div>
+      <div class="day-row"><div class="day-label">Day 26</div><div class="day-task">Reddit daily. Post blog link in r/tinnitus and r/ScienceOfSleep with a helpful intro, not a promo.</div></div>
+      <div class="day-row"><div class="day-label">Day 27 · Sat (deep work)</div><div class="day-task"><strong>Monthly review.</strong> Open a spreadsheet. Log: installs/day, top Reddit comments by upvotes, top video by views, best-performing hashtag set. Double down on the top 20%.</div></div>
+      <div class="day-row"><div class="day-label">Day 28 · Sun</div><div class="day-task">Rest day.</div></div>
+      <div class="day-row"><div class="day-label">Day 29</div><div class="day-task">Write Month 2 plan based on what worked. Usually: fewer channels, more of whatever hit.</div></div>
+      <div class="day-row"><div class="day-label">Day 30</div><div class="day-task">Ship Video #7 (pick the format that won you the most views in Month 1 and make another). Keep the rhythm going.</div></div>
+    </div>
+
+    <div class="callout key">
+      <div class="callout-title">💡 Key Insight — The compounding you won't see yet</div>
+      <p>Most of Month 1's installs will come from things you did on Days 1–10. <strong>Your Reddit comments and YouTube sleep loops will keep paying for 6–12 months without any further work</strong>. Don't judge the plan by Month 1's install count — judge by whether you hit the daily motion consistently.</p>
+    </div>
+  </section>
+
+  <!-- ===================== TEMPLATES ===================== -->
+  <section class="panel" id="templates">
+    <h2>Templates &amp; Scripts <span class="badge new">NEW</span></h2>
+    <p class="lead">Copy, paste, edit lightly. The whole point of templates is to remove the blank-page tax so you actually ship the daily task.</p>
+
+    <h3>Reddit Comment — High Effort, Soft Mention</h3>
+    <div class="script">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="script-head"><span class="script-title">For r/insomnia "best white noise app" threads</span><span class="script-meta">~120 words</span></div>
+      <div class="script-body">Been there. A few things that actually moved the needle for me:
+
+1. <strong>Type of noise matters more than you'd think.</strong> Pure white noise is too harsh for most people — it's the high frequencies. Pink noise (softer, think "steady rain") or brown noise ("low rumble") usually works way better for falling asleep.
+
+2. <strong>Layer two sounds.</strong> One noise gets boring and your brain filters it out. Rain + a fan at 30% volume is a classic combo.
+
+3. <strong>Fade-out timer.</strong> If it plays all night, your sleep cycles get disrupted. 45–60 min timer with a soft fade is the sweet spot.
+
+Apps-wise: myNoise (browser), Dark Noise (iOS, paid), and I also built White Noise — Sleep Sounds for iOS (free, one $0.99 unlock, no subscription) because I got sick of sleep apps asking me for $60/year.
+
+What kind of sound do you usually gravitate toward? Might be able to narrow it down for you.</div>
+    </div>
+
+    <h3>Reddit Post — r/apple Saturday Launch</h3>
+    <div class="script">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="script-head"><span class="script-title">Title + body</span><span class="script-meta">Post Sat 8am ET</span></div>
+      <div class="script-body"><strong>TITLE:</strong> I'm a first-time iOS dev and I spent a year building the white noise app I wished existed — free, no subscription, $0.99 to unlock everything
+
+<strong>BODY:</strong>
+Hey r/apple — long-time lurker.
+
+I built <strong>White Noise — Sleep Sounds</strong> because every sleep app I tried either slammed me with ads or wanted $60/year for sounds I could find on YouTube. It's free, runs offline, has 27 sounds, mixes, a fade-out timer, background audio, and Home/Lock Screen widgets. If you want premium sounds + no ads, it's a one-time $0.99.
+
+Built in SwiftUI with AVAudioEngine, iOS 17+. Took around a year of nights and weekends.
+
+A few things I'm proud of:
+- Every sound is -14 LUFS normalized (no jarring volume jumps between them)
+- Mixes let you layer multiple sounds with independent volume sliders
+- Glass-morphism dark UI that I obsessed over (inspired by Portal.app)
+
+Screenshots + a 15-sec clip below. Download: [link].
+
+Would love feedback from this community — I reply to every comment.
+
+— Zalgo</div>
+    </div>
+
+    <h3>Press Pitch Email</h3>
+    <div class="script">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="script-head"><span class="script-title">To: tips@macstories.net (or equivalent)</span><span class="script-meta">~140 words</span></div>
+      <div class="script-body"><strong>SUBJECT:</strong> White Noise — indie iOS app, would love your take
+
+Hi [Name],
+
+Loved your recent [piece/review/podcast episode on X] — the part about [specific detail] matched how I think about [related topic].
+
+I'm a first-time iOS developer and just launched White Noise — Sleep Sounds, a small app I spent a year on because I couldn't find a sleep app that didn't push a $60/year subscription. It's free, has a 27-sound library, supports layered mixes, and unlocks everything with a single $0.99 purchase — no subscription.
+
+Built in SwiftUI + AVAudioEngine, iOS 17+, full background audio, widgets coming next update. Designed to match the calm aesthetic of Portal or Dark Noise.
+
+Press kit (screenshots, video, promo codes): [Carrd link]
+App Store: [link]
+
+No pressure either way — happy to answer questions or send a promo code if useful.
+
+Thanks for reading,
+Zalgo</div>
+    </div>
+
+    <h3>App Store Review Reply (paste-ready)</h3>
+    <div class="script">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="script-head"><span class="script-title">5-star reply</span><span class="script-meta">~30 words</span></div>
+      <div class="script-body">Thank you so much — made my day. If there are any sounds you'd love to see added, just reply here or email me at [your email]. I read every one.
+
+— Zalgo, solo developer</div>
+    </div>
+
+    <div class="script">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="script-head"><span class="script-title">Low-star reply (most important)</span><span class="script-meta">~50 words</span></div>
+      <div class="script-body">Sorry about this — I want to fix it. Would you mind emailing me at [your email] with the sound/feature that didn't work? I'm a solo dev and I ship fixes fast. If it's a legit issue I'll have it patched inside a week and will come back here to let you know.
+
+— Zalgo</div>
+    </div>
+
+    <h3>Product Hunt Launch Copy</h3>
+    <div class="script">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="script-head"><span class="script-title">Tagline + first comment</span><span class="script-meta">Launch Tuesday</span></div>
+      <div class="script-body"><strong>TAGLINE (60 char):</strong> White noise for sleep. Free, no subscription, just $0.99.
+
+<strong>DESCRIPTION:</strong>
+27 high-quality sounds, layered mixes, sleep timer, background audio, widgets. Dark, beautiful UI inspired by Portal. No $60/year paywalls — one dollar unlocks everything, forever.
+
+<strong>FIRST COMMENT (maker):</strong>
+Hey PH — I built White Noise over a year of nights and weekends because every sleep app I tried was some flavor of "$12/month or be stuck with 3 sounds." I just wanted a beautiful, offline, one-time-purchase app that helps me sleep.
+
+What's there today: 27 sounds (white / pink / brown / rain / ocean / fire / café / etc.), layered mixes with per-sound volume sliders, fade-out timer, background + AirPlay audio, full dark-mode UI.
+
+What's next: Home/Lock Screen widgets, alarm with sunrise fade, and a premium Spatial Audio pack.
+
+I'm a solo indie dev, this is my first iOS app. I reply to every review and every comment. Would love your feedback 🙏</div>
+    </div>
+
+    <h3>YouTube Sleep Loop Title + Description</h3>
+    <div class="script">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="script-head"><span class="script-title">For 3–10 hour sleep videos</span><span class="script-meta">SEO-optimized</span></div>
+      <div class="script-body"><strong>TITLE:</strong> Brown Noise for Deep Sleep · 10 Hours · Black Screen · No Ads
+
+<strong>DESCRIPTION:</strong>
+10 hours of pure brown noise for deep sleep, studying, ADHD focus, or masking tinnitus. Black screen so your phone doesn't light up the room. No mid-roll ads (monetization off on this video).
+
+Sound from the White Noise — Sleep Sounds iOS app: [link]
+The app has 27 sounds, layered mixes, and a sleep timer. Free, one $0.99 unlock, no subscription.
+
+Timestamps for skipping:
+0:00 Full brown noise (continuous)
+1:00:00 — 1 hour mark
+5:00:00 — 5 hour mark
+
+Tags: brown noise, sleep sounds, white noise 10 hours, sleep aid, insomnia help, study music, ADHD focus, tinnitus masking, black screen sleep, deep sleep, ambient noise
+
+❤️ Like and subscribe if this helped you sleep. I upload a new sleep loop every Friday.</div>
+    </div>
+
+    <h3>Cold DM to Micro-Influencer</h3>
+    <div class="script">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="script-head"><span class="script-title">For sleep coaches, ADHD creators, parenting accounts</span><span class="script-meta">IG/TikTok DM</span></div>
+      <div class="script-body">Hey [name] — loved your [specific post] on [topic]. I'm a first-time iOS dev and just launched a white noise app called White Noise — Sleep Sounds. Totally free, no subscription, one-time $0.99 unlocks everything.
+
+I'm not asking for a paid post — just wondering if you'd want a free lifetime premium code to try it. If you end up liking it and want to share, that'd be amazing. If not, no strings.
+
+Here's the App Store: [link]
+
+Either way, keep making great content — [specific follow-up detail so it's clear this isn't a blast].
+
+— Zalgo</div>
+    </div>
+
+    <h3>Weekly Build-in-Public Tweet Thread</h3>
+    <div class="script">
+      <button class="copy-btn" onclick="copyScript(this)">Copy</button>
+      <div class="script-head"><span class="script-title">Post every Friday · 5 tweets</span><span class="script-meta">Twitter + Bluesky</span></div>
+      <div class="script-body"><strong>Tweet 1:</strong>
+Week [N] of building my first iOS app 🧵
+
+White Noise — Sleep Sounds is now at [X] downloads.
+
+Here's what I shipped, what I learned, and what broke.
+
+<strong>Tweet 2:</strong>
+Shipped this week:
+• [feature 1]
+• [feature 2]
+• [bug fix]
+[screen-rec GIF]
+
+<strong>Tweet 3:</strong>
+Learned this week:
+• [a surprising lesson, e.g. "no one cares about my sound count, they care about the mix UI"]
+
+<strong>Tweet 4:</strong>
+Broke this week:
+• [something embarrassing, e.g. audio not resuming after phone call — now fixed]
+
+Honesty > polish on this account.
+
+<strong>Tweet 5:</strong>
+If you build on iOS and want to follow the journey — I post every Friday.
+
+App's free if you want to check it out: [link]</div>
+    </div>
+  </section>
+
+  <!-- ===================== SESSION LOG ===================== -->
+  <section class="panel" id="log">
+    <h2>Session Log</h2>
+    <p class="lead">Running record of what each working session on this marketing plan covered, so you can come back later and pick up without losing thread.</p>
+
+    <div class="week-section">
+      <div class="week-title">Session 1 · April 16, 2026</div>
+      <div class="week-subtitle">Built initial marketing playbook</div>
+      <h4>Covered</h4>
+      <ul>
+        <li>Overview page with the 60/30/10 three-pillar model (Reddit / short video / ASO)</li>
+        <li>Reddit playbook: 90/10 rule, subreddit tier list, daily motion, search queries, TL;NRA response framework</li>
+        <li>TikTok + Shorts: one-shoot-three-posts rule, production setup, 10 script templates, posting cadence</li>
+        <li>Competitor teardown: Dark Noise, Portal, White Noise Lite, BetterSleep — what to copy from each</li>
+        <li>ASO keyword plan + 8 secondary channels ranked by ROI</li>
+        <li>30-day calendar (15–30 min/day) with big-push days called out</li>
+        <li>Copy-paste templates: Reddit comments, r/apple post, press pitch, review replies, PH launch, YouTube loop, DM, BIP thread</li>
+      </ul>
+      <h4>Key takeaways</h4>
+      <ul>
+        <li>Your single most important moves this month: (1) post on r/apple Saturday 8am ET Day 20, (2) ship 5 faceless screen-rec videos, (3) answer daily in r/insomnia + r/sleep.</li>
+        <li>Copying Dark Noise's playbook is your highest-confidence bet — solo-dev Apple-community story fits you exactly.</li>
+        <li>YouTube long-form sleep loops are the sleeper channel — one 10-hour brown noise upload can keep driving installs for a year+.</li>
+      </ul>
+      <h4>Open questions / next session</h4>
+      <ul>
+        <li>Do you want me to draft the actual r/apple post body and 5 App Store screenshots for you?</li>
+        <li>Do you want a Carrd template built out for the press page?</li>
+        <li>Should we generate 2–3 thumbnails for the YouTube long-form sleep loops?</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer>
+    Built for the White Noise — Sleep Sounds iOS app · Marketing playbook v1.0 · Apr 16, 2026
+  </footer>
+
+</div>
+
+<script>
+  // Tab switching
+  const tabs = document.querySelectorAll('.tab');
+  const panels = document.querySelectorAll('.panel');
+
+  function activateTab(name) {
+    tabs.forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+    panels.forEach(p => p.classList.toggle('active', p.id === name));
+    // Guard: replaceState throws SecurityError in sandboxed iframes (about:srcdoc)
+    try {
+      if (history && typeof history.replaceState === 'function') {
+        history.replaceState(null, '', '#' + name);
+      }
+    } catch (e) { /* ignore in sandboxed contexts */ }
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => activateTab(tab.dataset.tab));
+  });
+
+  // Load from hash
+  if (window.location.hash) {
+    const name = window.location.hash.slice(1);
+    if (document.getElementById(name)) activateTab(name);
+  }
+
+  // Copy buttons for scripts
+  function copyScript(btn) {
+    const body = btn.parentElement.querySelector('.script-body');
+    if (!body) return;
+    const text = body.innerText;
+    navigator.clipboard.writeText(text).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = 'Copied ✓';
+      btn.classList.add('copied');
+      setTimeout(() => {
+        btn.textContent = orig;
+        btn.classList.remove('copied');
+      }, 1600);
+    });
+  }
+  window.copyScript = copyScript;
+</script>
+
+</body>
+</html>

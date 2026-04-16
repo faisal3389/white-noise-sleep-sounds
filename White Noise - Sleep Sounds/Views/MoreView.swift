@@ -236,9 +236,6 @@ struct MoreView: View {
                     }
                     .tint(Color.appAccent)
                     .listRowBackground(Color.appSurface)
-                    .onChange(of: settings.liveActivitiesEnabled) { _, enabled in
-                        player.liveActivityManager.onSettingsChanged(enabled: enabled)
-                    }
 
                     Text("Shows the current sound and sleep timer on your Lock Screen and Dynamic Island.")
                         .font(.caption)
@@ -246,6 +243,38 @@ struct MoreView: View {
                         .listRowBackground(Color.appSurface)
                 } header: {
                     Text("Lock Screen")
+                }
+
+                // MARK: - Siri Section
+                Section {
+                    Button {
+                        analytics.track(.siriSettingsOpened)
+                        if let url = URL(string: "shortcuts://") {
+                            UIApplication.shared.open(url)
+                        }
+                    } label: {
+                        Label {
+                            HStack {
+                                Text("Set Up Siri Shortcuts")
+                                    .foregroundStyle(.white)
+                                Spacer()
+                                Image(systemName: "arrow.up.right.square")
+                                    .font(.caption)
+                                    .foregroundStyle(.white.opacity(0.4))
+                            }
+                        } icon: {
+                            Image(systemName: "mic.fill")
+                                .foregroundStyle(Color.appAccent)
+                        }
+                    }
+                    .listRowBackground(Color.appSurface)
+
+                    Text("Try \"Hey Siri, play white noise\", \"start sleep timer\", or \"open sleep clock\".")
+                        .font(.caption)
+                        .foregroundStyle(.white.opacity(0.4))
+                        .listRowBackground(Color.appSurface)
+                } header: {
+                    Text("Siri")
                 }
 
                 // MARK: - Playback Section
@@ -273,21 +302,21 @@ struct MoreView: View {
 
                 // MARK: - About Section
                 Section("About") {
-                    Link(destination: URL(string: "https://apps.apple.com/app/id6762322017")!) {
+                    Link(destination: URL(string: "https://apps.apple.com/us/app/white-noise-sleep-sounds/id6762322017?action=write-review")!) {
                         Label("Rate on App Store", systemImage: "star.bubble")
                             .foregroundStyle(.white)
                     }
                     .simultaneousGesture(TapGesture().onEnded { analytics.track(.rateAppTapped) })
                     .listRowBackground(Color.appSurface)
 
-                    ShareLink(item: URL(string: "https://apps.apple.com/app/id6762322017")!) {
+                    ShareLink(item: URL(string: "https://apps.apple.com/us/app/white-noise-sleep-sounds/id6762322017")!) {
                         Label("Share with Friends", systemImage: "square.and.arrow.up")
                             .foregroundStyle(.white)
                     }
                     .simultaneousGesture(TapGesture().onEnded { analytics.track(.shareAppTapped) })
                     .listRowBackground(Color.appSurface)
 
-                    Link(destination: URL(string: "https://zalgo.dev/privacy")!) {
+                    Link(destination: URL(string: "https://www.privacypolicies.com/live/151d345f-90aa-4907-86fc-86bf638dd911")!) {
                         Label("Privacy Policy", systemImage: "hand.raised")
                             .foregroundStyle(.white)
                     }

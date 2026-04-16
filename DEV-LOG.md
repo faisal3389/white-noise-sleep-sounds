@@ -78,6 +78,39 @@
 
 ---
 
+## Phase 6 -- Live Activities Fix + Info.plist Audit
+
+### Session: 2026-04-16
+
+#### Bug Fixes
+- **Live Activities broken (CRITICAL):** Toggling the "Live Activity" setting and playing a sound did nothing -- no lock-screen banner, no Dynamic Island. Root cause: the main app target had `GENERATE_INFOPLIST_FILE = YES` but **no `INFOPLIST_FILE` build setting**, so Xcode auto-generated `Info.plist` from scratch using only `INFOPLIST_KEY_*` settings and completely ignored the physical `White Noise - Sleep Sounds/Info.plist`. Verified by inspecting the built `.app/Info.plist` -- `NSSupportsLiveActivities`, `CFBundleURLTypes`, `UIAppFonts`, `NSUserTrackingUsageDescription`, and `GADApplicationIdentifier` were all silently missing from shipped builds. Fix: added `INFOPLIST_FILE = "White Noise - Sleep Sounds/Info.plist"` and `INFOPLIST_KEY_NSSupportsLiveActivities = YES` to both Debug and Release configs.
+- **Duplicate `NSSupportsLiveActivities` key** removed from `Info.plist`.
+- **`resume()` never restarted the Live Activity** after it had been ended (settings toggle off, 8-hour iOS timeout, etc.). Now `LiveActivityManager.updateActivity` restarts from a cached last-context (`.sound` / `.mix`) when called with `isPlaying: true` and no current activity.
+- **Settings toggle flipping back ON mid-playback did nothing.** Fixed by passing `isPlaying` + `timerEndDate` into `onSettingsChanged` and starting a fresh activity from `lastContext`.
+- **Duplicate `.onChange(of: timerManager.isTimerActive)` in `ContentView`** removed.
+- **`liveActivitiesEnabled` UserDefaults default** now computed via an explicit object-vs-nil check in `LiveActivityManager` so fresh installs default to enabled even if `SettingsManager.init()` hasn't run yet.
+
+#### Confirmed: No Premium Gate on Live Activities
+The toggle and manager are not gated by `storeManager.isPremium` -- free users get it.
+
+#### Security Audit (Mix / Asset Extraction)
+User asked whether someone could create a mix in-app and download the underlying audio. Verified:
+- **No mix rendering exists** -- `MixesManager` only stores sound IDs + volumes in UserDefaults; no `AVAssetExportSession` / `AVAssetWriter`.
+- **`UIFileSharingEnabled` and `LSSupportsOpeningDocumentsInPlace` are both absent** -- Documents (including `CustomSounds/` user imports) is not exposed to the Files app.
+- **`ShareLink` usage is safe** (MoreView.swift:312, SettingsView.swift:72) -- only shares the App Store URL, never audio file URLs.
+- Bundled `.m4a` files are protected by iOS sandbox + FairPlay on non-jailbroken devices.
+- **Mac Catalyst caveat:** `SUPPORTED_PLATFORMS` still includes `macosx`, so `.app` bundle resources are trivially extractable on macOS. Revisit if Mac becomes a real distribution target.
+
+#### Files Changed
+- `White Noise - Sleep Sounds.xcodeproj/project.pbxproj` (INFOPLIST_FILE + INFOPLIST_KEY_NSSupportsLiveActivities for Debug & Release)
+- `White Noise - Sleep Sounds/Info.plist` (dedupe NSSupportsLiveActivities)
+- `Models/LiveActivityManager.swift` (last-context cache, restart-in-updateActivity, new `onSettingsChanged` signature)
+- `ViewModels/AudioPlayerViewModel.swift` (untouched -- restart is handled inside manager)
+- `ContentView.swift` (removed duplicate timer onChange, new onSettingsChanged args)
+- `Views/MoreView.swift` (removed redundant onChange -- ContentView handles it with full timer context)
+
+---
+
 ## Known Bugs
 
 | # | Screen | Description | Status |

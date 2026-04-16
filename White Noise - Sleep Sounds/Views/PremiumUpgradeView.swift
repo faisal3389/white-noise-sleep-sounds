@@ -28,8 +28,9 @@ struct PremiumUpgradeView: View {
 
                 // Benefits
                 VStack(alignment: .leading, spacing: 14) {
-                    benefitRow(icon: "xmark.circle.fill", text: "Remove all ads forever")
-                    benefitRow(icon: "lock.open.fill", text: "Unlock 12 exclusive sounds")
+                    benefitRow(icon: "infinity.circle.fill", text: "Pay once — yours forever")
+                    benefitRow(icon: "lock.open.fill", text: "Unlock 36+ exclusive sounds")
+                    benefitRow(icon: "sparkles", text: "All future sounds included")
                     benefitRow(icon: "heart.fill", text: "Support indie development")
                 }
                 .padding(.horizontal, 32)
@@ -278,7 +279,7 @@ private struct PurchaseSuccessWalkthroughView: View {
                 featureRow(
                     icon: "play.circle.fill",
                     title: "Pick a Sound",
-                    description: "Choose from 30+ sounds across 7 categories"
+                    description: "Choose from 39 sounds across 7 categories"
                 )
 
                 featureRow(

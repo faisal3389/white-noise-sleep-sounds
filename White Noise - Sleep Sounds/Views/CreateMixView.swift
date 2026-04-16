@@ -269,7 +269,7 @@ struct CreateMixView: View {
             guard components.count >= 2 else { return }
             AnalyticsManager.shared.track(.mixPreviewed, properties: ["component_count": components.count])
             let previewMix = SoundMix(name: "Preview", components: components)
-            player.playMix(mix: previewMix)
+            player.playMix(mix: previewMix, source: "preview")
             isPreviewing = true
         }
     }

@@ -51,6 +51,7 @@ final class AnalyticsManager {
         case mixPreviousPlayed = "mix_previous_played"
 
         // Mix management
+        case createMixTapped = "create_mix_tapped"
         case mixCreated = "mix_created"
         case mixEdited = "mix_edited"
         case mixDeleted = "mix_deleted"
@@ -59,6 +60,7 @@ final class AnalyticsManager {
         case mixPreviewed = "mix_preview_started"
         case mixPreviewStopped = "mix_preview_stopped"
         case curatedMixPlayed = "curated_mix_played"
+        case curatedMixPreviewEnded = "curated_mix_preview_ended"
 
         // Favorites
         case soundFavorited = "sound_favorited"
@@ -127,11 +129,14 @@ final class AnalyticsManager {
         case appIconChanged = "app_icon_changed"
         case liveActivityToggled = "live_activity_toggled"
         case fadeDurationChanged = "fade_duration_changed"
+        case siriSettingsOpened = "siri_settings_opened"
 
         // About / Share
         case rateAppTapped = "rate_app_tapped"
         case shareAppTapped = "share_app_tapped"
         case privacyPolicyTapped = "privacy_policy_tapped"
+        case ratePromptShown = "rate_prompt_shown"
+        case ratePromptDismissed = "rate_prompt_dismissed"
 
         // Live Activity
         case liveActivityStarted = "live_activity_started"

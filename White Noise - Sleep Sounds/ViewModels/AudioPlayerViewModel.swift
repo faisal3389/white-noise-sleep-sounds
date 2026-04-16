@@ -88,6 +88,7 @@ class AudioPlayerViewModel {
             "is_premium": sound.isPremium,
             "is_generated": sound.isGenerated
         ])
+        ReviewPromptManager.shared.recordPlay()
     }
 
     func pause() {
@@ -196,7 +197,7 @@ class AudioPlayerViewModel {
 
     // MARK: - Mix Playback
 
-    func playMix(mix: SoundMix) {
+    func playMix(mix: SoundMix, source: String = "user") {
         // Stop any single sound
         currentSound = nil
 
@@ -212,8 +213,10 @@ class AudioPlayerViewModel {
         liveActivityManager.startActivity(mix: mix, isPlaying: true, timerEndDate: nil)
         analytics.track(.mixPlayed, properties: [
             "mix_name": mix.name,
-            "component_count": mix.components.count
+            "component_count": mix.components.count,
+            "source": source
         ])
+        ReviewPromptManager.shared.recordPlay()
     }
 
     func adjustComponentVolume(soundId: String, volume: Float) {
@@ -230,7 +233,7 @@ class AudioPlayerViewModel {
               let index = mixes.firstIndex(where: { $0.id == current.id }) else { return }
         let nextIndex = (index + 1) % mixes.count
         analytics.track(.mixNextPlayed, properties: ["mix_name": mixes[nextIndex].name])
-        playMix(mix: mixes[nextIndex])
+        playMix(mix: mixes[nextIndex], source: "next")
     }
 
     func previousMix(in mixes: [SoundMix]) {
@@ -238,7 +241,7 @@ class AudioPlayerViewModel {
               let index = mixes.firstIndex(where: { $0.id == current.id }) else { return }
         let prevIndex = (index - 1 + mixes.count) % mixes.count
         analytics.track(.mixPreviousPlayed, properties: ["mix_name": mixes[prevIndex].name])
-        playMix(mix: mixes[prevIndex])
+        playMix(mix: mixes[prevIndex], source: "previous")
     }
 
     func updateLiveActivityTimer(endDate: Date?) {

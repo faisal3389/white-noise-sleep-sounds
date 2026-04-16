@@ -13,7 +13,8 @@ struct MixCardView: View {
             // Image area with 2-column grid
             ZStack(alignment: .topTrailing) {
                 imageGrid
-                    .aspectRatio(16/9, contentMode: .fill)
+                    .aspectRatio(16/9, contentMode: .fit)
+                    .clipped()
                     .clipShape(RoundedRectangle(cornerRadius: DS.Radius.xl))
                     .overlay(
                         RoundedRectangle(cornerRadius: DS.Radius.xl)

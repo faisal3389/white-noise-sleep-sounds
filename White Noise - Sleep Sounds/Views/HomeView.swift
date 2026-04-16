@@ -10,16 +10,17 @@ struct HomeView: View {
     @State private var showPremiumSheet = false
     @State private var appearedCards: Set<String> = []
 
-    // Featured sounds for the hero section
+    // Featured sounds for the hero section — curated mix of free + premium to showcase the library
     private var featuredSounds: [Sound] {
-        Array(SoundLibrary.allSounds.filter { !$0.isPremium }.prefix(5))
+        let ids = ["white_noise", "light_rain", "ocean_waves", "campfire", "forest"]
+        return ids.compactMap { id in SoundLibrary.allSounds.first(where: { $0.id == id }) }
     }
 
-    // Quick picks - one from each category
+    // Quick picks - one from each category (includes locked sounds as a conversion nudge)
     private var quickPicks: [Sound] {
         var picks: [Sound] = []
         for category in SoundCategory.allCases where category != .premium {
-            if let sound = SoundLibrary.sounds(for: category).first(where: { !$0.isPremium }) {
+            if let sound = SoundLibrary.sounds(for: category).first {
                 picks.append(sound)
             }
         }
