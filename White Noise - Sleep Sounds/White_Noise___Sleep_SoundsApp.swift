@@ -1,4 +1,5 @@
 import SwiftUI
+import FirebaseCore
 
 @main
 struct White_Noise___Sleep_SoundsApp: App {
@@ -6,6 +7,10 @@ struct White_Noise___Sleep_SoundsApp: App {
     @State private var settings = SettingsManager()
     @AppStorage("has_seen_onboarding") private var hasSeenOnboarding = false
     @State private var showSplash = true
+
+    init() {
+        FirebaseApp.configure()
+    }
 
     var body: some Scene {
         WindowGroup {

@@ -31,7 +31,7 @@ class StoreManager {
 
     init() {
         #if canImport(RevenueCat)
-        Purchases.configure(withAPIKey: "your_key")
+        Purchases.configure(withAPIKey: "appl_CNQAMLNHmBVDEWexzOqiGOmSLPL")
         Task { await loadOfferings() }
         Task { await checkEntitlements() }
         #endif

@@ -1,5 +1,6 @@
 import Foundation
 import os
+import FirebaseAnalytics
 
 /// Lightweight analytics service that tracks all user actions.
 /// Events are logged locally and can be forwarded to any analytics backend
@@ -153,15 +154,7 @@ final class AnalyticsManager {
 
     // MARK: - Backend Integration Point
 
-    /// Replace this implementation to forward events to your analytics provider.
-    /// Examples: Firebase Analytics, Mixpanel, Amplitude, PostHog, etc.
     private func send(event: String, properties: [String: Any]?) {
-        // TODO: Integrate with your analytics backend
-        //
-        // Firebase example:
-        //   Analytics.logEvent(event, parameters: properties as? [String: NSObject])
-        //
-        // Mixpanel example:
-        //   Mixpanel.mainInstance().track(event: event, properties: properties as? Properties)
+        Analytics.logEvent(event, parameters: properties)
     }
 }
