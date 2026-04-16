@@ -51,15 +51,14 @@ struct ContentView: View {
             let name = newTab < tabNames.count ? tabNames[newTab] : "Unknown"
             AnalyticsManager.shared.track(.tabSelected, properties: ["tab": name, "tab_index": newTab])
         }
-        .onChange(of: player.isPlaying) { _, isPlaying in
-            if isPlaying {
-                let soundName = player.displayTitle
-                let soundId = player.currentSound?.id
-                let mixName = player.currentMix?.name
-                sleepLog.startSession(soundName: soundName, soundId: soundId, mixName: mixName)
-            } else if !isPlaying && player.currentSound == nil && player.currentMix == nil {
-                sleepLog.endSession()
-            }
+        .onChange(of: player.isPlaying) { _, _ in
+            syncSleepLog()
+        }
+        .onChange(of: player.currentSound?.id) { _, _ in
+            syncSleepLog()
+        }
+        .onChange(of: player.currentMix?.id) { _, _ in
+            syncSleepLog()
         }
         .onChange(of: settings.liveActivitiesEnabled) { _, enabled in
             player.liveActivityManager.onSettingsChanged(
@@ -227,6 +226,23 @@ struct ContentView: View {
 
         UITabBar.appearance().standardAppearance = appearance
         UITabBar.appearance().scrollEdgeAppearance = appearance
+    }
+
+    // MARK: - Sleep Log Sync
+
+    private func syncSleepLog() {
+        let contextId: String? = {
+            if let sound = player.currentSound { return "sound:\(sound.id)" }
+            if let mix = player.currentMix { return "mix:\(mix.id.uuidString)" }
+            return nil
+        }()
+        sleepLog.syncToPlayback(
+            isPlaying: player.isPlaying,
+            contextId: contextId,
+            soundName: player.displayTitle,
+            soundId: player.currentSound?.id,
+            mixName: player.currentMix?.name
+        )
     }
 
     // MARK: - Navigation

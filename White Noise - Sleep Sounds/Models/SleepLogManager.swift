@@ -30,26 +30,69 @@ struct SleepLogEntry: Identifiable, Codable {
 @Observable
 class SleepLogManager {
     private static let storageKey = "sleep_log_entries"
+    private static let activeSessionKey = "sleep_log_active_session"
+    private static let heartbeatInterval: TimeInterval = 30
+
+    private struct ActiveSession: Codable {
+        let startDate: Date
+        var lastHeartbeat: Date
+        let contextId: String
+        let soundName: String
+        let soundId: String?
+        let mixName: String?
+    }
 
     var entries: [SleepLogEntry] = []
 
-    // Tracking state for an active session
-    var sessionStartDate: Date?
-    var sessionSoundName: String?
-    var sessionSoundId: String?
-    var sessionMixName: String?
+    private var activeSession: ActiveSession?
+    private var heartbeatTimer: Timer?
 
     init() {
         load()
+        finalizePendingSession()
     }
 
-    // MARK: - Session Tracking
+    // MARK: - Public API
 
-    func startSession(soundName: String, soundId: String? = nil, mixName: String? = nil) {
-        sessionStartDate = Date()
-        sessionSoundName = soundName
-        sessionSoundId = soundId
-        sessionMixName = mixName
+    /// Single entry point driven by ContentView observing the player. Handles
+    /// start, context-switch, and end in one place so we never double-start or
+    /// lose a session when the user pauses, resumes, or swaps sounds.
+    func syncToPlayback(isPlaying: Bool, contextId: String?, soundName: String, soundId: String?, mixName: String?) {
+        guard isPlaying, let contextId else {
+            endSession()
+            return
+        }
+
+        if let active = activeSession {
+            if active.contextId == contextId { return }
+            endSession()
+        }
+
+        startSession(contextId: contextId, soundName: soundName, soundId: soundId, mixName: mixName)
+    }
+
+    func endSession() {
+        stopHeartbeat()
+        guard let session = activeSession else { return }
+        activeSession = nil
+        UserDefaults.standard.removeObject(forKey: Self.activeSessionKey)
+        finalize(session: session, endDate: Date())
+    }
+
+    // MARK: - Session lifecycle
+
+    private func startSession(contextId: String, soundName: String, soundId: String?, mixName: String?) {
+        let now = Date()
+        activeSession = ActiveSession(
+            startDate: now,
+            lastHeartbeat: now,
+            contextId: contextId,
+            soundName: soundName,
+            soundId: soundId,
+            mixName: mixName
+        )
+        saveActiveSession()
+        startHeartbeat()
         AnalyticsManager.shared.track(.sleepSessionStarted, properties: [
             "sound_name": soundName,
             "sound_id": soundId ?? "",
@@ -57,38 +100,55 @@ class SleepLogManager {
         ])
     }
 
-    func endSession() {
-        guard let startDate = sessionStartDate, let soundName = sessionSoundName else { return }
-
-        let duration = Int(Date().timeIntervalSince(startDate) / 60)
-        // Only log sessions longer than 1 minute
-        guard duration >= 1 else {
-            clearSession()
+    /// If the app was killed mid-session (common for overnight use), we can't
+    /// know exactly when playback stopped. Use the last heartbeat timestamp as
+    /// a best-effort end time so the session still gets logged.
+    private func finalizePendingSession() {
+        guard let data = UserDefaults.standard.data(forKey: Self.activeSessionKey),
+              let session = try? JSONDecoder().decode(ActiveSession.self, from: data) else {
             return
         }
+        UserDefaults.standard.removeObject(forKey: Self.activeSessionKey)
+        finalize(session: session, endDate: session.lastHeartbeat)
+    }
 
+    private func finalize(session: ActiveSession, endDate: Date) {
+        let duration = Int(endDate.timeIntervalSince(session.startDate) / 60)
+        guard duration >= 1 else { return }
         let entry = SleepLogEntry(
-            date: startDate,
+            date: session.startDate,
             durationMinutes: duration,
-            soundName: soundName,
-            soundId: sessionSoundId,
-            mixName: sessionMixName
+            soundName: session.soundName,
+            soundId: session.soundId,
+            mixName: session.mixName
         )
         entries.insert(entry, at: 0)
         save()
         AnalyticsManager.shared.track(.sleepSessionEnded, properties: [
-            "sound_name": soundName,
+            "sound_name": session.soundName,
             "duration_minutes": duration,
-            "is_mix": sessionMixName != nil
+            "is_mix": session.mixName != nil
         ])
-        clearSession()
     }
 
-    private func clearSession() {
-        sessionStartDate = nil
-        sessionSoundName = nil
-        sessionSoundId = nil
-        sessionMixName = nil
+    // MARK: - Heartbeat
+
+    private func startHeartbeat() {
+        stopHeartbeat()
+        heartbeatTimer = Timer.scheduledTimer(withTimeInterval: Self.heartbeatInterval, repeats: true) { [weak self] _ in
+            self?.heartbeat()
+        }
+    }
+
+    private func stopHeartbeat() {
+        heartbeatTimer?.invalidate()
+        heartbeatTimer = nil
+    }
+
+    private func heartbeat() {
+        guard activeSession != nil else { return }
+        activeSession?.lastHeartbeat = Date()
+        saveActiveSession()
     }
 
     // MARK: - Queries
@@ -141,5 +201,11 @@ class SleepLogManager {
         guard let data = UserDefaults.standard.data(forKey: Self.storageKey),
               let saved = try? JSONDecoder().decode([SleepLogEntry].self, from: data) else { return }
         entries = saved
+    }
+
+    private func saveActiveSession() {
+        guard let session = activeSession,
+              let data = try? JSONEncoder().encode(session) else { return }
+        UserDefaults.standard.set(data, forKey: Self.activeSessionKey)
     }
 }
