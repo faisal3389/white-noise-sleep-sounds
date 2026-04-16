@@ -309,11 +309,14 @@ struct MoreView: View {
                     .simultaneousGesture(TapGesture().onEnded { analytics.track(.rateAppTapped) })
                     .listRowBackground(Color.appSurface)
 
-                    ShareLink(item: URL(string: "https://apps.apple.com/us/app/white-noise-sleep-sounds/id6762322017")!) {
+                    ShareLink(
+                        item: URL(string: "https://apps.apple.com/us/app/white-noise-sleep-sounds/id6762322017")!,
+                        subject: Text("White Noise — Sleep Sounds"),
+                        message: Text("I've been falling asleep to this — give it a try.")
+                    ) {
                         Label("Share with Friends", systemImage: "square.and.arrow.up")
                             .foregroundStyle(.white)
                     }
-                    .simultaneousGesture(TapGesture().onEnded { analytics.track(.shareAppTapped) })
                     .listRowBackground(Color.appSurface)
 
                     Link(destination: URL(string: "https://www.privacypolicies.com/live/151d345f-90aa-4907-86fc-86bf638dd911")!) {
