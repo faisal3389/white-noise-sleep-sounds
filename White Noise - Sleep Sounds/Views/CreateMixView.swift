@@ -112,7 +112,7 @@ struct CreateMixView: View {
                 }
                 .padding(.horizontal, 16)
             }
-            .padding(.bottom, selectedSoundIds.isEmpty ? 16 : 260)
+            .padding(.bottom, selectedSoundIds.isEmpty ? 16 : 330)
         }
     }
 
@@ -187,7 +187,7 @@ struct CreateMixView: View {
                     }
                 }
             }
-            .frame(maxHeight: 150)
+            .frame(maxHeight: 220)
 
             // Action buttons
             HStack(spacing: 12) {

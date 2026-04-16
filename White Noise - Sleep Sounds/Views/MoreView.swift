@@ -304,6 +304,7 @@ struct MoreView: View {
                     .listRowBackground(Color.appSurface)
                 }
             }
+            .contentMargins(.bottom, player.currentSound != nil || player.currentMix != nil ? 70 : 0, for: .scrollContent)
             .scrollContentBackground(.hidden)
             .background(Color.appBackground)
             .navigationTitle("More")

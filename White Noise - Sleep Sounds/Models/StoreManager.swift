@@ -5,7 +5,19 @@ import RevenueCat
 
 @Observable
 class StoreManager {
-    private(set) var isPremium: Bool = false
+    // Set to true to unlock all premium features during local testing.
+    // Only takes effect in DEBUG builds — release/App Store builds ignore this.
+    #if DEBUG
+    private static let forceUnlockPremium = false
+    #endif
+
+    private(set) var isPremium: Bool = {
+        #if DEBUG
+        return forceUnlockPremium
+        #else
+        return false
+        #endif
+    }()
     private(set) var purchaseError: String?
     private(set) var isLoading: Bool = false
 
