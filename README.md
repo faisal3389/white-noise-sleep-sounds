@@ -222,10 +222,10 @@ Place in a `Sounds/` folder added to the target bundle. Ideal: 30-60 second seam
 Used on the Now Playing screen and mix cards. Ideal: landscape 1920x1080 or similar, dark/moody aesthetic.
 
 **Noise**
-- [ ] `bg_white_noise`
-- [ ] `bg_pink_noise`
-- [ ] `bg_brown_noise`
-- [ ] `bg_blue_noise`
+- [x] `bg_white_noise`
+- [x] `bg_pink_noise`
+- [x] `bg_brown_noise`
+- [x] `bg_blue_noise`
 
 **Rain**
 - [ ] `bg_light_rain`
