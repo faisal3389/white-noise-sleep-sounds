@@ -63,19 +63,19 @@ struct SettingsView: View {
                 }
 
                 Section("About") {
-                    Link(destination: URL(string: "https://apps.apple.com/app/id6762322017")!) {
+                    Link(destination: URL(string: "https://apps.apple.com/us/app/white-noise-sleep-sounds/id6762322017?action=write-review")!) {
                         Label("Rate on App Store", systemImage: "star.bubble")
                             .foregroundStyle(.white)
                     }
                     .listRowBackground(Color.appSurface)
 
-                    ShareLink(item: URL(string: "https://apps.apple.com/app/id6762322017")!) {
+                    ShareLink(item: URL(string: "https://apps.apple.com/us/app/white-noise-sleep-sounds/id6762322017")!) {
                         Label("Share with Friends", systemImage: "square.and.arrow.up")
                             .foregroundStyle(.white)
                     }
                     .listRowBackground(Color.appSurface)
 
-                    Link(destination: URL(string: "https://zalgo.dev/privacy")!) {
+                    Link(destination: URL(string: "https://www.privacypolicies.com/live/151d345f-90aa-4907-86fc-86bf638dd911")!) {
                         Label("Privacy Policy", systemImage: "hand.raised")
                             .foregroundStyle(.white)
                     }

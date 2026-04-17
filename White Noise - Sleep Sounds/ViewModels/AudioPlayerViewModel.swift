@@ -2,6 +2,10 @@ import Foundation
 import MediaPlayer
 import WidgetKit
 
+extension Notification.Name {
+    static let whiteNoisePlaybackToggleRequested = Notification.Name("WhiteNoisePlaybackToggleRequested")
+}
+
 @Observable
 class AudioPlayerViewModel {
     private let analytics = AnalyticsManager.shared
@@ -54,6 +58,45 @@ class AudioPlayerViewModel {
         }
         nowPlayingManager.onPreviousTrack = { [weak self] in
             self?.previous()
+        }
+
+        setupLiveActivityToggleListener()
+    }
+
+    deinit {
+        CFNotificationCenterRemoveEveryObserver(
+            CFNotificationCenterGetDarwinNotifyCenter(),
+            Unmanaged.passUnretained(self).toOpaque()
+        )
+        NotificationCenter.default.removeObserver(self)
+    }
+
+    // Listens for Darwin notifications posted by the Live Activity's TogglePlaybackLiveIntent.
+    // The widget process can't touch our AVAudioEngine, so it signals us; we respond here.
+    private func setupLiveActivityToggleListener() {
+        let center = CFNotificationCenterGetDarwinNotifyCenter()
+        let observer = Unmanaged.passUnretained(self).toOpaque()
+
+        CFNotificationCenterAddObserver(
+            center,
+            observer,
+            { _, _, _, _, _ in
+                NotificationCenter.default.post(
+                    name: .whiteNoisePlaybackToggleRequested,
+                    object: nil
+                )
+            },
+            "com.zalgo.whitenoise.toggle" as CFString,
+            nil,
+            .deliverImmediately
+        )
+
+        NotificationCenter.default.addObserver(
+            forName: .whiteNoisePlaybackToggleRequested,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            self?.togglePlayPause()
         }
     }
 
