@@ -100,6 +100,11 @@ struct PremiumUpgradeView: View {
         .onAppear {
             analytics.track(.premiumSheetViewed, properties: ["source": "premium_view"])
         }
+        .onDisappear {
+            analytics.track(.paywallDismissed, properties: [
+                "was_purchased": storeManager.isPremium
+            ])
+        }
         .onChange(of: storeManager.isPremium) { _, newValue in
             if newValue {
                 withAnimation(.easeInOut(duration: 0.4)) {

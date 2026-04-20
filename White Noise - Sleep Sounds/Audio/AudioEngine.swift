@@ -29,6 +29,12 @@ class AudioEngine {
     private var mixBrownNoiseState: [String: Float] = [:]
     private var mixPinkNoiseState: [String: (rows: [Float], runningSum: Float, index: Int)] = [:]
 
+    // Bumped on every stopAll() so in-flight buffer-completion callbacks
+    // (running on the audio render thread) can detect that they're now stale
+    // and skip the recursive scheduleBuffer — which would otherwise crash by
+    // calling into a player node that's already been detached from the engine.
+    private var playbackEpoch: Int = 0
+
     var onInterruption: ((Bool) -> Void)?  // true = began, false = ended (should resume)
     var onRouteChange: (() -> Void)?       // headphones disconnected
 
@@ -67,18 +73,27 @@ class AudioEngine {
               let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
               let type = AVAudioSession.InterruptionType(rawValue: typeValue) else { return }
 
-        switch type {
-        case .began:
-            onInterruption?(true)
-        case .ended:
-            if let optionsValue = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt {
-                let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
-                if options.contains(.shouldResume) {
-                    onInterruption?(false)
-                }
+        // iOS delivers AVAudioSession notifications on its own queue, not
+        // necessarily main. Hop to main before invoking the callback —
+        // the ViewModel that consumes it touches @Observable state.
+        let shouldResume: Bool
+        if type == .ended,
+           let optionsValue = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt {
+            shouldResume = AVAudioSession.InterruptionOptions(rawValue: optionsValue).contains(.shouldResume)
+        } else {
+            shouldResume = false
+        }
+
+        DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            switch type {
+            case .began:
+                self.onInterruption?(true)
+            case .ended where shouldResume:
+                self.onInterruption?(false)
+            default:
+                break
             }
-        @unknown default:
-            break
         }
     }
 
@@ -88,7 +103,9 @@ class AudioEngine {
               let reason = AVAudioSession.RouteChangeReason(rawValue: reasonValue) else { return }
 
         if reason == .oldDeviceUnavailable {
-            onRouteChange?()
+            DispatchQueue.main.async { [weak self] in
+                self?.onRouteChange?()
+            }
         }
     }
 
@@ -231,14 +248,178 @@ class AudioEngine {
     }
 
     private func scheduleLoop(player: AVAudioPlayerNode, file: AVAudioFile) {
-        guard let buffer = AVAudioPCMBuffer(pcmFormat: file.processingFormat, frameCapacity: AVAudioFrameCount(file.length)) else { return }
+        guard let buffer = makeLoopBuffer(from: file) else { return }
+        // Queue two buffers up front and keep re-queueing on completion. This
+        // is more reliable than `.loops` for overnight playback — we've seen
+        // `.loops` stop after the first pass on some iOS builds, leaving the
+        // user in silence. Completion-based rescheduling guarantees there is
+        // always a buffer ready to play.
+        let epoch = playbackEpoch
+        scheduleNextLoop(player: player, buffer: buffer, epoch: epoch)
+        scheduleNextLoop(player: player, buffer: buffer, epoch: epoch)
+    }
+
+    private func scheduleNextLoop(player: AVAudioPlayerNode, buffer: AVAudioPCMBuffer, epoch: Int) {
+        player.scheduleBuffer(
+            buffer,
+            at: nil,
+            options: [],
+            completionCallbackType: .dataConsumed
+        ) { [weak self, weak player] _ in
+            guard let self, let player else { return }
+            // Bail if a stopAll() has happened since this buffer was scheduled.
+            // The epoch check is the load-bearing guard against the race where
+            // the player node has been (or is about to be) detached from the
+            // engine — calling scheduleBuffer on a detached node throws an
+            // uncatchable Obj-C exception.
+            guard self.playbackEpoch == epoch else { return }
+            // Also bail if a new sound has replaced this player while the
+            // engine kept running.
+            let stillActive = self.playerNode === player
+                || self.mixPlayerNodes.values.contains(where: { $0 === player })
+            guard stillActive else { return }
+            self.scheduleNextLoop(player: player, buffer: buffer, epoch: epoch)
+        }
+    }
+
+    // Builds a seamlessly loopable PCM buffer from a file.
+    //
+    // Source clips have fade-in/fade-out baked in — typically 1–5 seconds on
+    // each side. Looping the raw buffer makes that fade audible every cycle,
+    // which users correctly describe as "the sound stops and restarts."
+    //
+    // Strategy:
+    // 1. Read the full PCM data.
+    // 2. Scan per-window RMS energy to find where steady-state audio begins
+    //    and ends (any region below 50% of peak RMS is treated as fade/silence).
+    // 3. Extract that steady-state middle section.
+    // 4. Apply a long equal-power crossfade across the loop seam so the wrap
+    //    point is inaudible even if the middle's start and end don't match.
+    private func makeLoopBuffer(from file: AVAudioFile) -> AVAudioPCMBuffer? {
+        let sampleRate = file.processingFormat.sampleRate
+        let fullFrames = AVAudioFrameCount(file.length)
+        guard fullFrames > 0,
+              let full = AVAudioPCMBuffer(pcmFormat: file.processingFormat, frameCapacity: fullFrames),
+              full.floatChannelData != nil else {
+            return nil
+        }
         do {
             file.framePosition = 0
-            try file.read(into: buffer)
-            player.scheduleBuffer(buffer, at: nil, options: .loops)
+            try file.read(into: full)
         } catch {
-            print("Buffer scheduling failed: \(error)")
+            print("Buffer read failed: \(error)")
+            return nil
         }
+
+        let totalSeconds = Double(full.frameLength) / sampleRate
+        guard totalSeconds >= 2.0 else {
+            // Too short to do anything sensible — play as-is.
+            return full
+        }
+
+        let range = detectSteadyStateRange(buffer: full)
+        let startFrame = range.start
+        let endFrame = range.end
+        let contentFrames = AVAudioFrameCount(endFrame - startFrame)
+
+        guard contentFrames > AVAudioFrameCount(sampleRate * 1.0),
+              let core = AVAudioPCMBuffer(pcmFormat: file.processingFormat, frameCapacity: contentFrames),
+              let srcChannels = full.floatChannelData,
+              let dstChannels = core.floatChannelData else {
+            return full
+        }
+        core.frameLength = contentFrames
+
+        let channelCount = Int(file.processingFormat.channelCount)
+        let byteCount = Int(contentFrames) * MemoryLayout<Float>.size
+        for ch in 0..<channelCount {
+            memcpy(dstChannels[ch], srcChannels[ch].advanced(by: startFrame), byteCount)
+        }
+
+        // Crossfade the tail with the head so the seam is inaudible. Use up
+        // to 1s or a quarter of the clip, whichever is smaller.
+        let maxCrossfadeSec = min(1.0, Double(contentFrames) / sampleRate / 4.0)
+        let xfade = Int(maxCrossfadeSec * sampleRate)
+        guard xfade > 64 else { return core }
+
+        let total = Int(contentFrames)
+        for ch in 0..<channelCount {
+            let ptr = dstChannels[ch]
+            for i in 0..<xfade {
+                let t = Float(i) / Float(xfade)
+                let outGain = cosf(t * .pi / 2)
+                let inGain = sinf(t * .pi / 2)
+                let tailIdx = total - xfade + i
+                ptr[tailIdx] = ptr[tailIdx] * outGain + ptr[i] * inGain
+            }
+        }
+
+        // The head section (first `xfade` frames) was blended into the tail,
+        // so drop it — the resulting buffer's end naturally leads into its
+        // start when `.loops` (or manual re-scheduling) wraps around.
+        let newLen = contentFrames - AVAudioFrameCount(xfade)
+        guard let shifted = AVAudioPCMBuffer(pcmFormat: file.processingFormat, frameCapacity: newLen) else {
+            return core
+        }
+        shifted.frameLength = newLen
+        let shiftByteCount = Int(newLen) * MemoryLayout<Float>.size
+        for ch in 0..<channelCount {
+            guard let dst = shifted.floatChannelData?[ch] else { continue }
+            memcpy(dst, dstChannels[ch].advanced(by: xfade), shiftByteCount)
+        }
+        return shifted
+    }
+
+    // Scans RMS energy per window to locate the "content" region of a clip —
+    // i.e., where the audio is at steady amplitude, skipping any fade-in/out
+    // or silence padding at the edges.
+    private func detectSteadyStateRange(buffer: AVAudioPCMBuffer) -> (start: Int, end: Int) {
+        let total = Int(buffer.frameLength)
+        let fallback = (start: 0, end: total)
+        guard let channels = buffer.floatChannelData else { return fallback }
+
+        let channelCount = Int(buffer.format.channelCount)
+        let sampleRate = buffer.format.sampleRate
+        let windowSize = max(1, Int(sampleRate * 0.05)) // 50 ms windows
+        guard total >= windowSize * 4 else { return fallback }
+
+        var rms: [Float] = []
+        rms.reserveCapacity(total / windowSize + 1)
+        var i = 0
+        while i + windowSize <= total {
+            var sumSq: Float = 0
+            for ch in 0..<channelCount {
+                let ptr = channels[ch]
+                for j in 0..<windowSize {
+                    let s = ptr[i + j]
+                    sumSq += s * s
+                }
+            }
+            rms.append(sqrtf(sumSq / Float(windowSize * channelCount)))
+            i += windowSize
+        }
+
+        guard let peak = rms.max(), peak > 0 else { return fallback }
+        let threshold = peak * 0.5
+
+        var startWindow = 0
+        for (idx, v) in rms.enumerated() where v >= threshold {
+            startWindow = idx
+            break
+        }
+        var endWindow = rms.count - 1
+        for idx in stride(from: rms.count - 1, through: 0, by: -1) where rms[idx] >= threshold {
+            endWindow = idx
+            break
+        }
+
+        let startFrame = startWindow * windowSize
+        let endFrame = min(total, (endWindow + 1) * windowSize)
+
+        // Require at least 1 second of content — otherwise fall back to the
+        // full buffer rather than return a uselessly short loop.
+        guard endFrame - startFrame >= Int(sampleRate) else { return fallback }
+        return (startFrame, endFrame)
     }
 
     // MARK: - Mix Playback
@@ -394,23 +575,56 @@ class AudioEngine {
     }
 
     func resume() {
-        if isMixMode || isUsingGeneratedNoise {
+        // Fast path: a normal pause→play (no interruption happened). The
+        // engine is still running; just unpause the player nodes. Stays on
+        // the main thread, returns immediately, UI stays snappy.
+        if engine.isRunning {
+            if isMixMode {
+                for (_, player) in mixPlayerNodes { player.play() }
+            } else if !isUsingGeneratedNoise {
+                playerNode?.play()
+            }
+            return
+        }
+
+        // Slow path: an interruption (alarm, call, another audio app)
+        // deactivated our session and stopped the engine. Reactivating the
+        // session and restarting the engine can BLOCK for hundreds of ms
+        // while iOS renegotiates audio resources — running it on the main
+        // thread freezes every button in the UI. Do it on a utility queue.
+        let epoch = playbackEpoch
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            guard let self else { return }
             do {
-                try engine.start()
+                try AVAudioSession.sharedInstance().setActive(true)
+            } catch {
+                print("AudioSession reactivate failed: \(error)")
+            }
+            // If a stopAll() ran while we were waiting on setActive(true),
+            // the engine has been torn down — don't try to start it back up.
+            guard self.playbackEpoch == epoch else { return }
+            do {
+                try self.engine.start()
             } catch {
                 print("Engine resume failed: \(error)")
+                return
             }
-            if isMixMode {
-                for (_, player) in mixPlayerNodes {
-                    player.play()
-                }
+            guard self.playbackEpoch == epoch else { return }
+            if self.isMixMode {
+                for (_, player) in self.mixPlayerNodes { player.play() }
+            } else if !self.isUsingGeneratedNoise {
+                self.playerNode?.play()
             }
-        } else {
-            playerNode?.play()
+            // Generated-noise mode renders straight from the source node —
+            // once the engine is running, audio flows.
         }
     }
 
     func stopAll() {
+        // Invalidate any in-flight loop completions BEFORE we detach nodes —
+        // their guard checks read this value and bail out if it changed.
+        playbackEpoch &+= 1
+
         // Stop single playback
         playerNode?.stop()
         if let player = playerNode {

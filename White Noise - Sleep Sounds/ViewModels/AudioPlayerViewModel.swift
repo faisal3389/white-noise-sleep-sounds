@@ -234,8 +234,25 @@ class AudioPlayerViewModel {
 
     func setVolume(_ newVolume: Float) {
         volume = newVolume
-        audioEngine.setVolume(newVolume)
+        audioEngine.setVolume(newVolume * fadeGain)
         analytics.track(.volumeChanged, properties: ["volume": newVolume])
+    }
+
+    // Transient gain applied on top of the user's stored `volume` — used by
+    // the sleep timer's fade-out. Kept separate so the user's volume slider
+    // stays where they set it; otherwise the fade ramp would permanently
+    // zero out their volume preference.
+    private var fadeGain: Float = 1.0
+
+    func applyFadeGain(_ gain: Float) {
+        fadeGain = gain
+        audioEngine.setVolume(volume * gain)
+    }
+
+    func resetFadeGain() {
+        guard fadeGain != 1.0 else { return }
+        fadeGain = 1.0
+        audioEngine.setVolume(volume)
     }
 
     // MARK: - Mix Playback

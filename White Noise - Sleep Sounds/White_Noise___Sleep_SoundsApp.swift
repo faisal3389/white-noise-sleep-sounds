@@ -56,12 +56,14 @@ struct RootView: View {
         case nowPlaying
         case toggle
         case playSound(String)
+        case openSharedMix(SharedMixPayload)
 
         var analyticsName: String {
             switch self {
             case .nowPlaying: return "now_playing"
             case .toggle: return "toggle"
             case .playSound: return "quick_play"
+            case .openSharedMix: return "shared_mix"
             }
         }
     }
@@ -113,6 +115,10 @@ struct RootView: View {
             let soundId = url.pathComponents.dropFirst().first ?? ""
             if !soundId.isEmpty {
                 deepLinkAction = .playSound(soundId)
+            }
+        case "mix":
+            if let payload = SharedMixPayload.decode(from: url) {
+                deepLinkAction = .openSharedMix(payload)
             }
         default:
             break

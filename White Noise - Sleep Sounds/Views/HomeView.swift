@@ -4,6 +4,9 @@ struct HomeView: View {
     @Bindable var player: AudioPlayerViewModel
     @Bindable var favorites: FavoritesManager
     var storeManager: StoreManager
+    @Bindable var mixesManager: MixesManager
+    @Bindable var sleepLog: SleepLogManager
+    @Bindable var lastPlayed: LastPlayedManager
     @Binding var selectedTab: Int
     @Binding var discoverCategory: SoundCategory?
 
@@ -39,6 +42,11 @@ struct HomeView: View {
                 // MARK: - Greeting Header
                 greetingHeader
 
+                // MARK: - Resume Card
+                if let resume = resumeCardContext {
+                    resumeCard(resume)
+                }
+
                 // MARK: - Hero Bento Grid
                 heroBentoGrid
 
@@ -72,11 +80,36 @@ struct HomeView: View {
                 .font(DS.Typography.bodyMd)
                 .foregroundStyle(.white.opacity(0.5))
 
-            Text("White Noise")
-                .font(DS.Typography.displayLg)
-                .foregroundStyle(.white)
+            HStack(alignment: .firstTextBaseline, spacing: DS.Spacing.md) {
+                Text("White Noise")
+                    .font(DS.Typography.displayLg)
+                    .foregroundStyle(.white)
+
+                if sleepLog.currentStreak > 0 {
+                    streakChip
+                }
+
+                Spacer()
+            }
         }
         .padding(.top, DS.Spacing.lg)
+    }
+
+    private var streakChip: some View {
+        HStack(spacing: 4) {
+            Image(systemName: "flame.fill")
+                .font(.system(size: 12, weight: .bold))
+                .foregroundStyle(Color.orange)
+
+            Text("\(sleepLog.currentStreak)")
+                .font(DS.Typography.labelMd)
+                .foregroundStyle(.white)
+        }
+        .padding(.horizontal, DS.Spacing.md)
+        .padding(.vertical, DS.Spacing.xs)
+        .background(Color.white.opacity(0.08))
+        .clipShape(Capsule())
+        .accessibilityLabel("\(sleepLog.currentStreak) night streak")
     }
 
     private var greetingText: String {
@@ -168,6 +201,133 @@ struct HomeView: View {
                     .staggeredAppear(index: index, appearedCards: $appearedCards, id: "cat_\(category.rawValue)")
             }
         }
+    }
+
+    // MARK: - Resume
+
+    private enum ResumeContext {
+        case sound(Sound)
+        case mix(SoundMix)
+
+        var title: String {
+            switch self {
+            case .sound(let s): return s.name
+            case .mix(let m): return m.name
+            }
+        }
+
+        var subtitle: String {
+            switch self {
+            case .sound(let s): return s.category.rawValue
+            case .mix(let m): return m.componentNames
+            }
+        }
+
+        var backgroundImage: String {
+            switch self {
+            case .sound(let s): return s.backgroundImage
+            case .mix(let m): return m.backgroundImage
+            }
+        }
+
+        var isLocked: Bool {
+            switch self {
+            case .sound(let s): return s.isPremium
+            case .mix: return false
+            }
+        }
+    }
+
+    private var resumeCardContext: ResumeContext? {
+        guard let context = lastPlayed.context else { return nil }
+
+        // If the user is actively playing this exact context, hide the card —
+        // the mini player already shows it.
+        switch context {
+        case .sound(let id):
+            if player.currentSound?.id == id && player.isPlaying { return nil }
+            guard let sound = SoundLibrary.allSounds.first(where: { $0.id == id }) else { return nil }
+            return .sound(sound)
+        case .mix(let id):
+            if player.currentMix?.id == id && player.isPlaying { return nil }
+            let allMixes = mixesManager.mixes + MixesManager.curatedMixes
+            guard let mix = allMixes.first(where: { $0.id == id }) else { return nil }
+            return .mix(mix)
+        }
+    }
+
+    private func resumeCard(_ context: ResumeContext) -> some View {
+        Button {
+            handleResume(context)
+        } label: {
+            ZStack(alignment: .leading) {
+                RoundedRectangle(cornerRadius: DS.Radius.xl)
+                    .fill(Color.appSurface)
+
+                Image(context.backgroundImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(height: 96)
+                    .clipShape(RoundedRectangle(cornerRadius: DS.Radius.xl))
+                    .opacity(0.55)
+
+                LinearGradient(
+                    colors: [Color.black.opacity(0.6), Color.black.opacity(0.2)],
+                    startPoint: .leading,
+                    endPoint: .trailing
+                )
+                .clipShape(RoundedRectangle(cornerRadius: DS.Radius.xl))
+
+                HStack(spacing: DS.Spacing.md) {
+                    ZStack {
+                        Circle()
+                            .fill(Color.appAccent)
+                            .frame(width: 44, height: 44)
+
+                        Image(systemName: context.isLocked && !storeManager.isPremium ? "lock.fill" : "play.fill")
+                            .font(.system(size: 16, weight: .bold))
+                            .foregroundStyle(Color.black)
+                    }
+
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Pick up where you left off")
+                            .font(DS.Typography.labelSm)
+                            .foregroundStyle(Color.appAccent)
+
+                        Text(context.title)
+                            .font(DS.Typography.headlineSm)
+                            .foregroundStyle(.white)
+                            .lineLimit(1)
+
+                        Text(context.subtitle)
+                            .font(DS.Typography.bodySm)
+                            .foregroundStyle(.white.opacity(0.6))
+                            .lineLimit(1)
+                    }
+
+                    Spacer()
+                }
+                .padding(.horizontal, DS.Spacing.lg)
+            }
+            .frame(height: 96)
+        }
+        .buttonStyle(CardPressStyle())
+    }
+
+    private func handleResume(_ context: ResumeContext) {
+        switch context {
+        case .sound(let sound):
+            if sound.isPremium && !storeManager.isPremium {
+                AnalyticsManager.shared.track(.premiumLockedContentTapped, properties: ["sound_id": sound.id, "source": "resume"])
+                showPremiumSheet = true
+                return
+            }
+            player.play(sound: sound)
+        case .mix(let mix):
+            player.playMix(mix: mix, source: "resume")
+        }
+        UIImpactFeedbackGenerator(style: .light).impactOccurred()
+        selectedTab = 2
     }
 
     // MARK: - Helpers

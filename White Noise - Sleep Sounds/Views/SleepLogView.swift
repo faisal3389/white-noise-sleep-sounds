@@ -29,15 +29,15 @@ struct SleepLogView: View {
     private var statsHeader: some View {
         HStack(spacing: 12) {
             statCard(
-                title: "This Week",
-                value: formatMinutes(sleepLog.totalSleepThisWeek),
-                icon: "calendar"
+                title: "Streak",
+                value: "\(sleepLog.currentStreak)",
+                icon: "flame.fill"
             )
 
             statCard(
-                title: "Average",
-                value: formatMinutes(sleepLog.averageSleepDuration),
-                icon: "chart.bar.fill"
+                title: "This Week",
+                value: formatMinutes(sleepLog.totalSleepThisWeek),
+                icon: "calendar"
             )
 
             statCard(
