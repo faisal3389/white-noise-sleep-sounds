@@ -1,3 +1,4 @@
+#if os(iOS)
 import ActivityKit
 import Foundation
 
@@ -139,3 +140,4 @@ class LiveActivityManager {
         }
     }
 }
+#endif

@@ -8,7 +8,9 @@ struct PlaylistView: View {
     @Binding var selectedTab: Int
 
     @State private var showAddSheet = false
+    #if os(iOS)
     @State private var editMode: EditMode = .inactive
+    #endif
     private let analytics = AnalyticsManager.shared
 
     var body: some View {
@@ -25,12 +27,14 @@ struct PlaylistView: View {
             .background(Color.appBackground)
             .navigationTitle("Playlist")
             .toolbar {
+                #if os(iOS)
                 ToolbarItem(placement: .topBarLeading) {
                     if !playlistManager.items.isEmpty {
                         EditButton()
                             .foregroundStyle(Color.appAccent)
                     }
                 }
+                #endif
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
                         showAddSheet = true
@@ -40,7 +44,9 @@ struct PlaylistView: View {
                     }
                 }
             }
+            #if os(iOS)
             .environment(\.editMode, $editMode)
+            #endif
             .sheet(isPresented: $showAddSheet) {
                 AddToPlaylistSheet(
                     playlistManager: playlistManager,

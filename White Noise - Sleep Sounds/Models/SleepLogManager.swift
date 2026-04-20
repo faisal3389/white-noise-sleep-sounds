@@ -184,6 +184,36 @@ class SleepLogManager {
         return entries.reduce(0) { $0 + $1.durationMinutes } / entries.count
     }
 
+    /// Consecutive calendar days ending today or yesterday that have at least
+    /// one session. Yesterday is included so the streak stays intact during the
+    /// day after a night of sleep — the user hasn't "broken" it until they skip
+    /// a full night.
+    var currentStreak: Int {
+        guard !entries.isEmpty else { return 0 }
+        let calendar = Calendar.current
+        let dayKeys = Set(entries.map { calendar.startOfDay(for: $0.date) })
+
+        let today = calendar.startOfDay(for: Date())
+        guard let yesterday = calendar.date(byAdding: .day, value: -1, to: today) else { return 0 }
+
+        var cursor: Date
+        if dayKeys.contains(today) {
+            cursor = today
+        } else if dayKeys.contains(yesterday) {
+            cursor = yesterday
+        } else {
+            return 0
+        }
+
+        var streak = 0
+        while dayKeys.contains(cursor) {
+            streak += 1
+            guard let previous = calendar.date(byAdding: .day, value: -1, to: cursor) else { break }
+            cursor = previous
+        }
+        return streak
+    }
+
     func deleteEntry(_ entry: SleepLogEntry) {
         entries.removeAll { $0.id == entry.id }
         save()

@@ -53,10 +53,12 @@ class NowPlayingManager {
         info[MPMediaItemPropertyArtist] = "White Noise"
         info[MPMediaItemPropertyAlbumTitle] = sound.category.rawValue
 
+        #if canImport(UIKit)
         if let image = UIImage(named: sound.backgroundImage) {
             let artwork = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
             info[MPMediaItemPropertyArtwork] = artwork
         }
+        #endif
 
         info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
 
@@ -73,10 +75,12 @@ class NowPlayingManager {
         info[MPMediaItemPropertyAlbumTitle] = "Custom Mix"
 
         let bgImage = mix.backgroundImage
+        #if canImport(UIKit)
         if let image = UIImage(named: bgImage) {
             let artwork = MPMediaItemArtwork(boundsSize: image.size) { _ in image }
             info[MPMediaItemPropertyArtwork] = artwork
         }
+        #endif
 
         info[MPNowPlayingInfoPropertyPlaybackRate] = isPlaying ? 1.0 : 0.0
 

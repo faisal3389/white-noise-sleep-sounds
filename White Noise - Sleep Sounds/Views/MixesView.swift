@@ -11,6 +11,7 @@ struct MixesView: View {
     @State private var createHeroPressed = false
     @State private var previewTask: Task<Void, Never>?
     @State private var previewMixId: UUID?
+    @State private var sharingPayload: SharedMixPayload?
 
     private let curatedPreviewSeconds: Int = 60
 
@@ -40,6 +41,18 @@ struct MixesView: View {
         .sheet(isPresented: $showPremiumSheet) {
             PremiumUpgradeView(storeManager: storeManager)
         }
+        .sheet(item: $sharingPayload) { payload in
+            MixShareSheet(payload: payload) { completed in
+                AnalyticsManager.shared.track(
+                    completed ? .mixShared : .mixShareCancelled,
+                    properties: [
+                        "mix_name": payload.name,
+                        "component_count": payload.components.count
+                    ]
+                )
+                sharingPayload = nil
+            }
+        }
         .onChange(of: player.currentMix?.id) { _, newId in
             if let activePreviewId = previewMixId, newId != activePreviewId {
                 previewTask?.cancel()
@@ -47,6 +60,18 @@ struct MixesView: View {
                 previewMixId = nil
             }
         }
+    }
+
+    // MARK: - Share
+
+    private func shareMix(_ mix: SoundMix, source: String) {
+        guard let payload = SharedMixPayload(mix: mix) else { return }
+        AnalyticsManager.shared.track(.mixShareTapped, properties: [
+            "mix_name": mix.name,
+            "component_count": mix.components.count,
+            "source": source
+        ])
+        sharingPayload = payload
     }
 
     // MARK: - Curated Mix Playback (with preview gating for free users)
@@ -192,6 +217,12 @@ struct MixesView: View {
                                 )
                             }
 
+                            Button {
+                                shareMix(mix, source: "saved_mix_context")
+                            } label: {
+                                Label("Share Mix", systemImage: "square.and.arrow.up")
+                            }
+
                             Button(role: .destructive) {
                                 AnalyticsManager.shared.track(.mixDeleted, properties: ["mix_name": mix.name])
                                 mixesManager.deleteMix(mix)
@@ -232,43 +263,54 @@ struct MixesView: View {
         Button {
             playCuratedMix(mix)
         } label: {
-            ZStack(alignment: .bottomLeading) {
-                GeometryReader { geo in
-                    Image(mix.backgroundImage)
-                        .resizable()
-                        .aspectRatio(contentMode: .fill)
-                        .frame(width: geo.size.width, height: geo.size.height)
-                        .clipped()
-                }
-
-                // Dark overlay
-                LinearGradient(
-                    colors: [.clear, .black.opacity(0.7)],
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(mix.name)
-                        .font(.system(size: 22, weight: .bold, design: .rounded))
-                        .foregroundStyle(.white)
-
-                    Text(mix.description)
-                        .font(.system(size: 14))
-                        .foregroundStyle(.white.opacity(0.7))
-                }
-                .padding(16)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 200)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
-            .overlay(alignment: .topTrailing) {
-                if !storeManager.isPremium {
-                    previewBadge.padding(12)
-                }
-            }
+            curatedLargeLabel(mix)
         }
         .buttonStyle(.plain)
+        .contextMenu {
+            Button {
+                shareMix(mix, source: "curated_mix_context")
+            } label: {
+                Label("Share Mix", systemImage: "square.and.arrow.up")
+            }
+        }
+    }
+
+    private func curatedLargeLabel(_ mix: SoundMix) -> some View {
+        ZStack(alignment: .bottomLeading) {
+            GeometryReader { geo in
+                Image(mix.backgroundImage)
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: geo.size.width, height: geo.size.height)
+                    .clipped()
+            }
+
+            // Dark overlay
+            LinearGradient(
+                colors: [.clear, .black.opacity(0.7)],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(mix.name)
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+
+                Text(mix.description)
+                    .font(.system(size: 14))
+                    .foregroundStyle(.white.opacity(0.7))
+            }
+            .padding(16)
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 200)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+        .overlay(alignment: .topTrailing) {
+            if !storeManager.isPremium {
+                previewBadge.padding(12)
+            }
+        }
     }
 
     private func curatedSmallCard(_ mix: SoundMix) -> some View {
@@ -312,6 +354,13 @@ struct MixesView: View {
             }
         }
         .buttonStyle(CardPressStyle())
+        .contextMenu {
+            Button {
+                shareMix(mix, source: "curated_mix_context")
+            } label: {
+                Label("Share Mix", systemImage: "square.and.arrow.up")
+            }
+        }
     }
 
     private var previewBadge: some View {

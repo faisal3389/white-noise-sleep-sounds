@@ -28,7 +28,9 @@ class AudioPlayerViewModel {
 
     private let audioEngine = AudioEngine()
     private let nowPlayingManager = NowPlayingManager()
+    #if os(iOS)
     let liveActivityManager = LiveActivityManager()
+    #endif
     private(set) var soundList: [Sound] = SoundLibrary.allSounds
 
     init() {
@@ -123,7 +125,9 @@ class AudioPlayerViewModel {
         isPlaying = true
         SharedPlaybackState.update(soundId: sound.id, soundName: sound.name, backgroundImage: sound.backgroundImage, isPlaying: true)
         nowPlayingManager.updateNowPlayingInfo(sound: sound, isPlaying: true)
+        #if os(iOS)
         liveActivityManager.startActivity(sound: sound, isPlaying: true, timerEndDate: nil)
+        #endif
         analytics.track(.soundPlayed, properties: [
             "sound_id": sound.id,
             "sound_name": sound.name,
@@ -146,7 +150,9 @@ class AudioPlayerViewModel {
         ])
         SharedPlaybackState.update(soundId: currentSound?.id ?? currentMix?.id.uuidString, soundName: displayTitle, backgroundImage: displayBackgroundImage, isPlaying: false)
         nowPlayingManager.updatePlaybackRate(isPlaying: false)
+        #if os(iOS)
         liveActivityManager.updateActivity(isPlaying: false, timerEndDate: nil)
+        #endif
     }
 
     func resume() {
@@ -157,7 +163,9 @@ class AudioPlayerViewModel {
         }
         SharedPlaybackState.update(soundId: currentSound?.id ?? currentMix?.id.uuidString, soundName: displayTitle, backgroundImage: displayBackgroundImage, isPlaying: true)
         nowPlayingManager.updatePlaybackRate(isPlaying: true)
+        #if os(iOS)
         liveActivityManager.updateActivity(isPlaying: true, timerEndDate: nil)
+        #endif
         analytics.track(.soundResumed, properties: [
             "sound_name": displayTitle,
             "is_mix": currentMix != nil
@@ -177,7 +185,9 @@ class AudioPlayerViewModel {
         activeComponents = []
         SharedPlaybackState.clear()
         nowPlayingManager.clearNowPlayingInfo()
+        #if os(iOS)
         liveActivityManager.endActivity()
+        #endif
     }
 
     func togglePlayPause() {
@@ -234,8 +244,25 @@ class AudioPlayerViewModel {
 
     func setVolume(_ newVolume: Float) {
         volume = newVolume
-        audioEngine.setVolume(newVolume)
+        audioEngine.setVolume(newVolume * fadeGain)
         analytics.track(.volumeChanged, properties: ["volume": newVolume])
+    }
+
+    // Transient gain applied on top of the user's stored `volume` — used by
+    // the sleep timer's fade-out. Kept separate so the user's volume slider
+    // stays where they set it; otherwise the fade ramp would permanently
+    // zero out their volume preference.
+    private var fadeGain: Float = 1.0
+
+    func applyFadeGain(_ gain: Float) {
+        fadeGain = gain
+        audioEngine.setVolume(volume * gain)
+    }
+
+    func resetFadeGain() {
+        guard fadeGain != 1.0 else { return }
+        fadeGain = 1.0
+        audioEngine.setVolume(volume)
     }
 
     // MARK: - Mix Playback
@@ -253,7 +280,9 @@ class AudioPlayerViewModel {
         audioEngine.setVolume(volume)
         SharedPlaybackState.update(soundId: mix.id.uuidString, soundName: mix.name, backgroundImage: mix.backgroundImage, isPlaying: true)
         nowPlayingManager.updateNowPlayingInfo(mix: mix, isPlaying: true)
+        #if os(iOS)
         liveActivityManager.startActivity(mix: mix, isPlaying: true, timerEndDate: nil)
+        #endif
         analytics.track(.mixPlayed, properties: [
             "mix_name": mix.name,
             "component_count": mix.components.count,
@@ -287,9 +316,11 @@ class AudioPlayerViewModel {
         playMix(mix: mixes[prevIndex], source: "previous")
     }
 
+    #if os(iOS)
     func updateLiveActivityTimer(endDate: Date?) {
         liveActivityManager.updateActivity(isPlaying: isPlaying, timerEndDate: endDate)
     }
+    #endif
 
     // Convenience for display
     var displayTitle: String {

@@ -9,11 +9,13 @@ struct ContentView: View {
     @State private var playlistManager = PlaylistManager()
     @State private var sleepLog = SleepLogManager()
     @State private var customSoundsManager = CustomSoundsManager()
+    @State private var lastPlayed = LastPlayedManager()
     @State private var selectedTab = 0
     @State private var discoverCategory: SoundCategory? = nil
     @State private var showSleepClock = false
     @State private var showPremiumSheet = false
     @State private var showRatePrompt = false
+    @State private var importMixPayload: SharedMixPayload?
     private let reviewPrompt = ReviewPromptManager.shared
     var storeManager: StoreManager
     var settings: SettingsManager
@@ -34,9 +36,10 @@ struct ContentView: View {
                 sleepLog.endSession()
                 player.stop()
                 playlistManager.stopPlaylist()
+                player.resetFadeGain()
             }
-            timerManager.onFadeOut = { volume in
-                player.setVolume(volume * player.volume)
+            timerManager.onFadeOut = { gain in
+                player.applyFadeGain(gain)
             }
 
             playlistManager.onPlaySound = { sound in
@@ -56,9 +59,11 @@ struct ContentView: View {
         }
         .onChange(of: player.currentSound?.id) { _, _ in
             syncSleepLog()
+            if let sound = player.currentSound { lastPlayed.recordSound(sound) }
         }
         .onChange(of: player.currentMix?.id) { _, _ in
             syncSleepLog()
+            if let mix = player.currentMix { lastPlayed.recordMix(mix) }
         }
         .onChange(of: settings.liveActivitiesEnabled) { _, enabled in
             player.liveActivityManager.onSettingsChanged(
@@ -92,6 +97,9 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showPremiumSheet) {
             PremiumUpgradeView(storeManager: storeManager)
+        }
+        .sheet(item: $importMixPayload) { payload in
+            MixImportSheet(payload: payload, player: player, mixesManager: mixesManager)
         }
         .sheet(isPresented: $showRatePrompt, onDismiss: {
             reviewPrompt.shouldShowPrompt = false
@@ -133,6 +141,9 @@ struct ContentView: View {
             player: player,
             favorites: favorites,
             storeManager: storeManager,
+            mixesManager: mixesManager,
+            sleepLog: sleepLog,
+            lastPlayed: lastPlayed,
             selectedTab: $selectedTab,
             discoverCategory: $discoverCategory
         )
@@ -308,6 +319,12 @@ struct ContentView: View {
                     selectedTab = 2
                 }
             }
+        case .openSharedMix(let payload):
+            AnalyticsManager.shared.track(.deepLinkOpened, properties: [
+                "action": "shared_mix",
+                "component_count": payload.components.count
+            ])
+            importMixPayload = payload
         }
 
         // Always fire the general widget_tapped event

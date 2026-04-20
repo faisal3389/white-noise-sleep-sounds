@@ -12,6 +12,7 @@ struct NowPlayingView: View {
     @State private var showTimerSheet = false
     @State private var showSleepClock = false
     @State private var showPremiumSheet = false
+    @State private var sharingPayload: SharedMixPayload?
     private let analytics = AnalyticsManager.shared
 
     var body: some View {
@@ -35,6 +36,7 @@ struct NowPlayingView: View {
                 },
                 onCancel: {
                     timerManager.stopTimer()
+                    player.resetFadeGain()
                 }
             )
             .presentationDetents([.large])
@@ -44,6 +46,18 @@ struct NowPlayingView: View {
         }
         .sheet(isPresented: $showPremiumSheet) {
             PremiumUpgradeView(storeManager: storeManager)
+        }
+        .sheet(item: $sharingPayload) { payload in
+            MixShareSheet(payload: payload) { completed in
+                analytics.track(
+                    completed ? .mixShared : .mixShareCancelled,
+                    properties: [
+                        "mix_name": payload.name,
+                        "component_count": payload.components.count
+                    ]
+                )
+                sharingPayload = nil
+            }
         }
         .onAppear {
             analytics.track(.nowPlayingViewed, properties: [
@@ -298,6 +312,20 @@ struct NowPlayingView: View {
                 ) {
                     analytics.track(.mixerSheetOpened, properties: ["mix_name": player.currentMix?.name ?? ""])
                     showMixerSheet = true
+                }
+
+                actionBarButton(
+                    icon: "square.and.arrow.up",
+                    label: "Share"
+                ) {
+                    guard let mix = player.currentMix,
+                          let payload = SharedMixPayload(mix: mix) else { return }
+                    analytics.track(.mixShareTapped, properties: [
+                        "mix_name": mix.name,
+                        "component_count": mix.components.count,
+                        "source": "now_playing"
+                    ])
+                    sharingPayload = payload
                 }
             }
         }

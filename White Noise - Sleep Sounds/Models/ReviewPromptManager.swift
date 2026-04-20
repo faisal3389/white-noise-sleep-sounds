@@ -1,5 +1,7 @@
 import Foundation
+#if canImport(UIKit)
 import UIKit
+#endif
 
 @Observable
 final class ReviewPromptManager {
@@ -59,7 +61,9 @@ final class ReviewPromptManager {
     func openAppStoreReview() {
         hasRated = true
         shouldShowPrompt = false
+        #if canImport(UIKit)
         UIApplication.shared.open(Self.reviewURL)
+        #endif
         AnalyticsManager.shared.track(.rateAppTapped, properties: ["source": "review_prompt"])
     }
 

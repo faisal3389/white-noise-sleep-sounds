@@ -62,6 +62,15 @@ final class AnalyticsManager {
         case curatedMixPlayed = "curated_mix_played"
         case curatedMixPreviewEnded = "curated_mix_preview_ended"
 
+        // Mix sharing
+        case mixShareTapped = "mix_share_tapped"
+        case mixShared = "mix_shared"
+        case mixShareCancelled = "mix_share_cancelled"
+        case mixImportOpened = "mix_import_opened"
+        case mixImportPlayed = "mix_import_played"
+        case mixImportSaved = "mix_import_saved"
+        case mixImportDismissed = "mix_import_dismissed"
+
         // Favorites
         case soundFavorited = "sound_favorited"
         case soundUnfavorited = "sound_unfavorited"
@@ -117,6 +126,7 @@ final class AnalyticsManager {
 
         // Premium / Purchases
         case premiumSheetViewed = "premium_sheet_viewed"
+        case paywallDismissed = "paywall_dismissed"
         case premiumPurchaseTapped = "premium_purchase_tapped"
         case premiumPurchaseCompleted = "premium_purchase_completed"
         case premiumPurchaseFailed = "premium_purchase_failed"
@@ -130,6 +140,8 @@ final class AnalyticsManager {
         case liveActivityToggled = "live_activity_toggled"
         case fadeDurationChanged = "fade_duration_changed"
         case siriSettingsOpened = "siri_settings_opened"
+        case bedtimeReminderToggled = "bedtime_reminder_toggled"
+        case bedtimeReminderTimeChanged = "bedtime_reminder_time_changed"
 
         // About / Share
         case rateAppTapped = "rate_app_tapped"

@@ -17,9 +17,11 @@ struct AppIconOption: Identifiable {
 
 struct AppIconPicker: View {
     @State private var selectedIcon: String = {
+        #if canImport(UIKit)
         if let name = UIApplication.shared.alternateIconName {
             return AppIconOption.allOptions.first(where: { $0.iconName == name })?.id ?? "default"
         }
+        #endif
         return "default"
     }()
 
@@ -60,10 +62,12 @@ struct AppIconPicker: View {
         selectedIcon = option.id
         AnalyticsManager.shared.track(.appIconChanged, properties: ["icon": option.name, "icon_id": option.id])
 
+        #if canImport(UIKit)
         UIApplication.shared.setAlternateIconName(option.iconName) { error in
             if let error {
                 print("Failed to set alternate icon: \(error)")
             }
         }
+        #endif
     }
 }

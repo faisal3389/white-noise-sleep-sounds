@@ -1,3 +1,4 @@
+#if os(iOS)
 import ActivityKit
 import Foundation
 
@@ -11,3 +12,4 @@ struct WhiteNoiseActivityAttributes: ActivityAttributes {
         var mixSoundCount: Int?
     }
 }
+#endif
