@@ -1,6 +1,5 @@
 import Foundation
 import os
-import FirebaseAnalytics
 
 /// Lightweight analytics service that tracks all user actions.
 /// Events are logged locally and can be forwarded to any analytics backend
@@ -175,9 +174,10 @@ final class AnalyticsManager {
         send(event: event.rawValue, properties: properties)
     }
 
-    // MARK: - Backend Integration Point
+    // MARK: - Onboarding Branch Backend
 
     private func send(event: String, properties: [String: Any]?) {
-        Analytics.logEvent(event, parameters: properties)
+        // Intentionally disabled only on chore/xcode-cloud-onboarding.
+        // The release remains Firebase-enabled on main.
     }
 }

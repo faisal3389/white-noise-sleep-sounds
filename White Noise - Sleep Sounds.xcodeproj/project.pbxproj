@@ -10,7 +10,6 @@
 		6A341C102F8F2878003FB276 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A341C0F2F8F2878003FB276 /* WidgetKit.framework */; };
 		6A341C122F8F2878003FB276 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6A341C112F8F2878003FB276 /* SwiftUI.framework */; };
 		6A341C1D2F8F287B003FB276 /* White​Noise​WidgetsExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 6A341C0D2F8F2878003FB276 /* White​Noise​WidgetsExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
-		6A694B3F2F90B98700E2A337 /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 6A694B3E2F90B98700E2A337 /* FirebaseAnalytics */; };
 		6A694B412F90C90100E2A337 /* RevenueCat in Frameworks */ = {isa = PBXBuildFile; productRef = 6A694B402F90C90100E2A337 /* RevenueCat */; };
 /* End PBXBuildFile section */
 
@@ -113,7 +112,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				6A694B412F90C90100E2A337 /* RevenueCat in Frameworks */,
-				6A694B3F2F90B98700E2A337 /* FirebaseAnalytics in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -197,7 +195,6 @@
 			);
 			name = "White Noise - Sleep Sounds";
 			packageProductDependencies = (
-				6A694B3E2F90B98700E2A337 /* FirebaseAnalytics */,
 				6A694B402F90C90100E2A337 /* RevenueCat */,
 			);
 			productName = "White Noise - Sleep Sounds";
@@ -309,7 +306,6 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				6A341BEE2F8F19AD003FB276 /* XCRemoteSwiftPackageReference "purchases-ios" */,
-				6A694B3B2F90B89300E2A337 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 6A24DE022F8C8B0F00BC532A /* Products */;
@@ -859,22 +855,9 @@
 				minimumVersion = 5.67.2;
 			};
 		};
-		6A694B3B2F90B89300E2A337 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 12.12.0;
-			};
-		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		6A694B3E2F90B98700E2A337 /* FirebaseAnalytics */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 6A694B3B2F90B89300E2A337 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseAnalytics;
-		};
 		6A694B402F90C90100E2A337 /* RevenueCat */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 6A341BEE2F8F19AD003FB276 /* XCRemoteSwiftPackageReference "purchases-ios" */;
